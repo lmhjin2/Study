@@ -33,8 +33,8 @@ model.add(Dense(10))
 model.add(Dense(10))
 model.add(Dense(1))
 
-# test
-#test
+
+
 # 로스 :  0.32382264733314514
 # 1/1 [==============================] - 0s 87ms/step
 # 7의 예측값 :  [[6.792662]]
