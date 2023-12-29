@@ -45,3 +45,4 @@ print("예측값 : ", result)
 # test2
 
 # sadasdads
+# sadsadasdaddsa
