@@ -22,13 +22,14 @@ x = train_csv.drop(['casual', 'registered', 'count'],
 y = train_csv['count']
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, train_size = 0.8, random_state = 1 )
+    x, y, train_size = 0.8, random_state = 1234 )
 
 #2
 model = Sequential()
-model.add(Dense(16, input_dim = 8, activation = 'relu'))    # relu 는 0이하는 0으로, 양수는 그대로 뽑아내는것
-model.add(Dense(32, activation = 'relu'))
-model.add(Dense(24, activation = 'relu'))
+model.add(Dense(160, input_dim = 8, activation = 'relu'))    # relu 는 0이하는 0으로, 양수는 그대로 뽑아내는것
+model.add(Dense(128, activation = 'relu'))
+model.add(Dense(92, activation = 'relu'))
+model.add(Dense(48, activation = 'relu'))
 model.add(Dense(16, activation = 'relu'))
 model.add(Dense(1, activation = 'relu'))
 
@@ -36,14 +37,16 @@ model.add(Dense(1, activation = 'relu'))
 model.compile(loss='msle', optimizer='adam') 
 
 from keras.callbacks import EarlyStopping
-
+# val_loss : 1.3645
+# R2:  0.23980802276182256
+# RMSLE: 1.1377991895665427
 es = EarlyStopping(monitor='val_loss',
                    mode='min',
-                   patience=100,
+                   patience = 28,
                    verbose=1)
 
 hist = model.fit(x_train, y_train, epochs = 1000,
-                 batch_size = 381, validation_split=0.2,
+                 batch_size = 154, validation_split=0.18,
                  verbose = 2, callbacks=[es])
 
 #4
@@ -66,8 +69,8 @@ rmsle = RMSLE(y_test, y_predict)
 print("R2: ", r2)
 # print("MSE:", loss)
 # print("RMSE:", rmse)
-# print("RMSLE:", rmsle)
-
+print("RMSLE:", rmsle)
+'''
 plt.figure(figsize=(9,6))
 # plt.plot(hist.history['loss'], color = 'red',
 #          label = 'loss', marker = '.')
@@ -79,9 +82,5 @@ plt.xlabel('epoch')
 plt.ylabel('val_loss')
 plt.grid()
 plt.show()
+'''
 
-
-# R2:  0.1695136367464205
-# MSE: 1.3988264799118042
-# RMSE: 168.17223212122659
-# RMSLE: 1.1827199680770888
