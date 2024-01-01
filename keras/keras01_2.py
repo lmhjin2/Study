@@ -9,7 +9,7 @@ y = np.array([1,2,3,5,4,6])     # 4랑 5랑 위치 일부러 바꾼거임
 #2 요 데잍를 훈련해서 최소의 Loss 값을 만들어라
 model = Sequential()
 model.add(Dense(1, input_dim=1))
-
+  
 model.compile(loss='mse', optimizer='adam')
 model.fit(x, y, epochs=20000)
 
