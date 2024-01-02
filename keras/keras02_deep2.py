@@ -52,7 +52,7 @@ model.fit(x, y, epochs=100)
 
 loss = model.evaluate(x, y)
 print("로스 : ", loss)
-result = model.predict([1,2,3,4,5,6,7])
+result = model.predict([7])
 print("7의 예측값 : ", result)
 
 # 로스 :  0.32380956411361694
