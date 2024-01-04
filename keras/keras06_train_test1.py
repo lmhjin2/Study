@@ -26,3 +26,7 @@ loss = model.evaluate(x_test, y_test)
 results = model.predict([11000, 7])
 print("로스 :", loss)
 print("예측값 :", results)
+
+# Dense 1줄, epochs = 3000, batch_size = 1
+# 로스 : 0.03919036313891411
+# 예측값 : [[1.0569212e+04], [6.8829894e+00]]

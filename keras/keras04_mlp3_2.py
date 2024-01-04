@@ -4,7 +4,7 @@ from keras.layers import Dense
 
 #1. 데이터
 x = np.array([range(10)])   # range는 python 제공 기본함수 # numpy 제공 함수는 보통 np가 붙음(내가 지정한 이름)
-print(x)        # [[0 1 2 3 4 5 6 7 8 9]]
+print(x)        # [[0 1 2 3 4 5 6 7 8 9]]   # 처음부터 10개
 print(x.shape)  # (1,10)
 
 x = np.array([range(1,10)]) # 1 부터 (10-1) 까지/ range(a,b) = a 부터 b-1 까지
