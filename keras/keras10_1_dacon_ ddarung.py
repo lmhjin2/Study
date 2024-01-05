@@ -10,10 +10,10 @@ import time
 
 #1 데이터
 path = "c:/_data\\dacon/ddarung//"
-train_csv = pd.read_csv(path+"train.csv", index_col=0)   # (1459,10)
+train_csv = pd.read_csv(path+"train.csv", index_col=0)   # (1459,10), 0번 열은 인덱스임 계산 ㄴㄴ
 # print(train_csv)    # (1459,10)
 # \ \\ / // 다 됨
-test_csv = pd.read_csv(path+"test.csv", index_col=0) # (715, 9)
+test_csv = pd.read_csv(path+"test.csv", index_col=0) # (715, 9), 0번 열은 인덱스임 계산 ㄴㄴ
 # print(test_csv)     # (715, 9)
 submission_csv = pd.read_csv(path+"submission.csv") # (715, 2)
 # print(submission_csv)     # (715, 2)
@@ -34,7 +34,7 @@ submission_csv = pd.read_csv(path+"submission.csv") # (715, 2)
 
     # 결측치를 0을 만들거나 평균을 넣는것도 되는데 이번엔 그냥 없앨거임
 ######### 결측치 처리 ##############
-## 1. 제거.     isnull().sum() == isna().sum()  == 결측치 몇개 있나 확인
+## 1. 제거.     isnull().sum() == isna().sum()  == 결측치 몇개 있나 확인. 프린트로 출력해서 봐야겠죠?
 print(train_csv.isnull().sum())
 
 # print(train_csv.isna().sum())
@@ -79,8 +79,8 @@ end_time = round(time.time(), 2)
 run_time = round(end_time - start_time, 2)
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)
-y_submit = model.predict(test_csv)
-y_predict = model.predict(x_test)
+y_submit = model.predict(test_csv)   # test_csv 에는 count column이 없음. 그래서 predict던져서 count예측하는거임
+y_predict = model.predict(x_test)   # 이건 r2값 찍으려고만든거. 최종 목표가 count를 맞추는것. 그래서 예상 count값을 만들고 r2에 넣는것
 # print(y_submit)
 # print(y_submit.shape)   # (715, 1)
 r2 = r2_score(y_test, y_predict)
@@ -92,6 +92,8 @@ submission_csv['count'] = y_submit      # submission_csv 에 'count' 열에 y_su
 # print(submission_csv)   # [715 rows x 2 columns]
 # print(submission_csv.shape) # (715, 2)
 submission_csv.to_csv(path+"submission_0105.csv", index = False)
+# submission_csv의 데이터를 뽑아 submission_0105.csv로 저장함. 윗줄에서 count 에y_submit 값을 넣어줬기 때문에 새 파일엔 y_submit값이 있음
+# index는 파일에 포함시키지 않음
 
 print("loss :", loss)
 print("R2 : ", r2)
