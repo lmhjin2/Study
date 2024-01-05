@@ -47,3 +47,4 @@ print("예측값 :", results)
 # Dense 한줄, epochs = 3000, batch_size = 1
 # 로스 : 0.0
 # 예측값 : [[1.1e+04], [7.0e+00]]
+

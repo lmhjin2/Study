@@ -43,9 +43,9 @@ model.add(Dense(30))
 model.add(Dense(8))
 model.add(Dense(1))
 
-model.compile(loss='mse', optimizer='adam')
+model.compile(loss='mae', optimizer='adam')
 start_time = round(time.time(), 2)
-model.fit(x_train, y_train, epochs = 15000,
+model.fit(x_train, y_train, epochs = 8000,
           batch_size = 301)
 end_time = round(time.time(), 2)
 
@@ -53,25 +53,46 @@ loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 
-# random_state = 7, epochs = 8000, batch_size = 301
+# random_state = 7, epochs = 8000, batch_size = 301, loss = 'mse'
 # 로스 : 0.5393111109733582
 # R2 스코어 : 0.5962883600390119
 # 걸린 시간 :  264.67 초
 
-# random_state = 7, epochs = 15000, batch_size = 301
+# random_state = 7, epochs = 15000, batch_size = 301, loss = 'mse'
 # 로스 : 0.5299805998802185
 # R2 스코어 : 0.6032728239318499
 # 걸린 시간 :  393.6 초
 
-# random_state = 7, epochs = 30000, batch_size = 100
+# random_state = 7, epochs = 30000, batch_size = 100, loss = 'mse'
 # 로스 : 0.5251055955886841
 # R2 스코어 : 0.606922141794031
 # 걸린 시간 :  2336.51 초
+
+# random_state = 7, epochs = 15000, batch_size = 301, loss = 'mae'
+# 로스 : 0.5327748656272888
+# R2 스코어 : -2.669946115710044
+# 걸린 시간 :  404.22 초
+
+# random_state = 7, epochs = 8000, batch_size = 301, loss = 'mae'
+# 로스 : 0.5362645387649536
+# R2 스코어 : -2.646081972694056
+# 걸린 시간 :  217.3 초
+
+# random_state = 7, epochs = 8000, batch_size = 301, loss = 'mae'
+# 로스 : 0.5294715166091919
+# R2 스코어 : -2.65481570871514
+# 걸린 시간 :  217.93 초
+
+# random_state = 7, epochs = 8000, batch_size = 301, loss = 'mse'
+# 로스 : 0.5328246355056763
+# R2 스코어 : 0.6011438151880254
+# 걸린 시간 :  210.58 초
 
 print("로스 :", loss)
 print("R2 스코어 :", r2)
 print("걸린 시간 : ", round(end_time - start_time, 2), "초")
 print("Random State:", random_state_value)
+print("california")
 
 
 

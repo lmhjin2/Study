@@ -43,7 +43,7 @@ model.add(Dense(50))
 model.add(Dense(13))
 model.add(Dense(1))
 
-model.compile(loss='mse', optimizer='adam')
+model.compile(loss='mae', optimizer='adam')
 start_time = round(time.time(), 2)
 model.fit(x_train, y_train, epochs = 1000, batch_size=30)
 end_time = round(time.time(), 2)
@@ -57,16 +57,22 @@ print("로스 :", loss)
 print("R2 스코어 :", r2)
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
 print("Random State:", random_state_value)
+print("boston")
 
 import warnings
 warnings.filterwarnings('ignore')
 
-# random_state = 1, epochs = 8000, batch_size = 30
+# random_state = 1, epochs = 8000, batch_size = 30, loss = 'mse'
 # 로스 : 18.694143295288086
 # R2 스코어 : 0.796036779999476
 # 걸린시간 :  58.3 초
-# random_state = 1, epochs = 1000, batch_size = 30
+# random_state = 1, epochs = 1000, batch_size = 30, loss = 'mse'
 # 로스 : 19.259849548339844
 # R2 스코어 : 0.7898646249851895
 # 걸린시간 :  7.9 초
+
+# random_state = 1, epochs = 8000, batch_size = 30, loss = 'mae'
+# 로스 : 3.1378023624420166
+# R2 스코어 : 0.7734149068248488
+# 걸린시간 :  8.16 초
 
