@@ -29,7 +29,7 @@ model = Sequential()
 model.add(Dense(20, input_dim = 10))
 model.add(Dense(40))
 model.add(Dense(50))
-model.add(Dense(25))
+model.add(Dense(30))
 model.add(Dense(10))
 model.add(Dense(1))
 
