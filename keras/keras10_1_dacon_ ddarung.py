@@ -53,7 +53,7 @@ x = train_csv.drop(['count'], axis=1)
 y = train_csv['count']
 # print(y)
 
-random_state_value = 6
+random_state_value = 65456
 train_size_value = 0.83
 # R2 :  0.6519230032127051
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=train_size_value, random_state=random_state_value)
@@ -64,6 +64,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_si
 model = Sequential()
 model.add(Dense(18, input_dim = 9))
 model.add(Dense(36))
+model.add(Dense(53))
 model.add(Dense(23))
 model.add(Dense(12))
 model.add(Dense(1))
@@ -72,7 +73,7 @@ model.add(Dense(1))
 #3. 컴파일 훈련
 model.compile(loss='mse', optimizer='adam')
 start_time = round(tm.time(), 2)
-model.fit(x_train, y_train, epochs = 500, batch_size = 111)
+model.fit(x_train, y_train, epochs = 1000, batch_size = 50)
 end_time = round(tm.time(), 2)
 run_time = round(end_time - start_time, 2)
 #4. 평가 예측
