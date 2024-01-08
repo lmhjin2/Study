@@ -10,10 +10,10 @@ import time as tm
 
 #1 데이터
 path = "c:/_data\\dacon/ddarung//"
-train_csv = pd.read_csv(path+"train.csv", index_col=0)   # (1459,10), 0번 열은 인덱스임 계산 ㄴㄴ
+train_csv = pd.read_csv(path+"train.csv", index_col=0)   # (1459,10), 0번 열은 column이 아닌 인덱스임 계산 ㄴㄴ
 # print(train_csv)    # (1459,10)
 # \ \\ / // 다 됨
-test_csv = pd.read_csv(path+"test.csv", index_col=0) # (715, 9), 0번 열은 인덱스임 계산 ㄴㄴ
+test_csv = pd.read_csv(path+"test.csv", index_col=0) # (715, 9), 0번 열은 column이 아닌 인덱스임 계산 ㄴㄴ
 # print(test_csv)     # (715, 9)
 submission_csv = pd.read_csv(path+"submission.csv") # (715, 2)
 # print(submission_csv)     # (715, 2)
@@ -34,10 +34,10 @@ submission_csv = pd.read_csv(path+"submission.csv") # (715, 2)
 
     # 결측치를 0을 만들거나 평균을 넣는것도 되는데 이번엔 그냥 없앨거임
 ######### 결측치 처리 ##############
-## 1. 제거.     isnull().sum() == isna().sum()  == 결측치 몇개 있나 확인. 프린트로 출력해서 봐야겠죠?
-# print(train_csv.isnull().sum())
+### 1. 제거.     isnull().sum() == isna().sum()  == 결측치 몇개 있나 확인. 프린트로 출력해서 봐야겠죠?
+## print(train_csv.isnull().sum())
 
-# print(train_csv.isna().sum())
+## print(train_csv.isna().sum())
 train_csv = train_csv.dropna()      # 행에 하나의 결측치라도 있으면 행 전체 삭제
 # print(train_csv.isna().sum())
 # print(train_csv.info())
@@ -49,10 +49,10 @@ test_csv = test_csv.fillna(test_csv.mean())     # 결측치에 평균값을 넣�
 
 #################### x 와 y 를 분리 ################################
 x = train_csv.drop(['count'], axis=1)
-# print(x)        # (1459, 9)
-y = train_csv['count']
-# print(y)
-
+# print(x)        # (1459, 9)   'count' 를 제외한 train_csv에 있는 데이터를 x 에 저장
+y = train_csv['count']  
+# print(y)          # train_csv 에 'count' 열만 y에 저장
+# 4,294,967,296 (2**32 / 2의 32승) 이상 숫자는 사용할수 없음 
 random_state_value = 65456
 train_size_value = 0.83
 # R2 :  0.6519230032127051
@@ -73,9 +73,10 @@ model.add(Dense(1))
 #3. 컴파일 훈련
 model.compile(loss='mse', optimizer='adam')
 start_time = round(tm.time(), 2)
-model.fit(x_train, y_train, epochs = 1000, batch_size = 50)
+model.fit(x_train, y_train, epochs = 3000, batch_size = 50)
 end_time = round(tm.time(), 2)
 run_time = round(end_time - start_time, 2)
+
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)
 y_submit = model.predict(test_csv)   # test_csv 에는 count column이 없음. 그래서 predict던져서 count예측하는거임
@@ -91,7 +92,7 @@ r2 = r2_score(y_test, y_predict)
 submission_csv['count'] = y_submit      # submission_csv 에 'count' 열에 y_submit 값을 넣어준다
 # print(submission_csv)   # [715 rows x 2 columns]
 # print(submission_csv.shape) # (715, 2)
-submission_csv.to_csv(path+"submission_0107.csv", index = False)
+submission_csv.to_csv(path+"submission_0108.csv", index = False)
 ## submission_csv.to_csv(path + f"submission_{save_time}.csv", index=False)
 # submission_csv의 데이터를 뽑아 submission_0105.csv로 저장함. 윗줄에서 count 에y_submit 값을 넣어줬기 때문에 새 파일엔 y_submit값이 있음
 # index는 파일에 포함시키지 않음
@@ -131,10 +132,19 @@ print("train_size_value", train_size_value)
 # random_state_value: 189
 # train_size_value 0.811
 
+# # epochs = 1000, batch_size = 50
+# loss : 2836.66845703125
+# R2 :  0.5256063036125895
+# run time: 13.71 초
+# random_state_value: 65456
+# train_size_value 0.83
 
 
 
 
 
 
-# sadasd 
+
+
+
+
