@@ -23,3 +23,4 @@ result = model.predict([4])
 print("4의 예측값 : ", result)
 
 # 최초에 모델이 랜덤값을 던지고 수를 맞춰감. 나중에 랜덤값 지정하는법 배움
+

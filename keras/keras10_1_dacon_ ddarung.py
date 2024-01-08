@@ -6,7 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
-import time
+import time as tm
 
 #1 데이터
 path = "c:/_data\\dacon/ddarung//"
@@ -35,7 +35,7 @@ submission_csv = pd.read_csv(path+"submission.csv") # (715, 2)
     # 결측치를 0을 만들거나 평균을 넣는것도 되는데 이번엔 그냥 없앨거임
 ######### 결측치 처리 ##############
 ## 1. 제거.     isnull().sum() == isna().sum()  == 결측치 몇개 있나 확인. 프린트로 출력해서 봐야겠죠?
-print(train_csv.isnull().sum())
+# print(train_csv.isnull().sum())
 
 # print(train_csv.isna().sum())
 train_csv = train_csv.dropna()      # 행에 하나의 결측치라도 있으면 행 전체 삭제
@@ -53,7 +53,7 @@ x = train_csv.drop(['count'], axis=1)
 y = train_csv['count']
 # print(y)
 
-random_state_value = 6
+random_state_value = 65456
 train_size_value = 0.83
 # R2 :  0.6519230032127051
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=train_size_value, random_state=random_state_value)
@@ -63,19 +63,18 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_si
 #2. 모델
 model = Sequential()
 model.add(Dense(18, input_dim = 9))
-model.add(Dense(56))
-model.add(Dense(49))
-model.add(Dense(43))
-model.add(Dense(30))
+model.add(Dense(36))
+model.add(Dense(53))
+model.add(Dense(23))
 model.add(Dense(12))
 model.add(Dense(1))
 
 
 #3. 컴파일 훈련
 model.compile(loss='mse', optimizer='adam')
-start_time = round(time.time(), 2)
-model.fit(x_train, y_train, epochs = 300, batch_size = 111)
-end_time = round(time.time(), 2)
+start_time = round(tm.time(), 2)
+model.fit(x_train, y_train, epochs = 1000, batch_size = 50)
+end_time = round(tm.time(), 2)
 run_time = round(end_time - start_time, 2)
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)
@@ -84,14 +83,16 @@ y_predict = model.predict(x_test)   # 이건 r2값 찍으려고만든거. 최종
 # print(y_submit)
 # print(y_submit.shape)   # (715, 1)
 r2 = r2_score(y_test, y_predict)
-
+## ltm = tm.localtime(tm.time())
+## save_time = f"{ltm.tm_year}{ltm.tm_mon}{ltm.tm_mday}{ltm.tm_hour}{ltm.tm_min}{ltm.tm_sec}"
 # print(submission_csv.shape)
 # print("========================================================================================")
 ########## submission.csv 만들기 (count컬럼에 값만 넣어주면 됨)
 submission_csv['count'] = y_submit      # submission_csv 에 'count' 열에 y_submit 값을 넣어준다
 # print(submission_csv)   # [715 rows x 2 columns]
 # print(submission_csv.shape) # (715, 2)
-submission_csv.to_csv(path+"submission_0105.csv", index = False)
+submission_csv.to_csv(path+"submission_0107.csv", index = False)
+## submission_csv.to_csv(path + f"submission_{save_time}.csv", index=False)
 # submission_csv의 데이터를 뽑아 submission_0105.csv로 저장함. 윗줄에서 count 에y_submit 값을 넣어줬기 때문에 새 파일엔 y_submit값이 있음
 # index는 파일에 포함시키지 않음
 
