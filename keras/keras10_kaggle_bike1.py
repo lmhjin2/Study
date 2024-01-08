@@ -27,12 +27,17 @@ y = train_csv['count']
 
 random_state_value = 1
 train_size_value = 0.74
+# MSE: 1.3773208856582642
+# RMSE: 165.2521729059214
+# RMSLE: 1.173593080617437
+
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, shuffle=True,
     train_size = train_size_value, random_state = random_state_value)
 
-x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, test_size = 0.58, random_state = 2)
+# x_test, x_val, y_test, y_val = train_test_split(x_test, y_test, test_size = 0.53, random_state = 2)
+# validation(검증용 데이터) 를 넣고 싶을 때 윗줄 코드 추가
 
 # print(x_train.shape, x_test.shape)  # (7620, 10), (3266, 10)
 # print(y_train.shape, y_test.shape)  # (7620,), (3266,)
@@ -47,8 +52,8 @@ model.add(Dense(1, activation = 'relu'))
 
 #3. 컴파일 훈련
 model.compile(loss='msle', optimizer='adam') 
-start_time = tm.time()
-model.fit(x_train, y_train, epochs = 1000, batch_size = 381, validation_data = (x_val, y_val),verbose = 2) # train_size 0.7 기준 x_train (7620, 8) / 0.74 기준 x_train (8055, 8)
+start_time = tm.time()                          # validation_data = (x_val, y_val) / validation(검증용 데이터) 를 넣고 싶을 때 아래 fit의 ()안에 이거 쓰면 됨
+model.fit(x_train, y_train, epochs = 1000, batch_size = 381, verbose = 2) # train_size 0.7 기준 x_train (7620, 8) / 0.74 기준 x_train (8055, 8)
 # verbose = 0 : 침묵
 # verbose = 1 : 원래 보던 그 epoch. default값
 # verbose = 2 : 프로그레스바 삭제
@@ -67,8 +72,7 @@ submission_csv['count'] = y_submit  # submission_csv 에 'count' 열에 y_submit
 # print(submission_csv)   # (6493, 2)
 submission_csv.to_csv(path + "submission_0108.csv", index = False)
 
-print("음수갯수 :", submission_csv[submission_csv['count']<0].count())  ## 진짜 중요함!!!
-
+print("음수갯수 :", submission_csv[submission_csv['count']<0].count())  ## 진짜 중요함 ##
 print("R2: ", r2)
 print("run time: ", run_time, "초")
 print("random_state_value: ", random_state_value)
