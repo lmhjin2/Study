@@ -35,6 +35,7 @@ random_state_value = 7
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, test_size = 0.3, random_state = random_state_value)
 
+#2. 
 model = Sequential()
 model.add(Dense(16, input_dim = 8))
 model.add(Dense(32))
@@ -43,12 +44,14 @@ model.add(Dense(30))
 model.add(Dense(8))
 model.add(Dense(1))
 
+#3
 model.compile(loss='mae', optimizer='adam')
 start_time = round(time.time(), 2)
 model.fit(x_train, y_train, epochs = 8000,
           batch_size = 301)
 end_time = round(time.time(), 2)
 
+#4 
 loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)

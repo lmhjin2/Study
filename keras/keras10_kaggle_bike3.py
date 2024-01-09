@@ -52,7 +52,7 @@ r2 = r2_score(y_test, y_predict)
 
 submission_csv['count'] = y_submit
 
-submission_csv.to_csv(path + "submission_0109_val", index = False)
+submission_csv.to_csv(path + "submission_0109_val.csv", index = False)
 
 print("음수갯수 :", submission_csv[submission_csv['count']<0].count())
 print("R2 : ", r2)

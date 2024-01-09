@@ -65,7 +65,7 @@ run_time = round(end_time - start_time, 2)
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)
 y_submit = model.predict(test_csv)    # 원래 하던거. 근데 count에 음수가 나옴;;
-# y_submit = abs(model.predict(test_csv)) # 그냥 전부 절대값을 씌웠음. 근데 이
+# y_submit = abs(model.predict(test_csv)) # 그냥 전부 절대값을 씌웠음. 근데 이거 소용없음
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 submission_csv['count'] = y_submit  # submission_csv 에 'count' 열에 y_submit 값을 넣어줌

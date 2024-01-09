@@ -56,7 +56,9 @@ y = train_csv['count']
 random_state_value = 65456
 train_size_value = 0.83
 # R2 :  0.6519230032127051
-x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=train_size_value, random_state=random_state_value)
+x_train, x_test, y_train, y_test = train_test_split(x, y,
+            shuffle=True, train_size=train_size_value,
+            random_state=random_state_value)
 # print(x_train.shape, x_test.shape)  # (929, 9)   (399, 9)
 # print(y_train.shape, y_test.shape)  # (929,)    (399,)
 
