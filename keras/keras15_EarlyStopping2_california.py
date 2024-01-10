@@ -34,7 +34,9 @@ model.compile(loss = 'mse', optimizer = 'adam')
 es = EarlyStopping(monitor = 'val_loss',
                    mode = 'auto',
                    patience = 15,
-                   verbose = 1)
+                   verbose = 1,
+                   restore_best_weights=True)
+
 hist = model.fit(x_train, y_train, epochs = 300,
                  batch_size = 301, validation_split = 0.2,
                  verbose = 2,
@@ -49,8 +51,8 @@ print('loss:', loss)
 print('r2:', r2)
 
 # print(hist.history['loss']) # 로스값이 들어있음.
-print(hist.history['val_loss'])
-
+# print(hist.history['val_loss'])
+'''
 plt.figure(figsize=(9,6))
 # plt.plot(hist.history['loss'], color = 'red',
         #  label = 'loss', marker = '.')
@@ -62,10 +64,13 @@ plt.xlabel('epoch')
 plt.ylabel('loss')
 plt.grid()
 plt.show()
+'''
 
 # loss: 0.7462538480758667
 # r2: 0.44137737734148896
 
-
+# restore_best_weight = True
+# loss: 0.6875315308570862
+# r2: 0.4853350152062813
 
 

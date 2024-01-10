@@ -54,6 +54,7 @@ loss = model.evaluate(x_test, y_test)
 y_submit = model.predict(test_csv)    # 원래 하던거. 근데 count에 음수가 나옴;;
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
+
 submission_csv['count'] = y_submit
 submission_csv.to_csv(path + "submission_0109_es.csv", index = False)
 

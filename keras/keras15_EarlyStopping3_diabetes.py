@@ -35,7 +35,8 @@ from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor = 'val_loss',
                    mode = 'auto',   # min이나 max나 auto가 잡아줌
                    patience = 10,
-                   verbose = 1 )
+                   verbose = 1,
+                   restore_best_weights=True)
 
 hist = model.fit(x_train, y_train, epochs=3000,
           batch_size = 35, validation_split=0.2,
@@ -46,10 +47,10 @@ loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 
-print(hist.history['val_loss'])
+# print(hist.history['val_loss'])
 print('loss:', loss)
 print('r2:', r2)
-
+'''
 plt.figure(figsize=(9,6))
 # plt.plot(hist.history['loss'], color = 'red',
 #          label = 'loss', marker = '.')
@@ -61,5 +62,12 @@ plt.xlabel('epochs')
 plt.ylabel('loss')
 plt.grid()
 plt.show()
+'''
+# 기본
+# loss: 2779.651123046875
+# r2: 0.512714340577765
 
+# restore_best_weight = True
+# loss: 2737.075439453125
+# r2: 0.5201781073002912
 

@@ -39,8 +39,9 @@ model.compile(loss='mse', optimizer='adam')
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss',
                    mode = 'min',
-                   patience = 15,
-                   verbose = 1)
+                   patience = 50,
+                   verbose = 1,
+                   restore_best_weights=True)
 
 hist = model.fit(x_train, y_train, epochs = 200, batch_size = 1,
           validation_split = 0.2, verbose = 1,
@@ -91,3 +92,10 @@ plt.show()
 import warnings
 warnings.filterwarnings('ignore')
 
+# patience
+# R2 스코어 : 0.7274254961623279
+# MSE:  26.93782615661621
+
+# restore_best_weights = True
+# R2 스코어 : 0.739571757205811
+# MSE:  25.737443923950195

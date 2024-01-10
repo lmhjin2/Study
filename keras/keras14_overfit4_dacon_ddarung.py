@@ -1,3 +1,5 @@
+# https://dacon.io/competitions/open/235576/mysubmission
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
