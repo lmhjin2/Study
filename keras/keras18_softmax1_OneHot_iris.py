@@ -63,15 +63,12 @@ print(y_ohe3)
 # y = y.reshape(5, 10, 3), y = y.reshape(30, 5) 전부가능.
 
 ## sklearn3 ## 선생님
-'''from sklearn.preprocessing import OneHotEncoder
-ohe = OneHotEncoder()
-y_ohe3 = ohe.fit(y)
-y_ohe3 = ohe.transform(y)
-'''
 from sklearn.preprocessing import OneHotEncoder
-ohe = OneHotEncoder()
+ohe = OneHotEncoder()   # sparse = False 를 쓰면 .toarray()를 쓰면 안됨 
 y = y.reshape(-1, 1)
-y_ohe3 = ohe.fit_transform(y).toarray()
+# y_ohe3 = ohe.fit(y)
+# y_ohe3 = ohe.transform(y)
+y_ohe3 = ohe.fit_transform(y).toarray() # 위에 두줄 합친거 권장하지는 않음
 # print(y_ohe3)
 # print(y_ohe3.shape)
 

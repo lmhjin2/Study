@@ -20,15 +20,21 @@ y = datasets.target
 # print(np.unique(y, return_counts=True))
     # (array([0, 1, 2]), array([59, 71, 48], dtype=int64))
 
-from keras.utils import to_categorical
-y_encoded = to_categorical(y)
+from sklearn.preprocessing import OneHotEncoder
+ohe = OneHotEncoder()   # ()안에 sparse = False 를 쓰면 .toarray()를 쓰면 안됨 
 # print(y)    # [0 0 0 0 0.... 1 1 1 1.... 2 2 2 2....]
-# print(y_encoded)    # [[1. 0. 0.]... [0. 1. 0.]....[0. 0. 1.]]
-# print(y_encoded.shape)  # (178, 3)
+y = y.reshape(-1, 1)
+# print(y)    # [[0].... [1].... [2]]
+y_ohe = ohe.fit(y)  
+# print(y_ohe)    # OneHotEncoder() <-- ???
+y_ohe = ohe.transform(y).toarray()  # sparse = False 를 쓰면 .toarray()를 쓰면 안됨
+# print(y_ohe)    # [[1. 0. 0.]... [0. 1. 0.]....[0. 0. 1.]]
+# print(y_ohe.shape)
+# print(y_ohe.shape)  # (178, 3)
 # 마지막 Dense(Layer)에 3 
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_encoded, stratify=y, train_size = 0.8, random_state = 0 )
+    x, y_ohe, stratify=y, train_size = 0.8, random_state = 0 )
 # print(y_test)   # y_encoded 랑 독같이 생김
 # print(y_test.shape) # (36,3) # y_encoded 랑 독같이 생김
 
@@ -50,7 +56,7 @@ model.add(Dense(3, activation='softmax'))
 model.compile(loss = 'categorical_crossentropy',
               optimizer='adam', metrics=['acc'])
 es = EarlyStopping(monitor='val_loss', mode='min',
-                   patience = 100, verbose=1,
+                   patience = 200, verbose=1,
                    restore_best_weights=True)
 hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 96, validation_split = 0.2,
@@ -81,7 +87,7 @@ acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
 
 
-# loss: 1.1135207414627075
+# loss: 0.7279049158096313
 # acc: 0.8611111044883728
 # accuracy_score : 0.8611111111111112
 
