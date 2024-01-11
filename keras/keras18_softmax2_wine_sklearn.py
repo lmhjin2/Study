@@ -34,7 +34,7 @@ y_ohe = ohe.transform(y).toarray()  # sparse = False 를 쓰면 .toarray()를 �
 # 마지막 Dense(Layer)에 3 
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, train_size = 0.8, random_state = 0 )
+    x, y_ohe, stratify=y, train_size = 0.8, random_state = 4 )
 # print(y_test)   # y_encoded 랑 독같이 생김
 # print(y_test.shape) # (36,3) # y_encoded 랑 독같이 생김
 
@@ -50,15 +50,17 @@ model.add(Dense(60))
 model.add(Dense(30))
 model.add(Dense(10))
 model.add(Dense(3, activation='softmax'))
-
+# loss: 0.18727758526802063
+# acc: 0.9444444179534912
+# accuracy_score : 0.9444444444444444
 
 #3
 model.compile(loss = 'categorical_crossentropy',
               optimizer='adam', metrics=['acc'])
 es = EarlyStopping(monitor='val_loss', mode='min',
-                   patience = 200, verbose=1,
+                   patience = 1000, verbose=1,
                    restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs = 1000,
+hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 96, validation_split = 0.2,
                  verbose = 1, callbacks=[es])
 
@@ -85,9 +87,8 @@ y_predict = np.argmax(y_predict, axis=1)
 
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
+print('sklearn')
 
 
-# loss: 0.7279049158096313
-# acc: 0.8611111044883728
-# accuracy_score : 0.8611111111111112
+
 

@@ -41,11 +41,11 @@ print(y_train)
 
 #2
 model = Sequential()
-model.add(Dense(120, input_dim = 54))
-model.add(Dense(90))
-model.add(Dense(60))
-model.add(Dense(30))
-model.add(Dense(10))
+model.add(Dense(120, input_dim = 54, activation='relu'))
+model.add(Dense(90, activation='relu'))
+model.add(Dense(60, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(10, activation='relu'))
 model.add(Dense(8, activation='softmax'))
 # keras만 8개
 
@@ -55,9 +55,9 @@ model.compile(loss = 'categorical_crossentropy',
 es = EarlyStopping(monitor='val_loss', mode='min',
                    patience = 100, verbose=1,
                    restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs = 1000,
+hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 50000, validation_split = 0.2,
-                 verbose = 2, callbacks=[es])
+                 verbose = 1, callbacks=[es])
 
 #4
 results = model.evaluate(x_test, y_test)
@@ -82,11 +82,11 @@ y_predict = np.argmax(y_predict, axis=1)
 
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
+print('keras')
 
-
-# loss: 0.6590697169303894
-# acc: 0.7154462337493896
-# accuracy_score : 0.7154462449334354
-
+# loss: 0.3379572629928589
+# acc: 0.8663201332092285
+# accuracy_score : 0.8663201466399318
+ 
 
 

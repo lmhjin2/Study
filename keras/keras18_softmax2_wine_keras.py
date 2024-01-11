@@ -28,7 +28,7 @@ y_encoded = to_categorical(y)
 # 마지막 Dense(Layer)에 3 
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_encoded, stratify=y, train_size = 0.8, random_state = 0 )
+    x, y_encoded, stratify=y, train_size = 0.8, random_state = 4 )
 # print(y_test)   # y_encoded 랑 독같이 생김
 # print(y_test.shape) # (36,3) # y_encoded 랑 독같이 생김
 
@@ -50,9 +50,9 @@ model.add(Dense(3, activation='softmax'))
 model.compile(loss = 'categorical_crossentropy',
               optimizer='adam', metrics=['acc'])
 es = EarlyStopping(monitor='val_loss', mode='min',
-                   patience = 100, verbose=1,
+                   patience = 1000, verbose=1,
                    restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs = 1000,
+hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 96, validation_split = 0.2,
                  verbose = 1, callbacks=[es])
 
@@ -79,9 +79,10 @@ y_predict = np.argmax(y_predict, axis=1)
 
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
+print('keras')
 
 
-# loss: 1.1135207414627075
-# acc: 0.8611111044883728
-# accuracy_score : 0.8611111111111112
 
+# loss: 0.0532647967338562
+# acc: 1.0
+# accuracy_score : 1.0
