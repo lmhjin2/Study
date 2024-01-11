@@ -27,13 +27,16 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 #2
 model = Sequential()
-model.add(Dense(828, input_dim = 9))
-model.add(Dense(560))
-model.add(Dense(330))
-model.add(Dense(180))
-model.add(Dense(108))
-model.add(Dense(52))
-model.add(Dense(27))
+model.add(Dense(108, input_dim = 9))
+model.add(Dense(90))
+model.add(Dense(87))
+model.add(Dense(73))
+model.add(Dense(68))
+model.add(Dense(57))
+model.add(Dense(49))
+model.add(Dense(36))
+model.add(Dense(21))
+model.add(Dense(11))
 model.add(Dense(1))
 
 #3
@@ -53,7 +56,7 @@ y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 
 submission_csv['count']=y_submit
-submission_csv.to_csv(path+"submission_0110_met.csv",index=False)
+submission_csv.to_csv(path+"submission_0111_met.csv",index=False)
 
 def RMSE(y_test, y_predict):
     return np.sqrt(mean_squared_error(y_test, y_predict))
