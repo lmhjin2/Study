@@ -28,13 +28,18 @@ y = train_csv['quality']
 # print(np.unique(y, return_counts=True))  
     # (array([3, 4, 5, 6, 7, 8, 9], dtype=int64),
     # array([  26,  186, 1788, 2416,  924,  152,    5], dtype=int64))
-y_ohe = pd.get_dummies(y)
+from sklearn.preprocessing import OneHotEncoder
+y_ohe = y.values.reshape(-1, 1)
+enc = OneHotEncoder(sparse=False).fit(y_ohe)
+y_ohe = enc.transform(y_ohe)
+print(y_ohe[0])
 # print(np.unique(y, return_counts=True))  
 # print(y_ohe)
+
 x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify = y, 
                                     train_size = 0.8, random_state = 0 )
-
-
+# [0. 0. 0. 0. 0. 1. 0. 0. 0. 0.]   
+# [0. 0. 1. 0. 0. 0. 0.]        
 #2
 model = Sequential()
 model.add(Dense(80, input_dim = 12))
@@ -54,7 +59,7 @@ es = EarlyStopping(monitor='val_loss', mode='auto',
                    restore_best_weights=True)
 start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs= 500000,
-                 batch_size = 1200, validation_split= 0.2 ,
+                 batch_size = 3517, validation_split= 0.2 ,
                  verbose = 1, callbacks=[es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -66,10 +71,10 @@ y_predict = model.predict(x_test)
 # encode 풀기
 y_test = np.argmax(y_test, axis=1)
 y_predict = np.argmax(y_predict, axis=1)
-y_submit = np.argmax(y_submit, axis=1)
+y_submit = np.argmax(y_submit, axis=1)+3
 
 submission_csv['quality'] = y_submit
-submission_csv.to_csv(path + "submission_0112.csv", index=False)
+submission_csv.to_csv(path + "submission_0112_1.csv", index=False)
 
 acc = accuracy_score(y_predict, y_test) 
 
