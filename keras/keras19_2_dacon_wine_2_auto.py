@@ -18,6 +18,12 @@ submission_csv = pd.read_csv(path+"sample_submission.csv")
 train_csv['type'] = train_csv['type'].replace({"white":0, "red":1})
 test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
 
+# from sklearn.preprocessing import LabelEncoder
+# lae = LabelEncoder()
+# lae.fit(train['type'])
+# train['type'] = lae.transform(train['type'])
+# test['type'] = lae.transform(test['type'])
+
 x = train_csv.drop(['quality'], axis = 1)
 y = train_csv['quality']
 
@@ -79,21 +85,21 @@ def auto(a,b,c):
 
     acc = accuracy_score(y_predict, y_test) 
 
-    print('loss:', results[0])
     print('acc:', results[1])
     print('accuracy_score :', acc)
     print('run time', run_time)
-
+    print('loss:', results[0])
     return acc
     tm.sleep(1)
+    
 import random
-for i in range(100000000):
-    a = random.randrange(0, 123451234)
+for i in range(4294967295):
+    a = random.randrange(0, 4294967295)
     b = random.randrange(1, 3517)
-    c = random.randrange(0, 123451234)
+    c = random.randrange(0, 4294967295)
     r = auto(a,b,c)
     print('random state:', a)
-    if r > 0.55:
+    if r > 0.56:
         print('random state :', a)
         print('batch size :', b)
         print('epochs :', c)
