@@ -75,7 +75,7 @@ def auto(a,b,c):
     y_submit = np.argmax(y_submit, axis=1)+3
 
     submission_csv['quality'] = y_submit
-    submission_csv.to_csv(path + "submission_0112_2.csv", index=False)
+    submission_csv.to_csv(path + "submission_0112_3.csv", index=False)
 
     acc = accuracy_score(y_predict, y_test) 
 
