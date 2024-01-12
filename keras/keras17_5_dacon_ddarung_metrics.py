@@ -6,7 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error,mean_absolute_error
+from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error, mean_absolute_error
 
 plt.rcParams['font.family']='Malgun Gothic'
 plt.rcParams['axes.unicode_minus']=False
