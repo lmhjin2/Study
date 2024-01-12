@@ -99,7 +99,7 @@ for i in range(4294967295):
     c = random.randrange(0, 4294967295)
     r = auto(a,b,c)
     print('random state:', a)
-    if r > 0.56:
+    if r > 0.55:
         print('random state :', a)
         print('batch size :', b)
         print('epochs :', c)
