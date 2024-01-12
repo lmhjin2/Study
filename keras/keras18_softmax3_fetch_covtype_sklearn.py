@@ -6,6 +6,8 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+import time as tm
+
 
 datasets = fetch_covtype()
 x = datasets.data
@@ -57,10 +59,12 @@ model.compile(loss = 'categorical_crossentropy',
 es = EarlyStopping(monitor='val_loss', mode='min',
                    patience = 100, verbose=1,
                    restore_best_weights=True)
+start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 100000, validation_split = 0.2,
                  verbose = 1, callbacks=[es])
-
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 #4
 results = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
@@ -85,6 +89,7 @@ y_predict = np.argmax(y_predict, axis=1)
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
 print('sklearn')
+print('run time', run_time)
 
 
 # loss: 0.341567724943161

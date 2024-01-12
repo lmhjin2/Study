@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 #1 
-path = "c:/_data/dacon/cancer/"
+path = "c:/_data/dacon/diabetes/"
 train_csv = pd.read_csv(path + "train.csv", index_col = 0)
 # (652, 9)
 test_csv = pd.read_csv(path + "test.csv", index_col = 0)
@@ -49,7 +49,7 @@ y_submit = model.predict(test_csv)
 y_predict = model.predict(x_test)
 
 submission_scv['Outcome'] = np.round(y_submit)
-submission_scv.to_csv(path + "submission_0110.csv", index = False)
+submission_scv.to_csv(path + "submission_0112.csv", index = False)
 
 def ACC(y_test, y_predict):
     return accuracy_score(y_test, y_predict)

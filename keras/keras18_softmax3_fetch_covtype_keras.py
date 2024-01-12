@@ -6,6 +6,8 @@ from keras.layers import Dense
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+import time as tm
+
 
 datasets = fetch_covtype()
 x = datasets.data
@@ -47,7 +49,7 @@ model.add(Dense(60, activation='relu'))
 model.add(Dense(30, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(8, activation='softmax'))
-# keras만 8개
+# keras만 8개. column이 하나 늘어나버림. 근데 7갠데 8개짜리로 뽑으면 여러가지로 귀찮아짐. 성능도 안좋음(보편적)
 
 #3
 model.compile(loss = 'categorical_crossentropy',
@@ -55,10 +57,12 @@ model.compile(loss = 'categorical_crossentropy',
 es = EarlyStopping(monitor='val_loss', mode='min',
                    patience = 100, verbose=1,
                    restore_best_weights=True)
+start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 50000, validation_split = 0.2,
                  verbose = 1, callbacks=[es])
-
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 #4
 results = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
@@ -83,6 +87,7 @@ y_predict = np.argmax(y_predict, axis=1)
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
 print('keras')
+print('run time', run_time)
 
 # loss: 0.3379572629928589
 # acc: 0.8663201332092285
