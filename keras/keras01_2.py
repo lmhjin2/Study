@@ -2,11 +2,11 @@ from keras.models import Sequential
 from keras.layers import Dense
 import numpy as np
 
-#1 데이터
+# 1 데이터
 x = np.array([1,2,3,4,5,6])
 y = np.array([1,2,3,5,4,6])     # 4랑 5랑 위치 일부러 바꾼거임
 
-#2 요 데잍를 훈련해서 최소의 Loss 값을 만들어라
+# 2 요 데이터를 훈련해서 최소의 Loss 값을 만들어라
 model = Sequential()
 model.add(Dense(1, input_dim=1))
   
