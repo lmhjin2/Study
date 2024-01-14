@@ -13,12 +13,10 @@ y = np.array([1,2,4,3,5,7,9,3,8,12,13, 8,14,15, 9, 6,17,23,21,20])
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, shuffle=True, random_state=70)
 
-
 print(x_train)
 print(x_test)
 print(y_train)
 print(y_test)
-
 
 model = Sequential()
 model.add(Dense(1, input_dim = 1))
@@ -37,15 +35,9 @@ plt.scatter(x,y)
 plt.plot(x, results, color = 'red')
 plt.show()
 
-
-
 # 14/14 [==============================] - 0s 1ms/step - loss: 16.8640
 # 1/1 [==============================] - 0s 61ms/step - loss: 12.4742
 
 # random_state = 70
 # 14/14 [==============================] - 0s 1ms/step - loss: 9.2090
 # 1/1 [==============================] - 0s 70ms/step - loss: 16.9311
-
-
-
-
