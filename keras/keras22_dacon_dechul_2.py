@@ -8,7 +8,7 @@ from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 import time as tm
 
 path = "c:/_data/dacon/dechul/"
@@ -47,6 +47,8 @@ y = train_csv['대출등급']
 y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
+scaler = MinMaxScaler()
+x = scaler.fit_transform(x)
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y_ohe, stratify=y, test_size = 0.18, random_state = 28 )     
