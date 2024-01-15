@@ -49,7 +49,7 @@ y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 28 )
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 28 )     
 
 #2
 model = Sequential()
