@@ -48,14 +48,13 @@ y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, train_size = 0.85, random_state = 18 )
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 28 )
 
 #2
 model = Sequential()
 model.add(Dense(64, input_shape = (13,)))
 model.add(Dense(32))
 model.add(Dense(16))
-model.add(Dense(4))
 model.add(Dense(7, activation = 'softmax'))
 
 #3
@@ -63,10 +62,10 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 500, verbose = 1,
+                   patience = 1000, verbose = 1,
                    restore_best_weights = True)
 start_time = tm.time()
-model.fit(x_train, y_train, epochs = 5000, batch_size = 500,
+model.fit(x_train, y_train, epochs = 50000, batch_size = 500,
           validation_split = 0.18, verbose = 2, callbacks = [es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -82,13 +81,12 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0113_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0113_3.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro')
 
 print('accuracy_score :', acc)
-print('?', results[1])
 print('run time', run_time)
 print('loss', results[0])
 print('f1 score', f1)
@@ -99,3 +97,7 @@ print('f1 score', f1)
 # run time 751.35
 # loss 1.2514524459838867
 # f1 score 0.3351856312483164
+
+
+# 점수 : 0.4743243041
+# f1 score 0.45057744718755127
