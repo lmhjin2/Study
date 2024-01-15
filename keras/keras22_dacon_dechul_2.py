@@ -12,15 +12,16 @@ from sklearn.preprocessing import LabelEncoder
 import time as tm
 
 path = "c:/_data/dacon/dechul/"
-train_csv = pd.read_csv(path+'train.csv', index_col=0)
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+train_csv = pd.read_csv(path + 'train.csv', index_col=0)  # 0번 column은 index라고 지정해 주는거
+test_csv = pd.read_csv(path + 'test.csv', index_col=0)  # 0번 column은 index라고 지정해 주는거
 submission_csv = pd.read_csv(path + 'sample_submission.csv')
 
-le_work_period = LabelEncoder()
+
+le_work_period = LabelEncoder() 
 le_work_period.fit(train_csv['근로기간'])
 train_csv['근로기간'] = le_work_period.transform(train_csv['근로기간'])
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
-                                                  
+
 le_grade = LabelEncoder()
 le_grade.fit(train_csv['대출등급'])
 train_csv['대출등급'] = le_grade.transform(train_csv['대출등급'])
