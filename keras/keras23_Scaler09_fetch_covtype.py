@@ -41,10 +41,10 @@ x_train, x_test, y_train, y_test = train_test_split(
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
 
-scaler = MinMaxScaler()
+# scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-# scaler = RobustScaler()
+scaler = RobustScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
@@ -73,7 +73,7 @@ es = EarlyStopping(monitor='val_loss', mode='min',
 start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 50000, validation_split = 0.2,
-                 verbose = 1, callbacks=[es])
+                 verbose = 2, callbacks=[es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 #4
@@ -107,13 +107,27 @@ print('run time', run_time)
 # accuracy_score : 0.8663201466399318
  
 
+
 # scaler = MinMaxScaler()
+# loss: 0.260427325963974
+# acc: 0.9010868668556213
+# accuracy_score : 0.9010868910441211
 
 
 # scaler = StandardScaler()
+# loss: 0.20535320043563843
+# acc: 0.9242876768112183
+# accuracy_score : 0.9242876689930553
 
 
 # scaler = MaxAbsScaler()
+# loss: 0.2867389917373657
+# acc: 0.8877481818199158
+# accuracy_score : 0.8877481648494445
 
 
 # scaler = RobustScaler()
+# loss: 0.20221827924251556
+# acc: 0.9258022308349609
+# accuracy_score : 0.9258022598383863
+
