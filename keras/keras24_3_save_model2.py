@@ -1,31 +1,24 @@
 # 09_1 copy
 import numpy as np
-from keras.models import Sequential
+import pandas as pd
+from keras.models import Sequential, load_model
 from keras.layers import Dense
+from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.datasets import load_boston
 import time
 
+#1
 datasets = load_boston()
-# print(datasets)
 
 x = datasets.data
 y = datasets.target
-# print(x.shape)  # (506, 13) 506행 13열
-# print(y.shape)  # (506,)
-# print(datasets.feature_names)
-# ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT']
-# print(datasets.DESCR)
-# ['범죄율', '어쩌구',,,]
 
 random_state_value = 1
 
-
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, test_size = 0.3, random_state = random_state_value )
-
-# 1. minmax 2. standard
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -37,31 +30,35 @@ scaler = MinMaxScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
-# x_train = scaler.fit_transform(x_train) 바로 위 두줄 합친거
 x_test = scaler.transform(x_test)
+# test_csv = scaler.transform(test_csv)
 
-# print(np.min(x_train))  # 0.0
-# print(np.min(x_test))   # -0.03297872340425531
-# print(np.max(x_train))  # 1.0
-# print(np.max(x_test))   # 1.210017220702162
-
-# 한번에 scaling 해도 각 column 별로 scaling 됨
-# 나중엔 column 각각 지정해서 다른 scaling 함.
-
+#2
 model = Sequential()
-model.add(Dense(26, input_dim = 13))
-model.add(Dense(52))
-model.add(Dense(25))
-model.add(Dense(50))
-model.add(Dense(13))
-model.add(Dense(1))
+model.add(Dense(26, input_dim = 13))    # 364
+model.add(Dense(52))                    # 1404
+model.add(Dense(25))                    # 1325
+model.add(Dense(50))                    # 1300
+model.add(Dense(13))                    # 663
+model.add(Dense(1))                     # 14
 
+# model.summary()
+model.save("c:/_data/_save/keras24_save_model.h5")  # c드라이브 부터 들어가는게 # 절대경로
+# model.save("../_data/_save/keras24_save_model.h5")  ../은 상위폴더를 의미 # 이건 상대경로
+# model.save("./_data/_save/keras24_save_model.h5")   ./은 현재 Study폴더에 _data폴더, 그 안에 _save폴더 그안에 h5 파일이 생김.
 
+# model = load_model('../_data/_save/keras24_save_model.h5')
+model.summary()
+
+#3
 model.compile(loss='mae', optimizer='adam')
 start_time = round(time.time(), 2)
 model.fit(x_train, y_train, epochs = 1000, batch_size=30)
 end_time = round(time.time(), 2)
+model.save("c:/_data/_save/keras24_3_save_model2.h5")  # 훈련된 모델
 
+
+#4
 loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
