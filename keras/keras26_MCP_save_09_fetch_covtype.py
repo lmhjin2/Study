@@ -100,8 +100,7 @@ y_predict = np.argmax(y_predict, axis=1)
 
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
-print('keras')
-print('run time', run_time)
+# print('run time', run_time)
 
 # loss: 0.3379572629928589
 # acc: 0.8663201332092285
@@ -131,4 +130,10 @@ print('run time', run_time)
 # loss: 0.20221827924251556
 # acc: 0.9258022308349609
 # accuracy_score : 0.9258022598383863
+
+# RobustScaler  # MCP
+# loss: 0.19374237954616547
+# acc: 0.9310688972473145
+# accuracy_score : 0.9310689052778327
+
 
