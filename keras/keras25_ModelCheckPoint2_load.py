@@ -55,8 +55,8 @@ x_test = scaler.transform(x_test)
 #           callbacks = [es, mcp], validation_split = 0.2,
 #           epochs = 1000, batch_size = 32 )
 
-model = load_model('c:/_data/_save/MCP/keras_25_MCP1.hdf5')
-
+model = load_model('c:/_data/_save/MCP/keras25_MCP1.hdf5')
+# ModelCheckpoint
 
 #4
 loss = model.evaluate(x_test, y_test)

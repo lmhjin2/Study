@@ -52,7 +52,7 @@ es = EarlyStopping(monitor='val_loss', mode='auto',
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
                       verbose=1,save_best_only=True,
-    filepath='c:/_data/_save/MCP/keras26_MCP_save_07_dacon_diabetes.hdf5')
+    filepath='c:/_data/_save/MCP/keras26_MCP_07_dacon_diabetes.hdf5')
 hist = model.fit(x_train, y_train, epochs = 3000,
                  batch_size = 25, validation_split = 0.13,
                  verbose = 3, callbacks = [es, mcp])

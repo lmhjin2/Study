@@ -68,7 +68,7 @@ es = EarlyStopping(monitor='val_loss', mode='min',
                    restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
                       verbose=1,save_best_only=True,
-    filepath='c:/_data/_save/MCP/keras_MCP_08_wine.hdf5')
+    filepath='c:/_data/_save/MCP/keras26_MCP_08_wine.hdf5')
 hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 96, validation_split = 0.2,
                  verbose = 1, callbacks=[es, mcp])

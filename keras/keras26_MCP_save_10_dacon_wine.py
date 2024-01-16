@@ -71,15 +71,15 @@ model.add(Dense(7, activation = 'softmax'))
 model.compile(loss= 'categorical_crossentropy', optimizer='adam',
               metrics = ['acc'])
 es = EarlyStopping(monitor='val_loss', mode='auto',
-                   patience = 1000, verbose = 2,
+                   patience = 2000, verbose = 2,
                    restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1,save_best_only=True,
-    filepath='c:/_data/_save/MCP/keras26_MCP_10_dacon_wine.hdf5')
+    filepath='c:/_data/_save/MCP/keras26_MCP_10_dacon_wine_3.hdf5')
 
 hist = model.fit(x_train, y_train, epochs= 20000,
-                 batch_size = 3517, validation_split= 0.2 ,
-                 verbose = 2, callbacks=[es])
+                 batch_size = 1, validation_split= 0.2 ,
+                 verbose = 2, callbacks=[es, mcp])
 
 #4 
 results = model.evaluate(x_test, y_test)
@@ -91,7 +91,7 @@ y_predict = np.argmax(y_predict, axis=1)
 y_submit = np.argmax(y_submit, axis=1)+3
 
 submission_csv['quality'] = y_submit
-submission_csv.to_csv(path + "submission_0116_1.csv", index=False)
+submission_csv.to_csv(path + "submission_0116_3.csv", index=False)
 
 acc = accuracy_score(y_predict, y_test) 
 
@@ -128,3 +128,4 @@ print('accuracy_score :', acc)
 # loss: 1.0724146366119385
 # acc: 0.5336363911628723
 # accuracy_score : 0.5336363636363637
+
