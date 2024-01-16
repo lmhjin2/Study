@@ -84,11 +84,10 @@ es = EarlyStopping(monitor='accuracy', mode = 'auto',
                    patience = 1500, verbose = 2,
                    restore_best_weights = True)
 start_time = tm.time()
-model.fit(x_train, y_train, epochs = 20000, batch_size = 500,
+hist = model.fit(x_train, y_train, epochs = 20000, batch_size = 500,
           validation_split = 0.18, verbose = 2, callbacks = [es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
-model.save("c:/_data/_save/keras23_Scaler11_dacon_dechul_save_model_3.h5")  # 훈련된 모델
 
 #4
 results = model.evaluate(x_test, y_test)
@@ -133,7 +132,10 @@ print('f1 score', f1)
 
 
 # scaler = StandardScaler()
-
+# accuracy_score : 0.8998442277736111
+# run time 2353.3
+# loss 0.3901255130767822
+# f1 score 0.8632198023469781
 
 
 # scaler = MaxAbsScaler()
