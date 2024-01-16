@@ -61,8 +61,8 @@ from sklearn.preprocessing import StandardScaler, RobustScaler
 
 # scaler = MinMaxScaler()
 # scaler = StandardScaler()
-scaler = MaxAbsScaler()
-# scaler = RobustScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
@@ -122,7 +122,7 @@ print('f1 score', f1)
 # f1 score 0.3351856312483164
 
 
-
+ 
 # 점수 : 0.4743243041
 # f1 score 0.45057744718755127
 
@@ -148,6 +148,9 @@ print('f1 score', f1)
 
 
 # scaler = RobustScaler()
-
+# accuracy_score : 0.8962672359083829
+# run time 1869.31
+# loss 0.4001994729042053
+# f1 score 0.8628113819593662
 
 

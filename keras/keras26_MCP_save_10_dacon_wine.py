@@ -125,4 +125,6 @@ print('accuracy_score :', acc)
 
 
 # MaxAbsScaler
-
+# loss: 1.0724146366119385
+# acc: 0.5336363911628723
+# accuracy_score : 0.5336363636363637
