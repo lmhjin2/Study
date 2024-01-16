@@ -130,4 +130,3 @@ print('run time', run_time)
 # loss: 0.20221827924251556
 # acc: 0.9258022308349609
 # accuracy_score : 0.9258022598383863
-
