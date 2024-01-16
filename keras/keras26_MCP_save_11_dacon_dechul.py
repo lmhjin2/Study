@@ -143,7 +143,10 @@ print('f1 score', f1)
 
 
 # scaler = MaxAbsScaler()
-
+# accuracy_score : 0.8889401719263832
+# run time 2329.45
+# loss 0.37109503149986267
+# f1 score 0.8568730227776467
 
 
 
