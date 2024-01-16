@@ -48,7 +48,7 @@ es = EarlyStopping(monitor='val_loss', mode = 'auto',
                    patience = 10, verbose = 1, restore_best_weights = True )
 mcp = ModelCheckpoint(
     monitor='val_loss', mode = 'auto', verbose = 1, save_best_only=True,
-    filepath="c:/_data/_save/MCP/keras_25_MCP1.hdf5")
+    filepath="c:/_data/_save/MCP/keras25_MCP_01.hdf5")
 
 model.compile(loss='mae', optimizer='adam')
 hist = model.fit(x_train, y_train,
