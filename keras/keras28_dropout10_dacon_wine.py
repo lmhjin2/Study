@@ -76,9 +76,9 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")   # 월일_시분
 
-path1 = "c:/_data/_save/MCP/k26/10/"
+path1 = "c:/_data/_save/MCP/k28/10/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k26_', date, '_', filename])
+filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss= 'categorical_crossentropy', optimizer='adam',
               metrics = ['acc'])
