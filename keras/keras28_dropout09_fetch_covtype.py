@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import fetch_covtype
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -57,8 +57,10 @@ x_test = scaler.transform(x_test)
 #2
 model = Sequential()
 model.add(Dense(120, input_dim = 54, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(90, activation='relu'))
 model.add(Dense(60, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(30, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(8, activation='softmax'))
@@ -146,3 +148,4 @@ print('accuracy_score :', acc)
 # accuracy_score : 0.9310689052778327
 
 
+# RobustScaler

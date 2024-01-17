@@ -73,7 +73,7 @@ x_test = scaler.transform(x_test)
 #                  batch_size = 96, validation_split = 0.2,
                 #  verbose = 1, callbacks=[es, mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_08_wine.hdf5')
+model = load_model('c:/_data/_save/MCP/k26/08/k26_0117_1426_0030-0.0248.hdf5')
 
 #4
 results = model.evaluate(x_test, y_test)

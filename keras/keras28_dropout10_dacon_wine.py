@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense, TextVectorization
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -59,8 +59,11 @@ test_csv = scaler.transform(test_csv)
 #2
 model = Sequential()
 model.add(Dense(80, input_dim = 12, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(60, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(40, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(10, activation='relu'))
 model.add(Dense(7, activation = 'softmax'))
@@ -137,4 +140,7 @@ print('accuracy_score :', acc)
 # loss: 1.0724146366119385
 # acc: 0.5336363911628723
 # accuracy_score : 0.5336363636363637
+
+
+# MaxAbsScaler
 

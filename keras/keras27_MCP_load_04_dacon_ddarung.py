@@ -65,7 +65,7 @@ test_csv = scaler.transform(test_csv)
 # hist = model.fit(x_train, y_train, epochs = 3000,
 #                  batch_size = 25, validation_split = 0.13,
 #                  verbose=3, callbacks=[es, mcp])
-model = load_model('c:/_data/_save/MCP/keras26_MCP_04_dacon_ddarung.hdf5')
+model = load_model('c:/_data/_save/MCP/k26_0117_1426_1114-0.2422.hdf5')
 
 
 #4
@@ -75,7 +75,7 @@ y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 
 submission_csv['count']=y_submit
-submission_csv.to_csv(path+"submission_0116_scale.csv",index=False)
+submission_csv.to_csv(path+"submission_0117_scale.csv",index=False)
 
 def RMSE(y_test, y_predict):
     return np.sqrt(mean_squared_error(y_test, y_predict))

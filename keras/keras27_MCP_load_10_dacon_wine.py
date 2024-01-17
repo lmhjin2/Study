@@ -81,7 +81,7 @@ test_csv = scaler.transform(test_csv)
 #                  batch_size = 3517, validation_split= 0.2 ,
 #                  verbose = 2, callbacks=[es, mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_10_dacon_wine.hdf5')
+model = load_model('c:/_data/_save/MCP//k26/10/k26_0117_1515_0703-1.0041.hdf5')
 
 #4 
 results = model.evaluate(x_test, y_test)

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
-from keras.models import Sequential, load_model
-from keras.layers import Dense
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, accuracy_score
 from keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -51,29 +51,39 @@ x_test = scaler.transform(x_test)
 
 
 #2 
-# model = Sequential()
-# model.add(Dense(110, input_dim = 30))
-# model.add(Dense(80))
-# model.add(Dense(50))
-# model.add(Dense(20))
-# model.add(Dense(1, activation = 'sigmoid'))
+model = Sequential()
+model.add(Dense(110, input_dim = 30))
+model.add(Dropout(0.2))
+model.add(Dense(80))
+model.add(Dropout(0.2))
+model.add(Dense(50))
+model.add(Dropout(0.2))
+model.add(Dense(20))
+model.add(Dense(1, activation = 'sigmoid'))
 
-# #3
-# model.compile(loss = 'binary_crossentropy', optimizer='adam',
-#               metrics=['accuracy','mse','mae'])
-# es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
-#                    patience = 100, verbose = 1,
-#                    restore_best_weights=True)
-# mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
-#                       verbose = 1, save_best_only=True,
-#     filepath='c:/_data/_save/MCP/keras26_MCP_06_cancer.hdf5')
-# hist = model.fit(x_train, y_train, epochs = 1000,
-#                  batch_size = 105, validation_split = 0.13,
-#                  verbose = 2, callbacks=[es, mcp])
+#3
+import datetime
+
+date = datetime.datetime.now()
+date = date.strftime("%m%d_%H%M")   # 월일_시분
+
+path1 = "c:/_data/_save/MCP/k28/06/"
+filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
+filepath = "".join([path1, 'k28_', date, '_', filename])
+
+model.compile(loss = 'binary_crossentropy', optimizer='adam',
+              metrics=['accuracy','mse','mae'])
+es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
+                   patience = 100, verbose = 1,
+                   restore_best_weights=True)
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
+                      verbose = 1, save_best_only=True,
+    filepath=filepath)
+hist = model.fit(x_train, y_train, epochs = 1000,
+                 batch_size = 105, validation_split = 0.13,
+                 verbose = 2, callbacks=[es, mcp])
 # loss: 0.09776605665683746
 # r2: 0.5982901288073281
-
-model = load_model('c:/_data/_save/MCP/k26/06/k26_0117_1425_0008-0.1176.hdf5')
 
 #4 
 loss = model.evaluate(x_test, y_test)   # x_test를 넣어서 predict한 값을 y_test 와 비교.

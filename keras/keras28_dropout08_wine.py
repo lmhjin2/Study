@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import load_wine
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -53,9 +53,12 @@ x_test = scaler.transform(x_test)
 #2
 model = Sequential()
 model.add(Dense(120, input_dim = 13))
+model.add(Dropout(0.2))
 model.add(Dense(90))
 model.add(Dense(60))
+model.add(Dropout(0.2))
 model.add(Dense(30))
+model.add(Dropout(0.2))
 model.add(Dense(10))
 model.add(Dense(3, activation='softmax'))
 
@@ -66,9 +69,9 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")   # 월일_시분
 
-path1 = "c:/_data/_save/MCP/k26/08/"
+path1 = "c:/_data/_save/MCP/k28/08/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k26_', date, '_', filename])
+filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss = 'categorical_crossentropy',
               optimizer='adam', metrics=['acc'])

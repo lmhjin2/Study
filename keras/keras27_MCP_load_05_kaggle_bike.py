@@ -56,7 +56,7 @@ test_csv = scaler.transform(test_csv)
 #                  batch_size = 760 , validation_split = 0.18,
 #                  verbose = 3 , callbacks=[es,mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_05_kaggle_bike.hdf5')
+model = load_model('c:/_data/_save/MCP/k26/05/k26_0117_1425_0684-21086.1328.hdf5')
 
 #4 
 loss = model.evaluate(x_test,y_test)

@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -38,8 +38,10 @@ test_csv = scaler.transform(test_csv)
 #2
 model = Sequential()
 model.add(Dense(120, input_dim = 8))
+model.add(Dropout(0.2))
 model.add(Dense(90))
 model.add(Dense(60))
+model.add(Dropout(0.2))
 model.add(Dense(30))
 model.add(Dense(10))
 model.add(Dense(1, activation='sigmoid')) # 0에서 1사이의 값으로 내기 위함
@@ -50,9 +52,9 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")   # 월일_시분
 
-path1 = "c:/_data/_save/MCP/k26/07/"
+path1 = "c:/_data/_save/MCP/k28/07/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k26_', date, '_', filename])
+filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss = 'binary_crossentropy', optimizer = 'adam',
               metrics = ['accuracy'])
@@ -72,7 +74,7 @@ y_submit = model.predict(test_csv)
 y_predict = model.predict(x_test)
 
 submission_scv['Outcome'] = np.round(y_submit)
-submission_scv.to_csv(path + "submission_0116_1.csv", index = False)
+submission_scv.to_csv(path + "submission_0117_1.csv", index = False)
 
 def ACC(y_test, y_predict):
     return accuracy_score(y_test, y_predict)

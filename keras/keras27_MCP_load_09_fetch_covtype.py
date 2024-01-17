@@ -78,7 +78,7 @@ x_test = scaler.transform(x_test)
 #                  batch_size = 50000, validation_split = 0.2,
 #                  verbose = 2, callbacks=[es, mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_09_fetch_covtype.hdf5')
+model = load_model('c:/_data/_save/MCP/k26/09/k26_0117_1427_3542-0.1895.hdf5')
 
 
 #4

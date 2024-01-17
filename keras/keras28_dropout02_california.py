@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error,mean_absolute_error
@@ -21,8 +21,8 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 # scaler = MinMaxScaler()
 # scaler = StandardScaler()
-# scaler = MaxAbsScaler()
-scaler = RobustScaler()
+scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
@@ -32,8 +32,10 @@ x_test = scaler.transform(x_test)
 model = Sequential()
 model.add(Dense(16, input_dim = 8))
 model.add(Dense(32))
+model.add(Dropout(0.2))
 model.add(Dense(15))
 model.add(Dense(30))
+model.add(Dropout(0.2))
 model.add(Dense(8))
 model.add(Dense(1))
 
@@ -43,9 +45,9 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")   # 월일_시분
 
-path = "c:/_data/_save/MCP/k26/02/"
+path = "c:/_data/_save/MCP/k28/02/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path, 'k26_', date, '_', filename])
+filepath = "".join([path, 'k28_', date, '_', filename])
 model.compile(loss='mse',optimizer='adam',
               metrics = ['mse','msle', 'mae'])
 es = EarlyStopping(monitor='val_loss', mode='min',

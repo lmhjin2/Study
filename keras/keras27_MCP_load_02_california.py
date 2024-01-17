@@ -50,7 +50,7 @@ x_test = scaler.transform(x_test)
 #                  batch_size = 301, validation_split=0.2,
 #                  verbose = 2, callbacks=[es, mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_02_california.hdf5')
+model = load_model('c:/_data/_save/MCP/k26_0117_1306_0226-0.4792.hdf5')
 
 #4
 loss = model.evaluate(x_test, y_test)

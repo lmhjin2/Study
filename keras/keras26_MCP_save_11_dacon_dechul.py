@@ -54,15 +54,15 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1818 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 18 )     
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
 
 # scaler = MinMaxScaler()
 # scaler = StandardScaler()
-# scaler = MaxAbsScaler()
-scaler = RobustScaler()
+scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
@@ -77,6 +77,15 @@ model.add(Dense(16, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
 
 #3
+import datetime
+
+date = datetime.datetime.now()
+date = date.strftime("%m%d_%H%M")   # 월일_시분
+
+path1 = "c:/_data/_save/MCP/k26/11/"
+filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
+filepath = "".join([path1, 'k26_', date, '_', filename])
+
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
@@ -85,9 +94,9 @@ es = EarlyStopping(monitor='accuracy', mode = 'auto',
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='accuracy', mode='auto',
                       verbose=1, save_best_only=True,
-    filepath='c:/_data/_save/MCP/keras26_MCP_11_dacon_dechul.hdf5')
+    filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 20000,
+hist = model.fit(x_train, y_train, epochs = 100000,
                  batch_size = 500,validation_split = 0.18,
                  verbose = 2,callbacks = [es,mcp])
 end_time = tm.time()
@@ -104,7 +113,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0116_SS_3.csv", index=False)
+submission_csv.to_csv(path + "submission_0117_mms.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
@@ -148,7 +157,15 @@ print('f1 score', f1)
 # loss 0.37109503149986267
 # f1 score 0.8568730227776467
 
+# accuracy_score : 0.9096521086943979   
+# run time 5581.98   
+# loss 0.42253240942955017
+# f1 score 0.8794265224077572
 
+# accuracy_score : 0.8891709455951076
+# run time 1896.16
+# loss 0.38271254301071167
+# f1 score 0.8606696685844899
 
 # scaler = RobustScaler()
 # accuracy_score : 0.8962672359083829

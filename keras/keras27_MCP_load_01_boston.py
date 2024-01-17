@@ -70,7 +70,7 @@ x_test = scaler.transform(x_test)
 #           callbacks= [es, mcp])
 
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_01_boston.hdf5')
+model = load_model('c:/_data/_save/MCP/k26_0117_1305_0317-2.8449.hdf5')
 
 loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)

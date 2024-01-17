@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_absolute_error,mean_squared_error,mean_squared_log_error
@@ -34,8 +34,11 @@ x_test = scaler.transform(x_test)
 model = Sequential()
 model.add(Dense(20, input_dim = 10))
 model.add(Dense(40))
+model.add(Dropout(0.2))
 model.add(Dense(50))
+model.add(Dropout(0.2))
 model.add(Dense(30))
+model.add(Dropout(0.2))
 model.add(Dense(10))
 model.add(Dense(1))
 
@@ -45,9 +48,9 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")   # 월일_시분
 
-path = "c:/_data/_save/MCP/k26/03/"
+path = "c:/_data/_save/MCP/k28/03/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path, 'k26_', date, '_', filename])
+filepath = "".join([path, 'k28_', date, '_', filename])
 model.compile(loss = 'mse', optimizer='adam',
               metrics = ['mse','msle','mae'])
 es = EarlyStopping(monitor='val_loss', mode='auto',

@@ -53,7 +53,7 @@ x_test = scaler.transform(x_test)
 #                  batch_size = 25, validation_split = 0.13,
 #                  verbose = 3, callbacks=[es, mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_03_diabetes.hdf5')
+model = load_model('c:/_data/_save/MCP/k26_0117_1307_0066-2840.1741.hdf5')
 
 
 #4

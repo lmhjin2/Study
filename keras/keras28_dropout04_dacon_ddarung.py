@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error, mean_absolute_error
@@ -42,14 +42,23 @@ test_csv = scaler.transform(test_csv)
 #2
 model = Sequential()
 model.add(Dense(108, input_dim = 9))
+model.add(Dropout(0.2))
 model.add(Dense(90))
+model.add(Dropout(0.2))
 model.add(Dense(87))
+model.add(Dropout(0.2))
 model.add(Dense(73))
+model.add(Dropout(0.2))
 model.add(Dense(68))
+model.add(Dropout(0.2))
 model.add(Dense(57))
+model.add(Dropout(0.2))
 model.add(Dense(49))
+model.add(Dropout(0.2))
 model.add(Dense(36))
+model.add(Dropout(0.2))
 model.add(Dense(21))
+model.add(Dropout(0.2))
 model.add(Dense(11))
 model.add(Dense(1))
 
@@ -59,9 +68,9 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")   # 월일_시분
 
-path1 = "c:/_data/_save/MCP/k26/04/"
+path1 = "c:/_data/_save/MCP/k28/04/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k26_', date, '_', filename])
+filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss = 'mse', optimizer='adam',
               metrics=['mse','msle','mae'])
@@ -82,7 +91,7 @@ y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 
 submission_csv['count']=y_submit
-submission_csv.to_csv(path+"submission_0116_scale.csv",index=False)
+submission_csv.to_csv(path+"submission_0117_scale.csv",index=False)
 
 def RMSE(y_test, y_predict):
     return np.sqrt(mean_squared_error(y_test, y_predict))

@@ -57,12 +57,20 @@ model.add(Dense(13))
 model.add(Dense(1))
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+import datetime
+
+date = datetime.datetime.now()
+date = date.strftime("%m%d_%H%M")   # 월일_시분
+
+path = "c:/_data/_save/MCP/k26/01/"
+filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
+filepath = "".join([path, 'k26_', date, '_', filename])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto', patience=100,
                    verbose = 1, restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss', mode = 'auto', verbose = 1,
                       save_best_only=True,
-                      filepath="c:/_data/_save/MCP/keras26_MCP_01_boston.hdf5")
+                      filepath=filepath)
 
 
 model.compile(loss='mae', optimizer='adam')

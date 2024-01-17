@@ -57,7 +57,7 @@ test_csv = scaler.transform(test_csv)
 #                  batch_size = 25, validation_split = 0.13,
 #                  verbose = 3, callbacks = [es, mcp])
 
-model = load_model('c:/_data/_save/MCP/keras26_MCP_07_dacon_diabetes.hdf5')
+model = load_model('c:/_data/_save/MCP/k26/07/k26_0117_1425_0030-0.5434.hdf5')
 
 #4
 loss = model.evaluate(x_test, y_test)

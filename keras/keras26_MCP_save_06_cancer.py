@@ -59,6 +59,15 @@ model.add(Dense(20))
 model.add(Dense(1, activation = 'sigmoid'))
 
 #3
+import datetime
+
+date = datetime.datetime.now()
+date = date.strftime("%m%d_%H%M")   # 월일_시분
+
+path1 = "c:/_data/_save/MCP/k26/06/"
+filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
+filepath = "".join([path1, 'k26_', date, '_', filename])
+
 model.compile(loss = 'binary_crossentropy', optimizer='adam',
               metrics=['accuracy','mse','mae'])
 es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
@@ -66,7 +75,7 @@ es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
                    restore_best_weights=True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose = 1, save_best_only=True,
-    filepath='c:/_data/_save/MCP/keras26_MCP_06_cancer.hdf5')
+    filepath=filepath)
 hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 105, validation_split = 0.13,
                  verbose = 2, callbacks=[es, mcp])
