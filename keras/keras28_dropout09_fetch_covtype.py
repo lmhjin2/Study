@@ -147,5 +147,5 @@ print('accuracy_score :', acc)
 # acc: 0.9310688972473145
 # accuracy_score : 0.9310689052778327
 
-
+ 
 # RobustScaler
