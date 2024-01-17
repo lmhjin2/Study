@@ -63,6 +63,8 @@ from sklearn.preprocessing import StandardScaler, RobustScaler
 # scaler = StandardScaler()
 scaler = MaxAbsScaler()
 # scaler = RobustScaler()
+scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
@@ -71,7 +73,7 @@ test_csv = scaler.transform(test_csv)
 
 #2
 model = Sequential()
-model.add(Dense(64, input_shape = (13,), activation = 'relu'))
+model.add(Dense(64, input_shape = (13,), activation = 'sigmoid'))
 model.add(Dense(32, activation = 'relu'))
 model.add(Dense(16, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
@@ -94,14 +96,14 @@ es = EarlyStopping(monitor='accuracy', mode = 'auto',
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='accuracy', mode='auto',
                       verbose=1, save_best_only=True,
-    filepath=filepath)
+    filepath='c:/_data/_save/MCP/keras26_MCP_11_dacon_dechul.hdf5')
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 100000,
+hist = model.fit(x_train, y_train, epochs = 20000,
                  batch_size = 500,validation_split = 0.18,
                  verbose = 2,callbacks = [es,mcp])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
-
+ 
 #4
 results = model.evaluate(x_test, y_test)
 y_submit = model.predict(test_csv)
@@ -113,7 +115,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0117_mms.csv", index=False)
+submission_csv.to_csv(path + "submission_0116_SS_3.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
@@ -122,20 +124,6 @@ print('accuracy_score :', acc)
 print('run time', run_time)
 print('loss', results[0])
 print('f1 score', f1)
-
-
-# 점수 : 0.3373152269
-# accuracy_score : 0.503772931810315
-# run time 751.35
-# loss 1.2514524459838867
-# f1 score 0.3351856312483164
-
-
- 
-# 점수 : 0.4743243041
-# f1 score 0.45057744718755127
-
-
 
 # scaler = MinMaxScaler()
 # accuracy_score : 0.9191715225292794
