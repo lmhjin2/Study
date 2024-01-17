@@ -76,7 +76,6 @@ model.add(Dropout(0.2))
 model.add(Dense(32, activation = 'relu'))
 model.add(Dropout(0.2))
 model.add(Dense(16, activation = 'relu'))
-model.add(Dropout(0.2))
 model.add(Dense(7, activation = 'softmax'))
 
 #3
@@ -92,10 +91,10 @@ filepath = "".join([path1, 'k28_', date, '_', filename,'_3'])
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
-es = EarlyStopping(monitor='accuracy', mode = 'auto',
+es = EarlyStopping(monitor='val_loss', mode = 'auto',
                    patience = 1500, verbose = 2,
                    restore_best_weights = True)
-mcp = ModelCheckpoint(monitor='accuracy', mode='auto',
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
