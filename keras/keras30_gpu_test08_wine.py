@@ -151,8 +151,8 @@ print("run time:", run_time)
 # StandardScaler
 
 # CPU
-# 
+# 19.34 초
 
 # GPU
-# 
+# 18.95 초
 

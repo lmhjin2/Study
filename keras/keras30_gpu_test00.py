@@ -9,4 +9,4 @@ else:
     print('gpu 안돈다')
 
 
-
+# gpu 돈다

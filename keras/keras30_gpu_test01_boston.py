@@ -116,7 +116,7 @@ warnings.filterwarnings('ignore')
 
 
 # CPU
-# 25.53
+# 25.53 초
 
 # GPU
-# 36.85
+# 36.85 초

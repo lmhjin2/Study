@@ -138,8 +138,8 @@ print("run time:", run_time)
 # RobustScaler
 
 # CPU
-# 
+# 20.91 초
 
 # GPU
-# 
+# 22.98 초
 

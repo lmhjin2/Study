@@ -148,8 +148,8 @@ print("run time:", run_time)
 
 
 # CPU
-# 
+# 22.04 초
 
 # GPU
-# 
+# 18.17 초
 

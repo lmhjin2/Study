@@ -59,10 +59,10 @@ x_train, x_test, y_train, y_test = train_test_split(
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
 
-scaler = MinMaxScaler()
+# scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
-# scaler = RobustScaler()
+scaler = RobustScaler()
 
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
@@ -86,7 +86,7 @@ date = date.strftime("%m%d_%H%M")   # 월일_시분
 
 path1 = "c:/_data/_save/MCP/k28/11/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k28_', date, '_1', filename])
+filepath = "".join([path1, 'k28_', date, '_2', filename])
 
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
@@ -98,7 +98,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 500,
+hist = model.fit(x_train, y_train, epochs = 30000,
                  batch_size = 500,validation_split = 0.18,
                  verbose = 2 )
 end_time = tm.time()
@@ -115,7 +115,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0118_abs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0118_rbs2.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
@@ -178,8 +178,8 @@ print('run time', run_time)
 
 
 # CPU
-# 
+# 94.08 초
 
 # GPU
-# 
+# 89.58 초
 

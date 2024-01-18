@@ -112,8 +112,8 @@ print("run time:", run_time)
 # 안쓰는게 낫다?
 
 # CPU
-# 
+# 32.68 초
 
 # GPU
-# 
+# 47.07 초
 

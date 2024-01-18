@@ -126,8 +126,7 @@ print("run time:", run_time)
 # MinMaxScaler
 
 # CPU
-# 
+# 52.15 초
 
 # GPU
-# 
-
+# 35.97 초
