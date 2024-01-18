@@ -112,7 +112,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
     filepath=filepath)
 start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 50000,
-                 batch_size = 500,validation_split = 0.18,
+                 batch_size = 500, validation_split = 0.18,
                  verbose = 2,callbacks = [es,mcp])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
