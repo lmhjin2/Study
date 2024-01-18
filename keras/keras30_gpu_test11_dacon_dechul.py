@@ -99,7 +99,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
     filepath=filepath)
 start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 30000,
-                 batch_size = 500,validation_split = 0.18,
+                 batch_size = 500, validation_split = 0.18,
                  verbose = 2 )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -125,26 +125,11 @@ print('loss', results[0])
 print('f1 score', f1)
 print('run time', run_time)
 
-
-# 점수 : 0.3373152269
-# accuracy_score : 0.503772931810315
-# run time 751.35
-# loss 1.2514524459838867
-# f1 score 0.3351856312483164
-
-
- 
-# 점수 : 0.4743243041
-# f1 score 0.45057744718755127
-
-
-
 # scaler = MinMaxScaler()
 # accuracy_score : 0.9191715225292794
 # run time 4188.69
 # loss 0.5466686487197876
 # f1 score 0.8978954857467664
-
 
 # scaler = StandardScaler()
 # accuracy_score : 0.8998442277736111
@@ -152,22 +137,11 @@ print('run time', run_time)
 # loss 0.3901255130767822
 # f1 score 0.8632198023469781
 
-
 # scaler = MaxAbsScaler()
-# accuracy_score : 0.8889401719263832
-# run time 2329.45
-# loss 0.37109503149986267
-# f1 score 0.8568730227776467
-
 # accuracy_score : 0.9096521086943979   
 # run time 5581.98   
 # loss 0.42253240942955017
 # f1 score 0.8794265224077572
-
-# accuracy_score : 0.8891709455951076
-# run time 1896.16
-# loss 0.38271254301071167
-# f1 score 0.8606696685844899
 
 # scaler = RobustScaler()
 # accuracy_score : 0.8962672359083829
