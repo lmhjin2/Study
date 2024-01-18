@@ -59,11 +59,13 @@ es = EarlyStopping(monitor='val_loss', mode='auto',
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
-
+import time as tm
+start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 3000, 
                  batch_size = 25, validation_split = 0.13,
                  verbose = 3, callbacks=[es, mcp])
-
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 #4
 loss = model.evaluate(x_test,y_test)
 y_predict = model.predict(x_test)
@@ -81,6 +83,7 @@ rmsle = RMSLE(y_test, y_predict)
 print('loss:' , loss)
 print('RMSE:', rmse)
 print('RMSLE:', rmsle)
+print("run time:", run_time)
 
 # loss: [3722.598388671875, 3722.598388671875, 0.17765571177005768, 47.66206741333008]
 # RMSE: 61.01310099210362

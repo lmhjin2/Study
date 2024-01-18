@@ -121,9 +121,9 @@ acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
 
 print('accuracy_score :', acc)
-print('run time', run_time)
 print('loss', results[0])
 print('f1 score', f1)
+print('run time', run_time)
 
 
 # 점수 : 0.3373152269

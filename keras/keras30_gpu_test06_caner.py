@@ -79,9 +79,15 @@ es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose = 1, save_best_only=True,
     filepath=filepath)
+
+import time as tm
+start_time = tm.time()
+
 hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 105, validation_split = 0.13,
                  verbose = 2, callbacks=[es, mcp])
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 # loss: 0.09776605665683746
 # r2: 0.5982901288073281
 
@@ -104,7 +110,7 @@ acc = ACC(y_test, np.round(y_predict))
 print('loss:', loss)
 print('acc: ', acc)
 print('r2:', r2)
-
+print("run time:", run_time)
 # loss: [0.20226573944091797, 0.9534883499145508, 0.046718303114175797, 0.06178978830575943]
 # r2: 0.8080396679605841
 

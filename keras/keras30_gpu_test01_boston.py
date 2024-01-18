@@ -64,23 +64,25 @@ date = date.strftime("%m%d_%H%M")   # 월 / 일 _ 시 : 분
 # print(date) # 0117_1059
 # <class 'str'>
 
-path = "c:/_data/_save/MCP/k28/01/"
-filename = "{epoch:04d}-{val_loss:.4f}.hdf5"    # 예) 1234-0.3333.hdf5
-# 04d 는 정수 네자리 수 까지(뭐의 약자인진 모름), .4f는 소수 넷째자리까지 표시하라는뜻 (float)
-filepath = "".join([path, 'k28_', date, '_', filename])
-# '../_data/_save/Mcp/k25_0117_1059_0101-0.3333.hdf5'
+# path = "c:/_data/_save/MCP/k28/01/"
+# filename = "{epoch:04d}-{val_loss:.4f}.hdf5"    # 예) 1234-0.3333.hdf5
+# # 04d 는 정수 네자리 수 까지(뭐의 약자인진 모름), .4f는 소수 넷째자리까지 표시하라는뜻 (float)
+# filepath = "".join([path, 'k28_', date, '_', filename])
+# # '../_data/_save/Mcp/k25_0117_1059_0101-0.3333.hdf5'
 
-es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 10, verbose = 1, restore_best_weights = True )
-mcp = ModelCheckpoint(monitor='val_loss', mode = 'auto', verbose = 1, save_best_only = True,
-    filepath=filepath)
+# es = EarlyStopping(monitor='val_loss', mode = 'auto',
+#                    patience = 10, verbose = 1, restore_best_weights = True )
+# mcp = ModelCheckpoint(monitor='val_loss', mode = 'auto', verbose = 1, save_best_only = True,
+#     filepath=filepath)
 
 model.compile(loss='mae', optimizer='adam')
+import time as tm
+start_time = tm.time()
 hist = model.fit(x_train, y_train,
-          callbacks = [es, mcp], validation_split = 0.2,
+          validation_split = 0.2,
           epochs = 1000, batch_size = 32 )
-# model.save('c:/_data/_save/keras25_3_save_model.h5')
-
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 # ModelCheckpoint
 
 #4
@@ -93,6 +95,7 @@ y_predict = model.predict(x_test, verbose = 0)
 r2 = r2_score(y_test, y_predict)
 print("R2 스코어 :", r2)
 
+print("run time:", run_time)
 
 # print('=================================================================================')
 # print(hist.history)
@@ -109,3 +112,11 @@ warnings.filterwarnings('ignore')
 # False, False  epoch 마다 하나씩 만드는데 당장 모델에 좋은값이 안박힘
 
 # 그냥 True 두개 박아두고 쓰자.
+
+
+
+# CPU
+# 
+
+# GPU
+# 36.85

@@ -88,11 +88,12 @@ es = EarlyStopping(monitor='val_loss', mode='auto',
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1,save_best_only=True,
     filepath=filepath)
-
+start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs= 20000,
                  batch_size = 3517, validation_split= 0.2 ,
                  verbose = 2, callbacks=[es, mcp])
-
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 #4 
 results = model.evaluate(x_test, y_test)
 y_submit = model.predict(test_csv)
@@ -111,6 +112,7 @@ print('loss:', results[0])
 print('acc:', results[1])
 print('accuracy_score :', acc)
 
+print("run time:", run_time)
 
 
 # scaler = MinMaxScaler()

@@ -81,9 +81,14 @@ es = EarlyStopping(monitor='val_loss', mode='min',
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
                       verbose=1,save_best_only=True,
     filepath=filepath)
+
+import time as tm
+start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 96, validation_split = 0.2,
                  verbose = 1, callbacks=[es, mcp])
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
 
 #4
 results = model.evaluate(x_test, y_test)
@@ -108,7 +113,7 @@ y_predict = np.argmax(y_predict, axis=1)
 
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
-print('keras')
+print("run time:", run_time)
 
 
 
