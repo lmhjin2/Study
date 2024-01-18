@@ -2,8 +2,8 @@
 
 import numpy as np
 import pandas as pd
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.models import Sequential, Model
+from keras.layers import Dense, Dropout,Input
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
@@ -70,13 +70,26 @@ x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
 #2
-model = Sequential()
-model.add(Dense(64, input_shape = (13,), activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(32, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(16, activation = 'relu'))
-model.add(Dense(7, activation = 'softmax'))
+# model = Sequential()
+# model.add(Dense(64, input_shape = (13,), activation = 'relu'))
+# model.add(Dropout(0.2))
+# model.add(Dense(32, activation = 'relu'))
+# model.add(Dropout(0.2))
+# model.add(Dense(16, activation = 'relu'))
+# model.add(Dense(7, activation = 'softmax'))
+
+
+#2
+input1 = Input(shape=(13,))
+dense1 = Dense(64, activation='relu')(input1)
+drop1 = Dropout(0.2)(dense1)
+dense2 = Dense(32, activation='relu')(drop1)
+drop2 = Dropout(0.2)(dense2)
+dense3 = Dense(16, activation='relu')(drop2)
+output1 = Dense(7, activation='softmax')(dense3)
+
+model = Model(inputs = input1, outputs = output1)
+
 
 #3
 import datetime
@@ -98,7 +111,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 100000,
+hist = model.fit(x_train, y_train, epochs = 50000,
                  batch_size = 500,validation_split = 0.18,
                  verbose = 2,callbacks = [es,mcp])
 end_time = tm.time()
@@ -115,7 +128,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0118_abs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0118_mms1.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
