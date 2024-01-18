@@ -74,20 +74,20 @@ filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss = 'mse', optimizer='adam',
               metrics=['mse','msle','mae'])
-es = EarlyStopping(monitor = 'val_loss',
-                   mode = 'auto', patience = 200,
-                   restore_best_weights = True )
-mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
-                      verbose=1, save_best_only=True,
-    filepath=filepath)
+# es = EarlyStopping(monitor = 'val_loss',
+#                    mode = 'auto', patience = 200,
+#                    restore_best_weights = True )
+# mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
+#                       verbose=1, save_best_only=True,
+#     filepath=filepath)
 
 
 import time as tm
 start_time = tm.time()
 
-hist = model.fit(x_train, y_train, epochs = 3000,
+hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 25, validation_split = 0.13,
-                 verbose=3, callbacks=[es, mcp])
+                 verbose=3)
 
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -117,22 +117,6 @@ print('따릉')
 
 print("run time:", run_time)
 
-
-
-'''
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'], color = 'red',
-         label = 'loss', marker = '.')
-plt.plot(hist.history['val_loss'], c = 'blue',
-         label = 'val_loss', marker='.')
-plt.legend(loc = 'upper right')
-plt.title("따릉이 로스")
-plt.xlabel('epoch')
-plt.ylabel('loss')
-plt.grid()
-plt.show()
-'''
-
 # loss: [2494.04052734375, 2494.04052734375, 0.6432426571846008, 39.16857147216797]
 # RMSE: 49.94036818182851
 # r2: 0.6079631835073899
@@ -161,4 +145,11 @@ plt.show()
 
 
 # StandardScaler
+
+
+# CPU
+# 
+
+# GPU
+# 
 

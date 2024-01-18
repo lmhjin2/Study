@@ -59,16 +59,16 @@ filepath = "".join([path1, 'k28_', date, '_', filename])
 model.compile(loss = 'binary_crossentropy', optimizer = 'adam',
               metrics = ['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode='auto',
-                   patience = 500, verbose = 1,
+                   patience = 1, verbose = 1,
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
                       verbose=1,save_best_only=True,
     filepath=filepath)
 import time as tm
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 3000,
+hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 25, validation_split = 0.13,
-                 verbose = 3, callbacks = [es, mcp])
+                 verbose = 3)
 
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -78,7 +78,7 @@ y_submit = model.predict(test_csv)
 y_predict = model.predict(x_test)
 
 submission_scv['Outcome'] = np.round(y_submit)
-submission_scv.to_csv(path + "submission_0117_1.csv", index = False)
+submission_scv.to_csv(path + "submission_0118_1.csv", index = False)
 
 def ACC(y_test, y_predict):
     return accuracy_score(y_test, y_predict)
@@ -110,3 +110,10 @@ print("run time:", run_time)
 
 
 # 안쓰는게 낫다?
+
+# CPU
+# 
+
+# GPU
+# 
+

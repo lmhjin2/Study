@@ -58,19 +58,19 @@ filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss='mse', optimizer='adam',
               metrics=['mae','mse','msle'])
-es = EarlyStopping(monitor='val_loss',
-                   mode='auto',
-                   patience = 200 ,
-                   verbose = 1 , restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
-                      save_best_only=True, verbose=1,
-    filepath=filepath)
+# es = EarlyStopping(monitor='val_loss',
+#                    mode='auto',
+#                    patience = 200 ,
+#                    verbose = 1 , restore_best_weights=True)
+# mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
+#                       save_best_only=True, verbose=1,
+#     filepath=filepath)
 
 start_time = tm.time()
 
-hist = model.fit(x_train, y_train, epochs = 5000,
+hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 760 , validation_split = 0.18,
-                 verbose = 3 , callbacks=[es,mcp])
+                 verbose = 3)
 
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -124,3 +124,10 @@ print("run time:", run_time)
 # loss : [21260.8359375, 105.3271713256836, 21260.8359375, 1.6402837038040161]
 
 # MinMaxScaler
+
+# CPU
+# 
+
+# GPU
+# 
+

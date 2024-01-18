@@ -85,9 +85,9 @@ mcp = ModelCheckpoint(monitor = 'val_loss',mode='auto',
             verbose = 1, save_best_only=True,
             filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 10000,
+hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 50000, validation_split = 0.2,
-                 verbose = 2, callbacks=[es, mcp])
+                 verbose = 2 )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 #4
@@ -151,3 +151,10 @@ print('run time', run_time)
 
  
 # RobustScaler
+
+# CPU
+# 
+
+# GPU
+# 
+

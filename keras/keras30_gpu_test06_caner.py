@@ -73,19 +73,19 @@ filepath = "".join([path1, 'k28_', date, '_', filename])
 
 model.compile(loss = 'binary_crossentropy', optimizer='adam',
               metrics=['accuracy','mse','mae'])
-es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
-                   patience = 100, verbose = 1,
-                   restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
-                      verbose = 1, save_best_only=True,
-    filepath=filepath)
+# es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
+#                    patience = 100, verbose = 1,
+#                    restore_best_weights=True)
+# mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
+#                       verbose = 1, save_best_only=True,
+#     filepath=filepath)
 
 import time as tm
 start_time = tm.time()
 
 hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 105, validation_split = 0.13,
-                 verbose = 2, callbacks=[es, mcp])
+                 verbose = 2)
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 # loss: 0.09776605665683746
@@ -136,3 +136,10 @@ print("run time:", run_time)
 # r2: 0.9081097883593787
 
 # RobustScaler
+
+# CPU
+# 
+
+# GPU
+# 
+

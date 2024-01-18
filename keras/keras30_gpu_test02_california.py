@@ -50,17 +50,17 @@ filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
 filepath = "".join([path, 'k28_', date, '_', filename])
 model.compile(loss='mse',optimizer='adam',
               metrics = ['mse','msle', 'mae'])
-es = EarlyStopping(monitor='val_loss', mode='min',
-                   patience = 300, verbose = 1,
-                   restore_best_weights=True)
-mcp = ModelCheckpoint(monitor='val_loss', mode = 'auto', verbose = 1,
-                      save_best_only=True,
-                      filepath=filepath)
+# es = EarlyStopping(monitor='val_loss', mode='min',
+#                    patience = 300, verbose = 1,
+#                    restore_best_weights=True)
+# mcp = ModelCheckpoint(monitor='val_loss', mode = 'auto', verbose = 1,
+#                       save_best_only=True,
+#                       filepath=filepath)
 import time as tm
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs=3000,
+hist = model.fit(x_train, y_train, epochs=1000,
                  batch_size = 301, validation_split=0.2,
-                 verbose = 2, callbacks=[es, mcp])
+                 verbose = 2)
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 #4
@@ -122,3 +122,11 @@ plt.show()
 
 
 # MixMaxScaler
+
+
+# CPU
+# 
+
+# GPU
+# 
+

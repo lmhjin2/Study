@@ -84,9 +84,9 @@ mcp = ModelCheckpoint(monitor='val_loss',mode='auto',
 
 import time as tm
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 10000,
+hist = model.fit(x_train, y_train, epochs = 1000,
                  batch_size = 96, validation_split = 0.2,
-                 verbose = 1, callbacks=[es, mcp])
+                 verbose = 1)
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 
@@ -149,3 +149,10 @@ print("run time:", run_time)
 
 
 # StandardScaler
+
+# CPU
+# 
+
+# GPU
+# 
+

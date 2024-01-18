@@ -98,9 +98,9 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 100000,
+hist = model.fit(x_train, y_train, epochs = 500,
                  batch_size = 500,validation_split = 0.18,
-                 verbose = 2,callbacks = [es,mcp])
+                 verbose = 2 )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 
@@ -175,4 +175,11 @@ print('run time', run_time)
 # loss 0.4001994729042053
 # f1 score 0.8628113819593662
 
+
+
+# CPU
+# 
+
+# GPU
+# 
 
