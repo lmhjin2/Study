@@ -74,6 +74,4 @@ print('acc', results[1], acc)
 
 # 1s - loss: 0.0266 - accuracy: 0.9930
 
-# loss 0.2538575232028961
-# acc 0.9800999760627747 0.9801
  
