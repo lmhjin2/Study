@@ -53,7 +53,7 @@ es = EarlyStopping(monitor='val_accuracy', mode='auto', verbose=1,
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 start_time = tm.time()
-model.fit(x_train, y_train, validation_split = 0.15, 
+model.fit(x_train, y_train, validation_split = 0.17, 
           batch_size = 300, verbose = 1, epochs = 1000 , callbacks=[es])
 end_time=tm.time()
 run_time=round(end_time - start_time, 2)
@@ -73,4 +73,7 @@ print('loss', results[0])
 print('acc', results[1], acc)
 
 
- 
+#  1s - loss: 0.0266 - accuracy: 0.9930
+
+# loss 0.2538575232028961
+# acc 0.9800999760627747 0.9801
