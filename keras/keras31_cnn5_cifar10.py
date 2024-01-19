@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from keras.datasets import cifar10
 from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Flatten, Dropout
+from keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical
 from sklearn.metrics import accuracy_score
@@ -24,15 +24,32 @@ y_test = to_categorical(y_test)
 
 #2
 model = Sequential()
-model.add(Conv2D(4, kernel_size=(3,3), input_shape=(32,32,3), activation='sigmoid'))
-model.add(Conv2D(4, kernel_size=(2,2), activation='relu'))
+
+model.add(Conv2D(50, kernel_size=(2,2), input_shape=(32,32,3), activation='sigmoid'))
+model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
 model.add(Dropout(0.2))
-model.add(Conv2D(4, kernel_size=(3,3), activation='relu'))
+model.add(Conv2D(50, kernel_size=(3,3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
+model.add(Dropout(0.2))
+model.add(Conv2D(50, kernel_size=(3,3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
 model.add(Dropout(0.2))
 model.add(Flatten())
-model.add(Dense(16, activation='relu'))
+model.add(Dense(220))
 model.add(Dropout(0.2))
+model.add(Dropout(0.5))
 model.add(Dense(10, activation='softmax'))
+
+# model.add(Conv2D(8, kernel_size=(3,3), input_shape=(32,32,3), activation='sigmoid'))
+# model.add(Conv2D(4, kernel_size=(2,2), activation='relu'))
+# model.add(Dropout(0.2))
+# model.add(MaxPooling2D(pool_size=(3,3)))
+# model.add(Conv2D(6, kernel_size=(3,3), activation='relu'))
+# model.add(Dropout(0.2))
+# model.add(Flatten())
+# model.add(Dense(16, activation='relu'))
+# model.add(Dropout(0.2))
+# model.add(Dense(10, activation='softmax'))
 # model.summary()
 
 #3
@@ -43,7 +60,7 @@ es = EarlyStopping(monitor='val_accuracy', mode = 'auto',
 model.compile(loss='categorical_crossentropy', optimizer = 'adam',
               metrics=['accuracy'])
 start_time = tm.time()
-model.fit(x_train, y_train, epochs = 500, batch_size = 1818, 
+model.fit(x_train, y_train, epochs = 1000, batch_size = 1818, 
           verbose = 1 , validation_split = 0.18 , callbacks=[es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
