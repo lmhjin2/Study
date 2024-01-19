@@ -1,0 +1,61 @@
+import numpy as np
+import pandas as pd
+from keras.datasets import cifar10
+from keras.models import Sequential
+from keras.layers import Dense, Conv2D, Flatten
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.utils import to_categorical
+from sklearn.metrics import accuracy_score
+import time as tm
+
+(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+
+# print(x_train.shape, y_train.shape) # (50000, 32, 32, 3) (50000, 1)
+# print(x_test.shape, y_test.shape)   # (10000, 32, 32, 3) (10000, 1)
+# print(np.unique(y_train, return_counts=True))
+    # (array([0,     1,     2,    3,    4,    5,    6,   7,     8,    9], dtype=uint8),
+    #  array([5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000],
+    #   dtype=int64))
+
+# acc = 0.77 이상
+y_train = to_categorical(y_train)
+y_test = to_categorical(y_test)
+
+
+#2
+model = Sequential()
+model.add(Conv2D(4, kernel_size=(3,3), input_shape=(32,32,3), activation='relu'))
+model.add(Conv2D(8, kernel_size=(3,3), input_shape=(30,30,4), activation='relu'))
+model.add(Flatten())
+model.add(Dense(16, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+
+#3
+es = EarlyStopping(monitor='val_accuracy', mode = 'auto',
+                   patience = 200, verbose = 1,
+                   restore_best_weights=True)
+
+model.compile(loss='categorical_crossentropy', optimizer = 'adam',
+              metrics=['accuracy'])
+start_time = tm.time()
+model.fit(x_train, y_train, epochs = 10, batch_size = 10000, 
+          verbose = 1 , validation_split=0.15 , callbacks=[es])
+end_time = tm.time()
+run_time = round(end_time - start_time, 2)
+
+#4
+y_predict = model.predict(x_test)
+results = model.evaluate(x_test, y_test)
+
+y_train = np.argmax(y_train, axis = 1)
+y_test = np.argmax(y_test, axis=1)
+y_predict = np.argmax(y_predict, axis = 1)
+
+acc = accuracy_score(y_test, y_predict)
+
+print('run time', run_time)
+print('loss', results[0])
+print('acc ', results[1], acc)
+
+
+
