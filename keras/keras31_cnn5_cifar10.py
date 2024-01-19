@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from keras.datasets import cifar10
 from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Flatten
+from keras.layers import Dense, Conv2D, Flatten, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical
 from sklearn.metrics import accuracy_score
@@ -24,22 +24,27 @@ y_test = to_categorical(y_test)
 
 #2
 model = Sequential()
-model.add(Conv2D(4, kernel_size=(3,3), input_shape=(32,32,3), activation='relu'))
-model.add(Conv2D(8, kernel_size=(3,3), input_shape=(30,30,4), activation='relu'))
+model.add(Conv2D(4, kernel_size=(3,3), input_shape=(32,32,3), activation='sigmoid'))
+model.add(Conv2D(4, kernel_size=(2,2), activation='relu'))
+model.add(Dropout(0.2))
+model.add(Conv2D(4, kernel_size=(3,3), activation='relu'))
+model.add(Dropout(0.2))
 model.add(Flatten())
 model.add(Dense(16, activation='relu'))
+model.add(Dropout(0.2))
 model.add(Dense(10, activation='softmax'))
+# model.summary()
 
 #3
 es = EarlyStopping(monitor='val_accuracy', mode = 'auto',
-                   patience = 200, verbose = 1,
+                   patience = 50, verbose = 1,
                    restore_best_weights=True)
 
 model.compile(loss='categorical_crossentropy', optimizer = 'adam',
               metrics=['accuracy'])
 start_time = tm.time()
-model.fit(x_train, y_train, epochs = 10, batch_size = 10000, 
-          verbose = 1 , validation_split=0.15 , callbacks=[es])
+model.fit(x_train, y_train, epochs = 500, batch_size = 1818, 
+          verbose = 1 , validation_split = 0.18 , callbacks=[es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
 
