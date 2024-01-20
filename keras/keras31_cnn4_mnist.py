@@ -72,6 +72,6 @@ print('run time', run_time)
 print('loss', results[0])
 print('acc', results[1], acc)
 
-# 1s - loss: 0.0266 - accuracy: 0.9930
+# loss: 0.0266 - accuracy: 0.9930
 
  
