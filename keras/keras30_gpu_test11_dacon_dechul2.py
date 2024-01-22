@@ -54,7 +54,7 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 337 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1818 )     
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -73,11 +73,14 @@ test_csv = scaler.transform(test_csv)
 model = Sequential()
 model.add(Dense(64, input_shape = (13,), activation = 'relu'))
 model.add(Dense(48, activation = 'relu'))
-model.add(Dense(32, activation = 'relu'))
+model.add(Dense(72, activation = 'relu'))
+model.add(Dropout(0.2))
 model.add(Dense(128, activation = 'relu'))
-model.add(Dense(48, activation = 'relu'))
-model.add(Dense(16, activation = 'relu'))
-model.add(Dense(48, activation = 'relu'))
+model.add(Dropout(0.2))
+model.add(Dense(84, activation = 'relu'))
+model.add(Dropout(0.2))
+model.add(Dense(53, activation = 'relu'))
+model.add(Dense(27, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
 
 # model = Sequential()
