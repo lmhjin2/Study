@@ -21,6 +21,14 @@ import time as tm
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 
+import matplotlib.pyplot as plt
+plt.imshow(x_train[5], "gray")
+plt.show()
+
+x_train = x_train/255 # 0~255까지 있는 데이터라 255로 나눠서 mimaxscaler랑 같은효과
+x_test = x_test/255 
+
+
 
 #2
 model = Sequential()
@@ -78,6 +86,7 @@ acc = accuracy_score(y_test, y_predict)
 print('run time', run_time)
 print('loss', results[0])
 print('acc ', results[1], acc)
+
 
 
 # run time 6824.01
