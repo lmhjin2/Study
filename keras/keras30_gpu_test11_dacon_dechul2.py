@@ -54,7 +54,7 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1717 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 337 )     
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -74,9 +74,10 @@ model = Sequential()
 model.add(Dense(64, input_shape = (13,), activation = 'relu'))
 model.add(Dense(48, activation = 'relu'))
 model.add(Dense(32, activation = 'relu'))
+model.add(Dense(128, activation = 'relu'))
 model.add(Dense(48, activation = 'relu'))
 model.add(Dense(16, activation = 'relu'))
-model.add(Dense(8, activation = 'relu'))
+model.add(Dense(48, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
 
 # model = Sequential()
@@ -122,7 +123,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0121_rbs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0122_rbs1.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
