@@ -155,8 +155,3 @@ print("run time:", run_time)
 # GPU
 # 18.17 초
 
-# CNN
-# loss: 1.1038585901260376
-# acc: 0.5336363911628723
-# accuracy_score : 0.5336363636363637
-# run time: 22.04
