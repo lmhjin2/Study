@@ -54,8 +54,8 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1387 )     
-
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1785 )     
+# 1785 / 1818 / 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
 
