@@ -8,6 +8,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score
 import time as tm
 
@@ -16,10 +17,19 @@ import time as tm
 # print(x_test.shape, y_test.shape)   # (10000, 28, 28) (10000,)
 # print(x_train)
 
+x_train = x_train.reshape(60000, 28* 28)
+x_test = x_test.reshape(10000, 28* 28)
+
+scaler = MinMaxScaler() # 정규화 한다하면 스케일링한거임.
+
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.fit_transform(x_test)
+
 x_train = x_train.reshape(60000, 28, 28, 1)
-# print(x_train.shape[0]) # 60000
+# print(x_train.shape[0], x_train.shape[1], x_train.shape[2], 1)/255 == (60000, 28, 28, 1)/255
 x_test = x_test.reshape(10000, 28, 28, 1)
 # print(x_test.shape[0]) # 10000
+# print(x_test.shape[0], x_test.shape[1], x_test.shape[2], 1)/255 == (10000, 28, 28, 1)/ 255
 
 # x_test = x_test.reshape(x_test.shape[0], x_test.shape[1],x_test.shape[2], 1)
 # print(x_train.shape, x_test.shape)
@@ -27,6 +37,8 @@ y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 # print(y_train.dtype, y_test.dtype)
 
+print(x_train[0])
+print(np.max(x_train, np.min(x_test))) # 1.0 0.0
 
 #2
 model = Sequential()
@@ -47,14 +59,14 @@ model.add(Dense(10, activation='softmax'))
 
 #3
 es = EarlyStopping(monitor='val_accuracy', mode='auto', verbose=1,
-                   patience = 100 , restore_best_weights=True )
+                   patience = 30 , restore_best_weights=True )
 # mcp = ModelCheckpoint(monitor='val_accuracy', mode = 'auto', verbose=1)
 
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 start_time = tm.time()
 model.fit(x_train, y_train, validation_split = 0.15, 
-          batch_size = 300, verbose = 1, epochs = 10000 , callbacks=[es])
+          batch_size = 500, verbose = 1, epochs = 100 , callbacks=[es])
 end_time=tm.time()
 run_time=round(end_time - start_time, 2)
 
@@ -74,4 +86,12 @@ print('acc', results[1], acc)
 
 # loss: 0.0266 - accuracy: 0.9930
 
- 
+# run time 8.43
+# loss 0.0852874368429184
+# acc 0.9767000079154968 0.9767
+
+# run time 49.35
+# loss 0.10515447705984116
+# acc 0.9857000112533569 0.9857
+
+
