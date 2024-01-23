@@ -57,18 +57,27 @@ y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 x_train, x_test, y_train, y_test = train_test_split(
     x, y_ohe, stratify=y, test_size = 0.18, random_state = 1818 )     
 
-# from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
-# from sklearn.preprocessing import StandardScaler, RobustScaler
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
+from sklearn.preprocessing import StandardScaler, RobustScaler
 
-# # scaler = MinMaxScaler()
-# # scaler = StandardScaler()
-# # scaler = MaxAbsScaler()
-# scaler = RobustScaler()
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+# scaler = MaxAbsScaler()
+scaler = RobustScaler()
 
-# scaler.fit(x_train)
-# x_train = scaler.transform(x_train)
-# x_test = scaler.transform(x_test)
-# test_csv = scaler.transform(test_csv)
+x_train = x_train.reshape(-1, 13)
+x_test = x_test.reshape(-1,13)
+test_csv = x_test.reshape(-1,13)
+
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
+
+x_train = x_train.reshape(-1, 13,1,1)
+x_test = x_test.reshape(-1, 13,1,1)
+test_csv = test_csv.reshape(-1, 13,1,1)
+
 
 #2
 model = Sequential()
@@ -169,3 +178,6 @@ print('run time', run_time)
 
 # GPU
 # 89.58 초
+
+
+

@@ -21,8 +21,8 @@ test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
 x = train_csv.drop(['quality'], axis = 1)
 y = train_csv['quality']
 
-x = x.reshape(5497, 2,2,3)
-test_csv = test_csv.reshape(-1,2,2,3)
+x = x.values.reshape(5497, 2,2,3)
+test_csv = test_csv.values.reshape(-1,2,2,3)
 # print(x)    # (5497, 12)
 # print(y)    # (5497,)
 # print(np.unique(y, return_counts=True))  
@@ -155,3 +155,7 @@ print("run time:", run_time)
 # GPU
 # 18.17 초
 
+# CNN
+# loss: 1.0927128791809082
+# acc: 0.5372727513313293
+# accuracy_score : 0.5372727272727272
