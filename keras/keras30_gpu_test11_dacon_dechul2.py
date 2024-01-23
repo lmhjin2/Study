@@ -54,7 +54,7 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1818 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 9518 )     
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -72,6 +72,7 @@ test_csv = scaler.transform(test_csv)
 #2
 model = Sequential()
 model.add(Dense(64, input_shape = (13,), activation = 'relu'))
+model.add(Dense(128, activation = 'relu'))
 model.add(Dense(48, activation = 'relu'))
 model.add(Dense(72, activation = 'relu'))
 model.add(Dropout(0.2))
@@ -79,6 +80,7 @@ model.add(Dense(128, activation = 'relu'))
 model.add(Dropout(0.2))
 model.add(Dense(84, activation = 'relu'))
 model.add(Dropout(0.2))
+model.add(Dense(128, activation = 'relu'))
 model.add(Dense(53, activation = 'relu'))
 model.add(Dense(27, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
@@ -103,13 +105,13 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 1500, verbose = 2,
+                   patience = 700, verbose = 2,
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 50000,
+hist = model.fit(x_train, y_train, epochs = 10000,
                  batch_size = 500, validation_split = 0.18,
                  verbose = 2, callbacks=[es, mcp] )
 end_time = tm.time()
@@ -126,7 +128,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0122_rbs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0123_rbs1.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
