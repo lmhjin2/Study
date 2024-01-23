@@ -38,7 +38,7 @@ path_train = 'c://_data//image//cat_and_dog//Train//'
 xy_train = train_datagen.flow_from_directory(
     path_train,
     target_size=(500,500),
-    batch_size = 20000, 
+    batch_size = 200, 
     class_mode = 'binary',
     shuffle=True
 )
@@ -58,7 +58,7 @@ xy_train = train_datagen.flow_from_directory(
 xy_test = test_datagen.flow_from_directory(
     path_test,
     target_size=(500,500),
-    batch_size = 5000, 
+    batch_size = 200, 
     class_mode = 'binary')
 
 gen_end = tm.time()
@@ -133,4 +133,9 @@ print('acc', acc)
 # gen time  0.41
 # fit time 8.37
 # loss [0.6921163201332092, 1.0]
+# acc 1.0
+
+# gen time  0.44
+# fit time 24.51
+# loss [0.6907598376274109, 1.0]
 # acc 1.0

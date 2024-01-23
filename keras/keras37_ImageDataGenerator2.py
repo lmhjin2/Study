@@ -42,7 +42,7 @@ path_test = 'c:/_data/image/brain/test/'
 xy_train = train_datagen.flow_from_directory(
     path_train,
     target_size=(200, 200),
-    batch_size=10,
+    batch_size = 300,
     class_mode='binary',
     shuffle=True
 )   # Found 160 images belonging to 2 classes.
@@ -50,7 +50,7 @@ xy_train = train_datagen.flow_from_directory(
 xy_test = test_datagen.flow_from_directory(
     path_test,
     target_size=(200, 200),
-    batch_size=10,
+    batch_size = 300,
     class_mode='binary'
 )   # Found 120 images belonging to 2 classes.
 
