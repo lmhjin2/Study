@@ -21,8 +21,8 @@ test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
 x = train_csv.drop(['quality'], axis = 1)
 y = train_csv['quality']
 
-x = x.reshape(5497, 2,2,3)
-test_csv = test_csv.reshape(-1,2,2,3)
+x = x.values.reshape(5497, 2,2,3)
+test_csv = test_csv.values.reshape(-1,2,2,3)
 # print(x)    # (5497, 12)
 # print(y)    # (5497,)
 # print(np.unique(y, return_counts=True))  
@@ -42,18 +42,18 @@ x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify = y,
 # [0. 0. 1. 0. 0. 0. 0.]        
 
 
-# from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
-# from sklearn.preprocessing import StandardScaler, RobustScaler
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
+from sklearn.preprocessing import StandardScaler, RobustScaler
 
-# # scaler = MinMaxScaler()
-# # scaler = StandardScaler()
-# scaler = MaxAbsScaler()
-# # scaler = RobustScaler()
+# scaler = MinMaxScaler()
+# scaler = StandardScaler()
+scaler = MaxAbsScaler()
+# scaler = RobustScaler()
 
-# scaler.fit(x_train)
-# x_train = scaler.transform(x_train)
-# x_test = scaler.transform(x_test)
-# test_csv = scaler.transform(test_csv)
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
 
 
 #2
@@ -155,3 +155,8 @@ print("run time:", run_time)
 # GPU
 # 18.17 초
 
+# CNN
+# loss: 1.1038585901260376
+# acc: 0.5336363911628723
+# accuracy_score : 0.5336363636363637
+# run time: 22.04

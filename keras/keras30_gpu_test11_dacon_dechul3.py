@@ -170,3 +170,4 @@ print('run time', run_time)
 # GPU
 # 89.58 초
 
+
