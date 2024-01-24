@@ -37,14 +37,14 @@ path_train = 'c://_data//image//cat_and_dog//Train//'
 xy_train_data = train_datagen.flow_from_directory(
     path_train,
     target_size=(100,100),
-    batch_size = 200, 
+    batch_size = 100, 
     class_mode = 'binary',
     shuffle=True )
 
 xy_test = test_datagen.flow_from_directory(
     path_test,
     target_size=(100,100),
-    batch_size = 200, 
+    batch_size = 100, 
     class_mode = 'binary')
 
 
@@ -52,7 +52,7 @@ x = []
 y = []
 failed_i = []
 
-for i in range(int(20000/200)):
+for i in range(int(20000/100)):
     try:
         xy_data = xy_train_data.next()
         new_x = xy_data[0]
@@ -98,15 +98,15 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,
 # x_test = x_test/255
 
 #2
-model = Sequential()
-model.add(Conv2D(32, (3, 3), input_shape=(100, 100, 3), activation='relu'))
-model.add(MaxPooling2D())
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D())
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(1, activation='sigmoid'))
+# model = Sequential()      # 빠름
+# model.add(Conv2D(32, (3, 3), input_shape=(100, 100, 3), activation='relu'))
+# model.add(MaxPooling2D())
+# model.add(Conv2D(64, (3, 3), activation='relu'))
+# model.add(MaxPooling2D())
+# model.add(Flatten())
+# model.add(Dense(128, activation='relu'))
+# model.add(Dropout(0.5))
+# model.add(Dense(1, activation='sigmoid'))
 
 # model = Sequential()
 # model.add(Conv2D(3, (25,25), input_shape=(100,100,3), activation='sigmoid'))
@@ -120,6 +120,21 @@ model.add(Dense(1, activation='sigmoid'))
 # model.add(Dropout(0.3))
 # model.add(Dense(16, activation='relu'))
 # model.add(Dense(1, activation='sigmoid'))
+
+model = Sequential()
+model.add(Conv2D(2, (16, 16), input_shape=(100, 100, 3), activation='relu'))
+model.add(MaxPooling2D())
+model.add(Dropout(0.5))
+model.add(Conv2D(2, (12, 12), activation='relu'))
+model.add(Dropout(0.5))
+model.add(MaxPooling2D())
+model.add(Conv2D(1, (8, 8), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Flatten())
+model.add(Dense(2, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(4, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
 
 model.summary()
 

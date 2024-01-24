@@ -11,7 +11,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 # 데이터 생성기
 train_datagen = ImageDataGenerator(
     rescale=1./255,
-    fill_mode='nearest'
+    # fill_mode='nearest'
 )
 
 test_datagen = ImageDataGenerator(
