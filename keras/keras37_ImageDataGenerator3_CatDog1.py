@@ -164,28 +164,6 @@ print('fit time', fit_time)
 print('loss', loss)
 # print('acc', acc)
 
-
-
-# gen time  0.42
-# fit time 8.71
-# loss [0.6921517848968506, 1.0]
-# acc 1.0
-
-# gen time  0.42
-# fit time 8.71
-# loss [0.6931471824645996, 1.0]
-# acc 1.0
-
-# gen time  0.41
-# fit time 8.37
-# loss [0.6921163201332092, 1.0]
-# acc 1.0
-
-# gen time  0.44
-# fit time 24.51
-# loss [0.6907598376274109, 1.0]
-# acc 1.0
-
-# gen time  0.47
-# fit time 5.7
-# loss [0.6928812265396118, 1.0]
+# gen time  45.72
+# fit time 142.8
+# loss [0.4158861041069031, 0.8057500123977661]
