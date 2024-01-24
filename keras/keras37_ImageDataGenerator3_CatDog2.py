@@ -1,3 +1,6 @@
+# fit에 steps_per_epoch
+# ㅈㄴ느림
+
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
