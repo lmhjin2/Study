@@ -26,49 +26,59 @@ train_datagen = ImageDataGenerator(
     # rotation_range=5,
     # zoom_range = 0.2,
     # shear_range=0.2,
-    
-    fill_mode = 'nearest'
-)
-
+    # fill_mode = 'nearest'
+    )
 test_datagen = ImageDataGenerator(
     rescale=1./255)
-
-# dog = 'C:\_data\image\cat_and_dog\Train\Dog'
-# cat = 'C:\_data\image\cat_and_dog\Train\Cat'
-
 
 path_test = 'c://_data//image//cat_and_dog//Test//'
 path_train = 'c://_data//image//cat_and_dog//Train//'
 
-xy_train = train_datagen.flow_from_directory(
+xy_train_data = train_datagen.flow_from_directory(
     path_train,
-    target_size=(200,200),
+    target_size=(100,100),
     batch_size = 200, 
     class_mode = 'binary',
-    shuffle=True
-)
-# xy_train_cat = train_datagen.flow_from_directory(
-#     cat,
-#     target_size=(500,500),
-#     batch_size = 10, 
-#     class_mode = 'binary',
-#     shuffle=True
-# )
-
-# xy_train.samples += xy_train_cat.samples
-# xy_train.classes = np.concatenate([xy_train.classes, xy_train_cat.classes])
+    shuffle=True )
 
 xy_test = test_datagen.flow_from_directory(
     path_test,
-    target_size=(200,200),
+    target_size=(100,100),
     batch_size = 200, 
     class_mode = 'binary')
 
-print_start = tm.time()
-print((xy_train.next()))
-print_end = tm.time()
-print_time = np.round(print_end-print_start, 2)
-print('print time', print_time, '초')
+
+x = []
+y = []
+failed_i = []
+
+for i in range(int(20000/200)):
+    try:
+        xy_data = xy_train_data.next()
+        new_x = xy_data[0]
+        new_y = xy_data[1]
+        if i == 0:
+            x = np.array(new_x)
+            y = np.array(new_y)
+            continue
+        x = np.vstack([x, new_x])
+        y = np.hstack([y,new_y])
+        print("i :", i)
+        print(f"{x.shape=}\n{y.shape=}")
+    except:
+        print("failed i:", i)
+        failed_i.append(i)
+
+print(failed_i)
+
+print(f"{x.shape=}\n{y.shape=}")
+
+
+load_start = tm.time()
+print((xy_train_data.next()))
+load_end = tm.time()
+load_time = np.round(load_end-load_start, 2)
+print('load time', load_time, '초')
 
 gen_end = tm.time()
 gen_time = np.round(gen_end - gen_start, 2)
@@ -78,32 +88,38 @@ gen_time = np.round(gen_end - gen_start, 2)
 # y_train = xy_train[0][1]
 # x_test = xy_test[0][0]
 # y_test = xy_test[0][1]
-
-x_train, x_test, y_train, y_test = train_test_split(
-    xy_train[0][0], xy_train[0][1], train_size=0.2, shuffle=True, random_state = 0 )
-
-
-
-
+r = int(np.random.uniform(1,1000))
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,
+                        random_state=r, stratify=y)
 
 # 모두 train과 동일하게 scaling을 해야함
 # scaling 1_1 MinMax
-x_train = x_train/255
-x_test = x_test/255
+# x_train = x_train/255
+# x_test = x_test/255
 
 #2
 model = Sequential()
-model.add(Conv2D(3, (25,25), input_shape=(200,200,3), activation='sigmoid'))
+model.add(Conv2D(32, (3, 3), input_shape=(100, 100, 3), activation='relu'))
 model.add(MaxPooling2D())
-model.add(Conv2D(2,(30,30), padding='valid',activation='relu'))
-model.add(Dropout(0.3))
-model.add(Conv2D(2,(20,20), padding='valid',activation='relu'))
-model.add(Dropout(0.3))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D())
 model.add(Flatten())
-model.add(Dense(3, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(16, activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
+
+# model = Sequential()
+# model.add(Conv2D(3, (25,25), input_shape=(100,100,3), activation='sigmoid'))
+# model.add(MaxPooling2D())
+# model.add(Conv2D(2,(30,30), padding='valid',activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Conv2D(2,(20,20), padding='valid',activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Flatten())
+# model.add(Dense(3, activation='relu'))
+# model.add(Dropout(0.3))
+# model.add(Dense(16, activation='relu'))
+# model.add(Dense(1, activation='sigmoid'))
 
 model.summary()
 
@@ -112,20 +128,22 @@ model.summary()
 model.compile(loss = 'binary_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience=50, verbose=1,
+                   patience = 50, verbose = 1,
                    restore_best_weights=True)
 fit_start = tm.time()
-model.fit(x_train, y_train, epochs= 2000, batch_size = 200,
-          verbose= 1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs= 1000, batch_size = 64,
+          verbose= 1, validation_data=(x_test,y_test), 
+          validation_split=0.2, callbacks=[es])
 fit_end = tm.time()
 fit_time = np.round(fit_end - fit_start, 2)
 
 #4
-loss = model.evaluate(x_test, y_test)
+loss = model.evaluate(x_test, y_test,verbose=1)
 # y_predict = model.predict(x_test)
 
 # acc = accuracy_score(y_test, np.round(y_predict))
 # print(y_predict)
+
 print('gen time ', gen_time)
 print('fit time', fit_time)
 print('loss', loss)
