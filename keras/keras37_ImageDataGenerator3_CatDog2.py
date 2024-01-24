@@ -65,7 +65,7 @@ es = EarlyStopping(monitor='val_loss', mode='auto', patience=50, verbose=1, rest
 
 # 모델 훈련
 start_time = tm.time()
-history = model.fit(
+history = model.fit_generator(
     xy_train_generator,
     steps_per_epoch=len(xy_train_generator), # xy_train_generator의 배치 수
     epochs=300,
