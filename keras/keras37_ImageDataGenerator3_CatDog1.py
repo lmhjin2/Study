@@ -146,7 +146,7 @@ es = EarlyStopping(monitor='val_loss', mode = 'auto',
                    patience = 50, verbose = 1,
                    restore_best_weights=True)
 fit_start = tm.time()
-hist = model.fit(x_train, y_train, epochs= 1000, batch_size = 64,
+hist = model.fit(x_train, y_train, epochs= 500, batch_size = 64,
           verbose= 1, validation_data=(x_test,y_test), 
           validation_split=0.2, callbacks=[es])
 fit_end = tm.time()
