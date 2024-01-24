@@ -31,6 +31,7 @@ xy_train = train_datagen.flow_from_directory(
     target_size=(200, 200),
     batch_size=10,
     class_mode='binary',
+    color_mode='grayscale',
     shuffle=True
 )   # Found 160 images belonging to 2 classes.
 
@@ -38,7 +39,8 @@ xy_test = test_datagen.flow_from_directory(
     path_test,
     target_size=(200, 200),
     batch_size=10,
-    class_mode='binary'
+    class_mode='binary',
+    color_mode='grayscale'  # color = 'rgb'
 )   # Found 120 images belonging to 2 classes.
 
 print(xy_train)
