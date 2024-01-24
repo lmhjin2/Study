@@ -42,7 +42,7 @@ np_path = 'c:/_data/_save_npy/'
 np.save(np_path + 'keras39_5_x_train.npy', arr = xy_train[0][0])
 np.save(np_path + 'keras39_5_y_train.npy', arr = xy_train[0][1])
 np.save(np_path + 'keras39_5_x_test.npy', arr = xy_test[0][0])
-np.save(np_path + 'keras39_5_y_test.npy', arr = xy_test[0][1])
+# np.save(np_path + 'keras39_5_y_test.npy', arr = xy_test[0][1])
 
 
 

@@ -18,6 +18,9 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(
     rescale=1./255 )
 
+submit_datagen = ImageDataGenerator(
+    rescale=1./255 )
+
 path_train = 'c:/_data/image/cat_and_dog/Train/'
 path_test = 'c:/_data/image/cat_and_dog/Test/'
 
@@ -34,16 +37,17 @@ xy_test = test_datagen.flow_from_directory(
     batch_size = 10000,
     class_mode = 'binary' )
 
+
 print(xy_train[0][0].shape) # (19997, 100, 100, 3)
 print(xy_train[0][1].shape) # (19997,)
 print(xy_test[0][0].shape) # (5000, 100, 100, 3)
-print(xy_test[0][1].shape) # (5000,)
+# print(xy_test[0][1].shape) # (5000,)
 
 np_path = 'c:/_data/_save_npy/'
 np.save(np_path + 'keras39_3_x_train.npy', arr = xy_train[0][0])
 np.save(np_path + 'keras39_3_y_train.npy', arr = xy_train[0][1])
-np.save(np_path + 'keras39_3_x_test.npy', arr = xy_test[0][0])
-np.save(np_path + 'keras39_3_y_test.npy', arr = xy_test[0][1])
+np.save(np_path + 'keras39_3_test.npy', arr = xy_test[0][0])
+# np.save(np_path + 'keras39_3_y_test.npy', arr = xy_test[0][1])
 
 
 
