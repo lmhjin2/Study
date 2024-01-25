@@ -73,6 +73,7 @@ print('acc', results[1])
 # print(y_predict)
 
 print("Predicted class probability:", y_predict[0, 0])  # 0이 남자
+# {'men': 0, 'women': 1}
 
 # loss 0.6826872825622559
 # acc 0.573440670967102

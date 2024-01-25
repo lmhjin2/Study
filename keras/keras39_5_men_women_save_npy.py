@@ -47,7 +47,8 @@ np.save(np_path + 'keras39_5_x_test.npy', arr = xy_test[0][0])
 
 
 
-
-
+class_labels = xy_train.class_indices
+print(class_labels)
+# {'men': 0, 'women': 1}
 
 
