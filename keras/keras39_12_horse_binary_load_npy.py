@@ -1,3 +1,6 @@
+# 39_7,8번 binary
+# 파라미터 4180만개 이상
+
 import numpy as np
 import pandas as pd
 from keras.models import Sequential, Model
@@ -21,8 +24,8 @@ np_path = 'c:/_data/_save_npy/'
 # y_test =np.load(np_path + 'keras39_07_y_test.npy')
 
 #1-2
-x = np.load(np_path + 'keras39_07_x.npy')
-y = np.load(np_path + 'keras39_07_y.npy')
+x = np.load(np_path + 'keras39_11_x.npy')
+y = np.load(np_path + 'keras39_11_y.npy')
 
 # print(x.shape)
 # print(y.shape)
@@ -31,25 +34,7 @@ x_train, x_test, y_train, y_test = train_test_split(x,y,
             test_size=0.2, random_state=42,stratify=y)
 
 # print(x_train.shape)    # (821, 300, 300, 3)
-#2-1
-
-# model = Sequential()
-# model.add(Conv2D(4, (5,5), input_shape=(300,300,3),
-#                  activation='relu'))
-# model.add(Dropout(0.2))
-# model.add(MaxPooling2D())
-# model.add(Conv2D(7,(6,6), activation='relu'))
-# model.add(MaxPooling2D())
-# model.add(Conv2D(3, (2,2), strides=(2,2), activation='relu'))
-# model.add(Dropout(0.2))
-# model.add(Flatten())
-# model.add(Dense(3, activation='relu'))
-# model.add(Dense(7, activation='relu'))
-# model.add(Dense(2, activation='softmax'))
-
-# model.summary()
-
-#2-2
+#2
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(2,2), input_shape = (x_train.shape[1], x_train.shape[2], x_train.shape[3]) , activation='relu'))
 model.add(MaxPooling2D((2,2), strides=(2,2)))
@@ -66,12 +51,13 @@ model.add(Dropout(0.4))
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(2, activation='softmax'))
+model.add(Dense(1, activation='sigmoid'))
 
 model.summary()
 
+
 #3
-model.compile(loss='categorical_crossentropy', optimizer='adam',
+model.compile(loss='binary_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode = 'min',
                    patience = 100, verbose = 1,
