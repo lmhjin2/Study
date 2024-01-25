@@ -1,3 +1,5 @@
+# https://www.kaggle.com/competitions/cat-and-dog-classification-harper2022/overview
+
 import numpy as np
 import pandas as pd
 from keras.models import Sequential, Model
@@ -78,7 +80,7 @@ for id in id_list:
 
 y_submit = pd.DataFrame({'id':id_list,'Target':y_predict})
 print(y_submit)
-y_submit.to_csv(path+"submit_0124.csv",index=False)
+y_submit.to_csv(path+"submit_0125.csv",index=False)
 
 
 
