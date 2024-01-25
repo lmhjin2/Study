@@ -1,3 +1,5 @@
+# https://www.kaggle.com/competitions/cat-and-dog-classification-harper2022/overview
+
 import numpy as np
 import pandas as pd
 from keras.models import Sequential, Model
