@@ -99,7 +99,7 @@ date = date.strftime("%m%d_%H%M")   # 월일_시분
 
 path1 = "c:/_data/_save/MCP/k28/11/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k28_', date, '_1_', filename])
+filepath = "".join([path1, 'k28_', date, '_2_', filename])
 
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
@@ -128,7 +128,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0125_rbs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0125_rbs2.csv", index=False)
 
 acc = accuracy_score(y_test, y_predict)
 f1 = f1_score(y_test, y_predict, average = 'macro') # [None, 'micro', 'macro', 'weighted'] 중에 하나
