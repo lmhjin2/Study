@@ -20,9 +20,9 @@ train_datagen = ImageDataGenerator(
     shear_range= 0.7,
     fill_mode='nearest'
 )
-augument_size = 40000
+augment_size = 40000
 
-randidx = np.random.randint(x_train.shape[0], size = augument_size, )
+randidx = np.random.randint(x_train.shape[0], size = augment_size, )
         # np.random.randint(60000, 40000)   6만개중에 4만개의 숫자를 뽑아내라
 # print(randidx) # [38946 26504 25897 ... 19778 49735 50152] list
 # print(np.min(randidx), np.max(randidx)) # 4 59999
@@ -47,7 +47,7 @@ x_augumented = x_augumented.reshape(
 
 x_augumented = train_datagen.flow(
     x_augumented, y_augumented,
-    batch_size=augument_size,
+    batch_size=augment_size,
     shuffle=False,
 ).next()[0]
 # print(x_augumented)
