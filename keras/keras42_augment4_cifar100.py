@@ -104,3 +104,6 @@ acc = accuracy_score(y_test, y_predict)
 print('run time', run_time)
 print('loss', results[0])
 print('acc', results[1], acc)
+
+# loss 2.90814208984375
+# acc 0.29910001158714294 0.2991
