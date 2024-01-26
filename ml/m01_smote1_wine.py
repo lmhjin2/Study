@@ -82,7 +82,7 @@ import sklearn as sk
 # 타임체크
 smote = SMOTE(random_state = 42)    # 갯수 가장 높은녀석 기준으로 나머지를 올림.
 x_train, y_train = smote.fit_resample(x_train, y_train)
-print(pd.value_counts(y_train))
+# print(pd.value_counts(y_train))
 # 타임체크.
 # 오래걸리면 넘파이로 꼭 저장하기. 한번에 많이 돌리면 시간이 많이많이 늘어남
 #2

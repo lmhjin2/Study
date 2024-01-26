@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
+from imblearn.over_sampling import SMOTE
 import time as tm
 
 path = "c:/_data/dacon/dechul/"
@@ -53,11 +54,15 @@ y = train_csv['대출등급']
 y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
+
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1785 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1818 )     
 # 1785 / 1818 / 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
+
+smote = SMOTE(random_state = 42)    # 갯수 가장 높은녀석 기준으로 나머지를 올림.
+x_train, y_train = smote.fit_resample(x_train, y_train)
 
 # scaler = MinMaxScaler()
 # scaler = StandardScaler()
@@ -105,14 +110,14 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 500, verbose = 2,
+                   patience = 50, verbose = 2,
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 10000,
-                 batch_size = 500, validation_split = 0.18,
+hist = model.fit(x_train, y_train, epochs = 100,
+                 batch_size = 5000, validation_split = 0.18,
                  verbose = 2, callbacks=[es, mcp] )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -171,4 +176,7 @@ print('run time', run_time)
 # GPU
 # 89.58 초
 
-
+# 점수 : 0.9134947636
+# accuracy_score : 0.9274216811861766
+# loss 0.21114441752433777
+# f1 score 0.9081019393097084
