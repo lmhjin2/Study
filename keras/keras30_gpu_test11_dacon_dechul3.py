@@ -105,14 +105,14 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 1000, verbose = 2,
+                   patience = 500, verbose = 2,
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 30000,
-                 batch_size = 100, validation_split = 0.18,
+hist = model.fit(x_train, y_train, epochs = 10000,
+                 batch_size = 500, validation_split = 0.18,
                  verbose = 2, callbacks=[es, mcp] )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
