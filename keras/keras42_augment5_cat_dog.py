@@ -46,6 +46,15 @@ x_augmented = train_datagen.flow(
 x_train = np.concatenate((x_train, x_augmented))
 y_train = np.concatenate((y_train, y_augmented))
 
+print(x_train.shape, x_test.shape)
+print(y_train.shape, y_test.shape)
+
+# (25997, 100, 100, 3) (4000, 100, 100, 3)
+# (25997,) (4000,)
+
+# (45997, 100, 100, 3) (4000, 100, 100, 3)
+# (45997,) (4000,)
+
 #2
 model = Sequential()
 model.add(Conv2D(2, (16, 16), input_shape=(100, 100, 3), activation='relu'))
@@ -68,7 +77,7 @@ model.summary()
 model.compile(loss = 'binary_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 50, verbose = 1,
+                   patience = 5, verbose = 1,
                    restore_best_weights=True)
 fit_start = tm.time()
 hist = model.fit(x_train, y_train, epochs= 300, batch_size = 64,
@@ -97,14 +106,11 @@ for id in id_list:
 
 
 y_submit = pd.DataFrame({'id':id_list, 'Target':y_predict})
-print(y_submit)
+# print(y_submit)
 y_submit.to_csv(path+"submit_0126.csv", index=False)
-
-
 
 # submit_df = pd.DataFrame(submit, columns=['Class'])
 # submit_df.to_csv('c:/_data/kaggle/cat_and_dog/')
-
 
 print('fit time', fit_time)
 print('loss', loss)
@@ -112,4 +118,5 @@ print('loss', loss)
 # fit time 87.31
 # loss [0.6893544793128967, 1.0]
 
-
+# fit time 37.68
+# loss [0.6846022009849548, 0.5565000176429749]

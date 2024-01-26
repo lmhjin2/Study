@@ -17,8 +17,8 @@ x_test = x_test/255.
 
 train_datagen = ImageDataGenerator(
     # rescale=1./255,
-    horizontal_flip = True,
-    vertical_flip=True,
+    # horizontal_flip = True,
+    # vertical_flip=True,
     width_shift_range=0.2,
     height_shift_range=0.2,
     rotation_range=30,
