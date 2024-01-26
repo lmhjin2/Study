@@ -50,7 +50,7 @@ model.add(Dropout(0.2))
 model.add(Conv2D(64, (2,2), activation='relu'))
 model.add(MaxPooling2D((2,2), strides=(2,2)))
 model.add(Dropout(0.3))
-    
+
 model.add(Conv2D(126, (2,2), activation='relu'))
 model.add(MaxPooling2D((2,2), strides=(2,2)))
 model.add(Dropout(0.4))
@@ -79,3 +79,6 @@ loss,acc = model.evaluate(x_test,y_test)
 
 print('loss', loss)
 print('accuracy', acc)
+
+# loss 0.005761188920587301
+# accuracy 1.0
