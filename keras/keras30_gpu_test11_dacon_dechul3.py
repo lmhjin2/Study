@@ -83,6 +83,17 @@ model.add(Dropout(0.2))
 model.add(Dense(128, activation = 'relu'))
 model.add(Dense(53, activation = 'relu'))
 model.add(Dense(27, activation = 'relu'))
+model.add(Dense(48, activation = 'relu'))
+model.add(Dense(128, activation = 'relu'))
+model.add(Dropout(0.2))
+model.add(Dense(72, activation = 'relu'))
+model.add(Dense(128, activation = 'relu'))
+model.add(Dropout(0.2))
+model.add(Dense(84, activation = 'relu'))
+model.add(Dropout(0.2))
+model.add(Dense(128, activation = 'relu'))
+model.add(Dense(53, activation = 'relu'))
+model.add(Dense(27, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
 
 # model = Sequential()
@@ -90,6 +101,8 @@ model.add(Dense(7, activation = 'softmax'))
 # model.add(Dense(32, activation = 'relu'))
 # model.add(Dense(16, activation = 'relu'))
 # model.add(Dense(7, activation = 'softmax'))
+
+model.summary()
 
 #3
 import datetime
@@ -105,7 +118,7 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 500, verbose = 2,
+                   patience = 1000, verbose = 2,
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
