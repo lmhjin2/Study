@@ -83,17 +83,6 @@ model.add(Dropout(0.2))
 model.add(Dense(128, activation = 'relu'))
 model.add(Dense(53, activation = 'relu'))
 model.add(Dense(27, activation = 'relu'))
-model.add(Dense(48, activation = 'relu'))
-model.add(Dense(128, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(72, activation = 'relu'))
-model.add(Dense(128, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(84, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(128, activation = 'relu'))
-model.add(Dense(53, activation = 'relu'))
-model.add(Dense(27, activation = 'relu'))
 model.add(Dense(7, activation = 'softmax'))
 
 # model = Sequential()
@@ -141,7 +130,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0128_rbs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0129_1.csv", index=False)
 # https://dacon.io/competitions/official/236214/mysubmission
 
 acc = accuracy_score(y_test, y_predict)
