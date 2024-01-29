@@ -101,7 +101,7 @@ date = date.strftime("%m%d_%H%M")   # 월일_시분
 
 path1 = "c:/_data/_save/MCP/k28/11/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k28_', date, '_2_', filename])
+filepath = "".join([path1, 'k28_', date, '_1_', filename])
 
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
@@ -130,7 +130,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0130_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0130_1.csv", index=False)
 # https://dacon.io/competitions/official/236214/mysubmission
 
 acc = accuracy_score(y_test, y_predict)
@@ -141,39 +141,12 @@ print('loss', results[0])
 print('f1 score', f1)
 print('run time', run_time)
 
-# scaler = MinMaxScaler()
-# accuracy_score : 0.9191715225292794
-# run time 4188.69
-# loss 0.5466686487197876
-# f1 score 0.8978954857467664
-
-# scaler = StandardScaler()
-# accuracy_score : 0.8998442277736111
-# run time 2353.3
-# loss 0.3901255130767822
-# f1 score 0.8632198023469781
-
-# scaler = MaxAbsScaler()
-# accuracy_score : 0.9096521086943979   
-# run time 5581.98   
-# loss 0.42253240942955017
-# f1 score 0.8794265224077572
-
-# scaler = RobustScaler()
-# accuracy_score : 0.8962672359083829
-# run time 1869.31
-# loss 0.4001994729042053
-# f1 score 0.8628113819593662
-
-
-
-# CPU
-# 94.08 초
-
-# GPU
-# 89.58 초
 
 # 점수 : 0.9134947636
 # accuracy_score : 0.9274216811861766
 # loss 0.21114441752433777
 # f1 score 0.9081019393097084
+
+# accuracy_score : 0.9267870535971846
+# loss 0.2142585664987564
+# f1 score 0.9098269876560444
