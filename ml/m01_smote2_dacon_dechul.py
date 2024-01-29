@@ -1,9 +1,8 @@
 # https://dacon.io/competitions/official/236214/mysubmission
-
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, BatchNormalization
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
@@ -16,7 +15,6 @@ path = "c:/_data/dacon/dechul/"
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)  
 test_csv = pd.read_csv(path + 'test.csv', index_col=0)  
 submission_csv = pd.read_csv(path + 'sample_submission.csv')
-
 
 le_work_period = LabelEncoder() 
 le_work_period.fit(train_csv['근로기간'])
@@ -43,27 +41,17 @@ le_loan_period.fit(train_csv['대출기간'])
 train_csv['대출기간'] = le_loan_period.transform(train_csv['대출기간'])
 test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 
-
 x = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
-
-
-
-
 
 y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
-
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1818 )     
+    x, y_ohe, stratify=y, test_size = 0.1818, random_state = 1785 )
 # 1785 / 1818 / 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
-
-smote = SMOTE(random_state = 42)    # 갯수 가장 높은녀석 기준으로 나머지를 올림.
-x_train, y_train = smote.fit_resample(x_train, y_train)
-
 # scaler = MinMaxScaler()
 # scaler = StandardScaler()
 # scaler = MaxAbsScaler()
@@ -74,27 +62,56 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
-#2
-model = Sequential()
-model.add(Dense(26, input_shape = (13,), activation = 'relu'))
-model.add(Dense(48, activation = 'relu'))
-model.add(Dense(128, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(72, activation = 'relu'))
-model.add(Dense(128, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(84, activation = 'relu'))
-model.add(Dropout(0.2))
-model.add(Dense(128, activation = 'relu'))
-model.add(Dense(53, activation = 'relu'))
-model.add(Dense(27, activation = 'relu'))
-model.add(Dense(7, activation = 'softmax'))
+smote = SMOTE(random_state = 48)    # 갯수 가장 높은녀석 기준으로 나머지를 올림.
+x_train, y_train = smote.fit_resample(x_train, y_train)
+# print(len(x_train))
+# print(x_train.shape, y_train.shape) # (165410, 13) (165410, 7)
 
+#2
 # model = Sequential()
-# model.add(Dense(64, input_shape = (13,), activation = 'relu'))
-# model.add(Dense(32, activation = 'relu'))
-# model.add(Dense(16, activation = 'relu'))
+# model.add(Dense(100, input_shape = (13,), activation = 'sigmoid'))
+# model.add(Dense(48, activation = 'relu'))
+# model.add(Dropout(0.2))
+# model.add(Dense(66, activation = 'relu'))
+# model.add(Dropout(0.2))
+# model.add(Dense(82, activation = 'relu'))
+# # model.add(Dense(68, activation = 'relu'))
+# # model.add(Dropout(0.2))
+# # model.add(Dense(74, activation = 'relu'))
+# # model.add(Dropout(0.2))
+# # model.add(Dense(98, activation = 'relu'))
+# # model.add(Dropout(0.2))
+# # model.add(Dense(53, activation = 'relu'))
+# model.add(Dense(27, activation = 'relu'))
 # model.add(Dense(7, activation = 'softmax'))
+# model.summary()
+
+model = Sequential()
+model.add(Dense(212, activation='swish', input_shape=(13,)))
+model.add(Dense(150, activation='swish'))
+model.add(Dropout(0.1))
+model.add(BatchNormalization())
+model.add(Dense(231, activation='swish'))
+model.add(Dropout(0.2))
+model.add(BatchNormalization())
+model.add(Dense(354, activation='swish'))
+model.add(Dropout(0.1))
+model.add(BatchNormalization())
+model.add(Dense(210, activation='swish'))
+model.add(Dropout(0.1))
+model.add(BatchNormalization())
+model.add(Dense(164, activation='swish'))
+model.add(Dropout(0.1))
+model.add(BatchNormalization())
+model.add(Dense(115, activation='swish'))
+model.add(Dropout(0.1))
+model.add(BatchNormalization())
+model.add(Dense(225, activation='swish'))
+model.add(Dropout(0.1))
+model.add(BatchNormalization())
+model.add(Dense(125, activation='swish'))
+model.add(Dense(7, activation='softmax')) 
+model.summary()
 
 #3
 import datetime
@@ -110,14 +127,14 @@ model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
 
 es = EarlyStopping(monitor='val_loss', mode = 'auto',
-                   patience = 50, verbose = 2,
+                   patience = 500, verbose = 2,
                    restore_best_weights = True)
 mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
                       verbose=1, save_best_only=True,
     filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 100,
-                 batch_size = 5000, validation_split = 0.18,
+hist = model.fit(x_train, y_train, epochs = 10000,
+                 batch_size = 2000, validation_split = 0.1828,
                  verbose = 2, callbacks=[es, mcp] )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
