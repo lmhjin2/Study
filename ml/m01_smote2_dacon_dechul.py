@@ -150,7 +150,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0126_rbs1.csv", index=False)
+submission_csv.to_csv(path + "submission_0129_rbs1.csv", index=False)
 # https://dacon.io/competitions/official/236214/mysubmission
 
 acc = accuracy_score(y_test, y_predict)
