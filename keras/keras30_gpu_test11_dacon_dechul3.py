@@ -101,7 +101,7 @@ date = date.strftime("%m%d_%H%M")   # 월일_시분
 
 path1 = "c:/_data/_save/MCP/k28/11/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k28_', date, '_2_', filename])
+filepath = "".join([path1, 'k28_', date, '_1_', filename])
 
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
