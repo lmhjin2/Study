@@ -92,3 +92,7 @@ submit.to_csv('c:/_data/kaggle/jena/jena_submit.csv', index=False)
 # loss 9.458792192162946e-06
 # [[79.06234]]
 
+# fit_time 107.28
+# loss 1.4996258869359735e-05
+# mse 1.4996271185029734e-05
+# r2 0.9992335538554432
