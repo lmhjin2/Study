@@ -157,4 +157,4 @@ print('run time', run_time)
 # loss 0.17946083843708038
 # f1 score 0.924449262145721
 
-# LSTM
+# LSTM 구데기
