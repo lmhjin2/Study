@@ -67,6 +67,8 @@ model.add(Dropout(0.2))
 model.add(Dense(11))
 model.add(Dense(1))
 
+model.summary()
+
 #3
 import datetime
 

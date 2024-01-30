@@ -33,17 +33,17 @@ y_test = to_categorical(y_test)
 
 #2
 model=Sequential()
-model.add(LSTM(800, input_shape=(28,28), activation='sigmoid'))
+model.add(LSTM(80, input_shape=(28,28), activation='sigmoid'))
 model.add(Dropout(0.2))
-model.add(Dense(700, activation='relu'))
-model.add(Dense(570, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(420, activation='relu'))
-model.add(Dense(340, activation='relu'))
-model.add(Dropout(0.2))
-model.add(Dense(200, activation='relu'))
-model.add(Dense(150, activation='relu'))
 model.add(Dense(70, activation='relu'))
+model.add(Dense(57, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(42, activation='relu'))
+model.add(Dense(34, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(20, activation='relu'))
+model.add(Dense(15, activation='relu'))
+model.add(Dense(17, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 
 model.summary()
@@ -54,7 +54,7 @@ es = EarlyStopping(monitor='val_loss', mode='auto',
 model.compile(loss='categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])
 start_time=tm.time()
-model.fit(x_train, y_train, epochs = 2000, batch_size = 500,
+model.fit(x_train, y_train, epochs = 2000, batch_size = 5000,
           verbose=1, validation_split = 0.21 , callbacks=[es])
 end_time=tm.time()
 run_time = round(end_time-start_time, 2)
@@ -110,3 +110,9 @@ print('acc', results[1], acc)
 # run time  66.9
 # loss 0.40729230642318726
 # acc 0.8503000140190125 0.8503
+
+# LSTM
+# run time  84.22
+# loss 0.44433456659317017
+# acc 0.8436999917030334 0.8437
+

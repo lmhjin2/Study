@@ -6,6 +6,7 @@ from keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D, LSTM
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.utils import to_categorical
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import RobustScaler, MinMaxScaler,MaxAbsScaler,StandardScaler
 import time as tm
 
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
@@ -21,25 +22,35 @@ import time as tm
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 
+x_train = x_train.reshape(50000, 32*32*3)
+x_test = x_test.reshape(10000, 32*32*3)
+
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+
 x_train = x_train.reshape(50000, 32*3, 32)
 x_test = x_test.reshape(10000, 32*3, 32)
-print(x_train.shape, x_test.shape)
+# print(x_train.shape, x_test.shape)
 # (50000, 3072) (30000, 3072)
 
 
 
 #2
 model = Sequential()
-model.add(LSTM(3500, input_shape=(96,32), activation='relu'))
+model.add(LSTM(15, input_shape=(32*3,32), activation='swish'))
 model.add(Dropout(0.2))
-model.add(Dense(2800, activation='relu'))
+model.add(Dense(26, activation='swish'))
 model.add(Dropout(0.2))
-model.add(Dense(2300, activation='relu'))
+model.add(Dense(23, activation='swish'))
 model.add(Dropout(0.2))
-model.add(Dense(1500, activation='relu'))
+model.add(Dense(32, activation='swish'))
 model.add(Dropout(0.2))
-model.add(Dense(800, activation='relu'))
+model.add(Dense(28, activation='swish'))
 model.add(Dense(10, activation='softmax'))
+
+model.summary()
 
 #3
 es = EarlyStopping(monitor='val_accuracy', mode = 'auto',
@@ -49,7 +60,7 @@ es = EarlyStopping(monitor='val_accuracy', mode = 'auto',
 model.compile(loss='categorical_crossentropy', optimizer = 'adam',
               metrics=['accuracy'])
 start_time = tm.time()
-model.fit(x_train, y_train, epochs = 1000, batch_size = 1818, 
+model.fit(x_train, y_train, epochs = 1000, batch_size = 18181, 
           verbose = 1 , validation_split = 0.18 , callbacks=[es])
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -87,3 +98,8 @@ print('acc ', results[1], acc)
 # Dense Layer
 # loss 1.4936628341674805
 # acc  0.5188999772071838 0.5189
+
+# LSTM
+# run time 56.11
+# loss 2.1593985557556152
+# acc  0.20020000636577606 0.2002

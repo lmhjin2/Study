@@ -157,3 +157,8 @@ print("run time:", run_time)
 # GPU
 # 18.17 초
 
+# LSTM
+# loss: 1.104003667831421
+# acc: 0.5363636612892151
+# accuracy_score : 0.5363636363636364
+# run time: 23.48
