@@ -4,7 +4,7 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, LSTM, Dropout, GRU, Conv2D, Bidirectional
 from keras.callbacks import EarlyStopping
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
 import time as tm
@@ -13,6 +13,7 @@ import time as tm
 
 data = pd.read_csv('c:/_data/kaggle/jena/jena_climate_2009_2016.csv', index_col=0)
 size = 144
+
 # print(data.shape)   # (420551, 14)
 # ---------------------------------------------------------------------------------------------
 # def split_x(dataset,size):
@@ -102,11 +103,12 @@ fit_time = np.round(fit_end - fit_start, 2)
 loss = model.evaluate(x_test, y_test)
 y_predict = model.predict(x_test)
 mse = mean_squared_error(y_test, y_predict)
+r2 = r2_score(y_test, y_predict)
 # print('split_time',split_time)
-print('fit_time',fit_time)
+print('fit_time', fit_time)
 print('loss', loss)
 print('mse', mse)
-
+print('r2', r2)
 
 # loss 9.458792192162946e-06
 # [[79.06234]]
