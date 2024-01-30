@@ -39,5 +39,4 @@ np.save(path_npy + 'keras52_yena3_x.npy', arr = x)
 np.save(path_npy + 'keras52_yena3_y.npy', arr = y)
 
 
-
-    
+print(y)

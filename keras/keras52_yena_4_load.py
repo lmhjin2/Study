@@ -45,7 +45,7 @@ es = EarlyStopping(monitor = 'val_loss', mode = 'auto', verbose = 1,
                    patience = 100, restore_best_weights=True)
 
 fit_start = tm.time()
-model.fit(x_train, y_train, epochs = 1000, batch_size = 2000, validation_split = 0.17,
+model.fit(x_train, y_train, epochs = 1000, batch_size = 20000, validation_split = 0.17,
           verbose = 1, callbacks=[es])
 fit_end = tm.time()
 fit_time = np.round(fit_end - fit_start, 2)
@@ -62,8 +62,13 @@ print('loss', loss)
 print('mse', mse)
 print('r2', r2)
 
-submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
-submit.to_csv('c:/_data/kaggle/jena/jena_submit_1.csv', index=False)
+## ERROR
+# submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
+# submit.to_csv('c:/_data/kaggle/jena/jena_submit_1.csv', index=False)
+#   File "c:\Study\keras\keras52_yena_4_load.py", line 65, in <module>
+#     submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
+# ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 2 dimensions. 
+# The detected shape was (2, 63081) + inhomogeneous part.
 
 
 # loss 9.458792192162946e-06
