@@ -130,7 +130,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0130_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0130_1.csv", index=False)
 # https://dacon.io/competitions/official/236214/mysubmission
 
 acc = accuracy_score(y_test, y_predict)
@@ -142,11 +142,7 @@ print('f1 score', f1)
 print('run time', run_time)
 
 
-# 점수 : 0.9134947636
-# accuracy_score : 0.9274216811861766
-# loss 0.21114441752433777
-# f1 score 0.9081019393097084
-
-# accuracy_score : 0.9267870535971846
-# loss 0.2142585664987564
-# f1 score 0.9098269876560444
+# 점수 0.91392
+# accuracy_score : 0.9356141464258928
+# loss 0.18289394676685333
+# f1 score 0.9230744496445683
