@@ -33,7 +33,7 @@ def split_xy(data, time_step, y_col):
     
     return np.array(result_x), np.array(result_y)
 
-x, y = split_xy(data,3,'T (degC)')
+x, y = split_xy(data,30,'T (degC)')
 
 path_npy = 'c:/_data/_save_npy/'
 np.save(path_npy + 'keras52_yena_x.npy', arr = x)
@@ -49,7 +49,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.18, random
 
 #2
 model = Sequential()
-model.add(GRU(22, input_shape = (3,14), activation='sigmoid'))
+model.add(GRU(22, input_shape = (30,14), activation='sigmoid'))
 model.add(Dense(25, activation ='swish'))
 model.add(Dense(28, activation ='swish'))
 model.add(Dense(27, activation ='swish'))
@@ -89,6 +89,9 @@ submit = pd.DataFrame(np.array([y_true, predicted_degC]).reshape(-1,2), columns 
 submit.to_csv('c:/_data/kaggle/jena/jena_submit.csv', index=False)
 
 
-# loss 9.458792192162946e-06
-# [[79.06234]]
 
+
+# fit_time 905.69
+# loss 1.2866002180089708e-05
+# mse 1.2866009574829116e-05
+# r2 0.9993432310315777
