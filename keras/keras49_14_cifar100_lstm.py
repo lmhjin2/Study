@@ -4,6 +4,7 @@ from keras.datasets import cifar100
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D, LSTM
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+from sklearn.preprocessing import RobustScaler, MinMaxScaler,MaxAbsScaler,StandardScaler
 from keras.utils import to_categorical
 from sklearn.metrics import accuracy_score
 import time as tm
@@ -20,18 +21,26 @@ import time as tm
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 
+x_train = x_train.reshape(50000, 32*3*32)
+x_test = x_test.reshape(10000, 32*3*32)
+
+scaler = RobustScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+
 x_train = x_train.reshape(50000, 32*3, 32)
 x_test = x_test.reshape(10000, 32*3, 32)
 
 
 # 2
 model = Sequential()
-model.add(LSTM(3300, input_shape=(96,32), activation='relu'))
-model.add(Dense(2800, activation='relu'))
-model.add(Dense(2200, activation='relu'))
-model.add(Dense(1700, activation='relu'))
-model.add(Dense(900, activation='relu'))
-model.add(Dense(300, activation='relu'))
+model.add(LSTM(22, input_shape=(32*3,32), activation='swish'))
+model.add(Dense(28, activation='swish'))
+model.add(Dense(22, activation='swish'))
+model.add(Dense(17, activation='swish'))
+model.add(Dense(90, activation='swish'))
+model.add(Dense(30, activation='swish'))
 model.add(Dense(100, activation='softmax'))
 
 #3
@@ -43,7 +52,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam',
 
 start_time = tm.time()
 
-model.fit(x_train, y_train, epochs = 1000, batch_size = 500,
+model.fit(x_train, y_train, epochs = 1000, batch_size = 50000,
           verbose = 1, validation_split = 0.15, callbacks = [es])
 
 end_time = tm.time()
@@ -78,3 +87,7 @@ print('acc', results[1], acc)
 # run time 56.48
 # loss 3.593038558959961
 # acc 0.21279999613761902 0.2128
+
+# LSTM
+# loss 3.8704495429992676
+# acc 0.1145000010728836 0.1145
