@@ -59,10 +59,10 @@ x_test = x_test.reshape(-1,54,1)
 
 #2
 model = Sequential()
-model.add(LSTM(120, input_shape = (54,1), activation='relu'))
+model.add(LSTM(12, input_shape = (54,1), activation='relu'))
 model.add(Dropout(0.2))
-model.add(Dense(90, activation='relu'))
-model.add(Dense(60, activation='relu'))
+model.add(Dense(39, activation='relu'))
+model.add(Dense(26, activation='relu'))
 model.add(Dropout(0.2))
 model.add(Dense(30, activation='relu'))
 model.add(Dense(10, activation='relu'))
@@ -88,7 +88,7 @@ mcp = ModelCheckpoint(monitor = 'val_loss',mode='auto',
             verbose = 1, save_best_only=True,
             filepath=filepath)
 start_time = tm.time()
-hist = model.fit(x_train, y_train, epochs = 1000,
+hist = model.fit(x_train, y_train, epochs = 500,
                  batch_size = 50000, validation_split = 0.2,
                  verbose = 2 )
 end_time = tm.time()
@@ -161,3 +161,7 @@ print('run time', run_time)
 # GPU
 # 68.57 초
 
+# loss: 0.7334080338478088
+# acc: 0.6861870884895325
+# accuracy_score : 0.6861871036031773
+# run time 328.24

@@ -119,7 +119,7 @@ mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
     filepath=filepath)
 start_time = tm.time()
 hist = model.fit(x_train, y_train, epochs = 10000,
-                 batch_size = 500, validation_split = 0.18,
+                 batch_size = 5000, validation_split = 0.18,
                  verbose = 2, callbacks=[es, mcp] )
 end_time = tm.time()
 run_time = round(end_time - start_time, 2)
@@ -152,7 +152,9 @@ print('run time', run_time)
 # loss 0.18289394676685333
 # f1 score 0.9230744496445683
 
-# 점수 
+# 점수 0.9211624768
 # accuracy_score : 0.9361333871805227
 # loss 0.17946083843708038
 # f1 score 0.924449262145721
+
+# LSTM
