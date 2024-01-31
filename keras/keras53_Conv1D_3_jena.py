@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, LSTM, GRU, Bidirectional
+from keras.layers import Dense, Dropout, LSTM, GRU, Bidirectional, Conv1D
 from keras.callbacks import EarlyStopping
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
@@ -29,7 +29,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, rando
 
 #2
 model=Sequential()
-model.add(GRU(2, input_shape=(720, 14), activation='sigmoid'))
+model.add(Conv1D(2, 2, input_shape = (720, 14), activation='sigmoid'))
+model.add(GRU(2, activation='swish'))
+model.add(Dense(8))
 model.add(Dense(1))
 
 model.summary()
@@ -60,4 +62,5 @@ print('r2', r2)
 y_test = y_test.reshape(-1,1)
 
 submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
-submit.to_csv('c:/_data/kaggle/jena/jena2_submit_1.csv', index=False)
+submit.to_csv('c:/_data/kaggle/jena/jena2_submit_keras53_3.csv', index=False)
+

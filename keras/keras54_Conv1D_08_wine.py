@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import load_wine
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, LSTM
+from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
@@ -11,6 +11,9 @@ from sklearn.metrics import accuracy_score
 datasets = load_wine()
 x = datasets.data
 y = datasets.target
+
+x = x.astype(np.float32)
+y = y.astype(np.float32)
 
 # print(x.shape, y.shape) # (178, 13) (178,)
 # print(pd.value_counts(y))
@@ -52,11 +55,13 @@ x_test = scaler.transform(x_test)
 x_train = x_train.reshape(-1,13,1)
 x_test = x_test.reshape(-1,13,1)
 
+# print(x_train.shape, x_test.shape)  # (132, 13, 1) (36, 13, 1)
 
 #2
 model = Sequential()
-model.add(LSTM(120, input_shape = (13,1)))
+model.add(Conv1D(120, 10, input_shape = (13,1)))
 model.add(Dropout(0.2))
+model.add(Flatten())
 model.add(Dense(90))
 model.add(Dense(60))
 model.add(Dropout(0.2))
@@ -117,48 +122,21 @@ y_predict = np.argmax(y_predict, axis=1)
 acc = accuracy_score(y_predict, y_test)
 print('accuracy_score :', acc)
 print("run time:", run_time)
-
-
-
-# loss: 0.0532647967338562
-# acc: 1.0
-# accuracy_score : 1.0
-
-
-# scaler = MinMaxScaler()
-# loss: 0.027338437736034393
-# acc: 1.0
-# accuracy_score : 1.0
-
-
+print('wine')
 # scaler = StandardScaler()
 # loss: 0.018835054710507393
 # acc: 1.0
 # accuracy_score : 1.0
 
-
-# scaler = MaxAbsScaler()
-# loss: 0.027734629809856415
-# acc: 1.0
-# accuracy_score : 1.0
-
-
-# scaler = RobustScaler()
-# loss: 0.026079488918185234
-# acc: 0.9722222089767456
-# accuracy_score : 0.9722222222222222
-
-
-
-
 # StandardScaler
 
-# CPU
-# 19.34 초
-
-# GPU
-# 18.95 초
-
+# LSTM
 # loss: 0.14838989078998566
 # acc: 0.9722222089767456
 # accuracy_score : 0.9722222222222222
+
+# Conv1D
+# loss: 0.6062490344047546
+# acc: 0.9444444179534912
+# accuracy_score : 0.9444444444444444
+
