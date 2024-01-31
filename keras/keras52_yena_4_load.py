@@ -62,9 +62,12 @@ print('loss', loss)
 print('mse', mse)
 print('r2', r2)
 
+# print(y_test.shape, y_predict.shape)
+y_test = y_test.reshape(-1,1)
+# print(y_test.shape, y_predict.shape)
 ## ERROR
-# submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
-# submit.to_csv('c:/_data/kaggle/jena/jena_submit_1.csv', index=False)
+submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
+submit.to_csv('c:/_data/kaggle/jena/jena_submit_1.csv', index=False)
 #   File "c:\Study\keras\keras52_yena_4_load.py", line 65, in <module>
 #     submit = pd.DataFrame(np.array([y_test, y_predict]).reshape(-1,2), columns = ['test', 'predict'])
 # ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 2 dimensions. 
