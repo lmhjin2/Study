@@ -57,8 +57,9 @@ merge1 = concatenate([output1, output11, output21], name = 'mg1')     # 이건 �
 merge2 = Dense(7, name='mg2')(merge1)
 merge3 = Dense(11, name='mg3')(merge2)
 last_output = Dense(2, name = 'last')(merge3)
+last_output2 = Dense(2, name = 'last')(merge3)
 
-model = Model(inputs=[input1, input11, input21], outputs = last_output)
+model = Model(inputs=[input1, input11, input21], outputs = [last_output, last_output2])
 # model.summary()
     # print(merge1.shape) # (None, 15)
     
