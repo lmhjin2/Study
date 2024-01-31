@@ -35,10 +35,10 @@ model.summary()
 #3
 model.compile(loss = 'mse', optimizer='adam')
 es = EarlyStopping(monitor='val_loss', mode = 'min',verbose=1,
-                   patience=100, restore_best_weights=True)
+                   patience=10, restore_best_weights=True)
 
 fit_start = tm.time()
-model.fit(x_train, y_train, epochs = 1, batch_size = 2000,
+model.fit(x_train, y_train, epochs = 300, batch_size = 2000,
           validation_split=0.2, callbacks=[es])
 fit_end = tm.time()
 fit_time = np.round(fit_end-fit_start, 2)
