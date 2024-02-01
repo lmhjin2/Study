@@ -1,6 +1,9 @@
 from keras.preprocessing.text import Tokenizer
 import numpy as np
 import pandas as pd
+from keras.models import Sequential
+from keras.layers import Dense, Conv1D, LSTM, GRU, Dropout, Flatten
+from keras.callbacks import EarlyStopping
 
 #1 데이터
 docs = [
@@ -11,7 +14,7 @@ docs = [
     '상헌이 바보', '반장 잘생겼다', '욱이 또 잔다'
 ]
 
-labels = np.array([1,1,1,1,1,0,0,0,0,0,0,1,0,1,0])
+labels = np.array([1,1,1,1,1,0,0,0,0,0,0,1,0,1,0])  # 1 = 긍정 / 0 = 부정
 
 token = Tokenizer()
 token.fit_on_texts(docs)
@@ -36,11 +39,43 @@ from keras.utils import pad_sequences
 # from keras_preprocessing.sequence import pad_sequences
 pad_x = pad_sequences(x, 
                     #   padding = 'pre' ,   # shape를 맞추기위해 임의의 숫자를 채우는것.
-                      maxlen = 5 ,          # 최대 길이.
+                      maxlen = 5 ,          # 최대 길이. 기본값이 최대길이를 알아서 잘 잡아줌.
                     #   truncating = 'pre'  # 잘린다면 어디를 자를것인가.
                       ) # padding, truncating 에 pre면 앞에 post면 뒤에 / 기본값 둘다 'pre'
 # print(pad_x)
 # print(pad_x.shape)  # (15, 5)
+
+
+# dnn, lstm, conv1d
+
+#2
+model = Sequential()
+model.add(Dense(82, input_shape = (5,), activation='relu'))
+model.add(Dense(56, activation='relu'))
+model.add(Dense(77, activation='relu'))
+model.add(Dense(31, activation='relu'))
+model.add(Dense(15, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+model.summary()
+
+#3
+model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics=['accuracy'])
+es = EarlyStopping(monitor='loss', mode='auto', verbose=1,
+                   patience = 200, restore_best_weights=True)
+model.fit(pad_x, labels, batch_size = 32, epochs = 1000, verbose=1, callbacks=[es])
+
+#4
+loss, acc = model.evaluate(pad_x, labels)
+
+print('loss', loss)
+print('acc', acc)
+
+# loss 1.651626746479451e-07
+# acc 1.0
+
+
 
 
 
