@@ -5,7 +5,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Conv1D, LSTM, GRU, Dropout, Flatten, Embedding, Reshape
 from keras.callbacks import EarlyStopping
 
-(x_train, y_train), (x_test, y_test) = reuters.load_data(num_words=1000,
+(x_train, y_train), (x_test, y_test) = reuters.load_data(num_words = 1000,
                                                          test_split=0.2)
     # print(x_train)
     # print(x_train.shape, x_test.shape) # (8982,) (2246,)
@@ -50,15 +50,16 @@ model.summary()
 
 #3
 model.compile(loss = 'sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-es = EarlyStopping(monitor='val_loss', mode='auto', verbose=1,
-                   patience= 200, restore_best_weights=True)
-model.fit(x_train,y_train, batch_size=100, epochs = 1000, verbose=1, callbacks=[es])
+es = EarlyStopping(monitor='loss', mode='auto', verbose=1,
+                   patience= 500, restore_best_weights=True)
+model.fit(x_train, y_train, batch_size = 1000, epochs = 3000, verbose=1, validation_data=(x_test,y_test), validation_split=0.2, callbacks=[es])
 
 #4
 loss, acc = model.evaluate(x_test, y_test)
 
 print('loss', loss)
-print('acc', acc),
+print('acc', acc)
 
-
+# loss 1.7657196521759033
+# acc 0.5538735389709473
 
