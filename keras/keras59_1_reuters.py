@@ -31,15 +31,15 @@ from keras.callbacks import EarlyStopping
 
 # 전처리
 from keras.utils import pad_sequences
-x_train = pad_sequences(x_train, padding='pre', maxlen=100, truncating='pre')
-x_test = pad_sequences(x_test, padding='pre', maxlen=100, truncating='pre')
+x_train = pad_sequences(x_train, padding='pre', maxlen=300, truncating='pre')
+x_test = pad_sequences(x_test, padding='pre', maxlen=300, truncating='pre')
 
 # y 원핫은 선택사항. 귀찮으면 sparse_categorical_crossentropy
     # print(x_train.shape, x_test.shape)  # (8982, 100) (2246, 100)
 
 #2
 model = Sequential()
-model.add(Embedding(input_dim = 100, output_dim=28))
+model.add(Embedding(input_dim = 1000, output_dim=28))
 model.add(LSTM(28, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(22, activation='relu'))
@@ -63,3 +63,5 @@ print('acc', acc)
 # loss 1.7657196521759033
 # acc 0.5538735389709473
 
+# loss 80.24693298339844
+# acc 0.6162065863609314
