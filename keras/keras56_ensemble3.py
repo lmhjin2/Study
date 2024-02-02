@@ -56,8 +56,8 @@ merge1 = concatenate([output1, output11, output21], name = 'mg1')     # 이건 �
     #  mg1 (Concatenate)              (None, 15)           0           ['bit4[0][0]', 'bit14[0][0]']
 merge2 = Dense(7, name='mg2')(merge1)
 merge3 = Dense(11, name='mg3')(merge2)
-last_output = Dense(2, name = 'last')(merge3)
-last_output2 = Dense(2, name = 'last')(merge3)
+last_output = Dense(2, name = 'last1')(merge3)
+last_output2 = Dense(2, name = 'last2')(merge3)
 
 model = Model(inputs=[input1, input11, input21], outputs = [last_output, last_output2])
 # model.summary()
@@ -73,3 +73,7 @@ loss = model.evaluate([x1_test, x2_test, x3_test], [y1_test, y2_test])
 
 print('loss : ', loss)
 # loss :  8.03669308879762e-07
+# loss :  [0.00017915567150339484, 1.6967454939731397e-05, 0.00016218821110669523]
+
+
+# 첫번째 로스가 전체적인 loss, 두번째가 모델 1, 세번째가 모델 2

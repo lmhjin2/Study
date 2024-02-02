@@ -54,7 +54,7 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1785 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 1234 )     
 # 1785 / 1818 / 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -101,7 +101,7 @@ date = date.strftime("%m%d_%H%M")   # 월일_시분
 
 path1 = "c:/_data/_save/MCP/k28/11/"
 filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k28_', date, '_3_', filename])
+filepath = "".join([path1, 'k28_', date, '_1_', filename])
 
 model.compile(loss = 'categorical_crossentropy', optimizer='adam',
               metrics = ['accuracy'])
@@ -130,7 +130,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0202_3.csv", index=False)
+submission_csv.to_csv(path + "submission_0203_1.csv", index=False)
 # https://dacon.io/competitions/official/236214/mysubmission
 
 acc = accuracy_score(y_test, y_predict)
@@ -151,3 +151,4 @@ print('run time', run_time)
 # accuracy_score : 0.9361333871805227
 # loss 0.17946083843708038
 # f1 score 0.924449262145721
+
