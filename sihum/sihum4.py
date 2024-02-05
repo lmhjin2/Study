@@ -3,12 +3,11 @@ import pandas as pd
 import numpy as np
 import pandas as pd
 from keras.models import Sequential, Model
-from keras.layers import Dense, Conv1D, Conv2D, SimpleRNN, LSTM, GRU, Dropout, Flatten, Embedding, Reshape, Input, concatenate, Concatenate
+from keras.layers import Dense, Conv1D, Conv2D, SimpleRNN, LSTM, GRU, Dropout, Flatten, Embedding, Reshape, Input, concatenate, Concatenate, Bidirectional
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error, mean_squared_log_error, accuracy_score, f1_score, mean_absolute_error
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-# import matplotlib as plt
 
 # csv 불러오기 + 컬럼명 지정
 path = 'c:/_data/sihum/'
@@ -93,7 +92,9 @@ amore = amore_concat.set_index('일자')
 # 결측치에 0 넣기
 samsung.fillna(0, inplace=True)
 amore.fillna(0, inplace=True)
-
+# print(samsung)
+# print(amore)
+# print(samsung.shape)
 # samsung_max = samsung.max().max()
 # amore_max = amore.max().max()   #  3억2662만2000
 # print(samsung_max, amore_max)   # (326622000, 3896837)
@@ -113,11 +114,16 @@ def split_x(dataset, timestep, column):
 
 samsung_x, samsung_y = split_x(samsung, 20, 15)
 amore_x, amore_y = split_x(amore, 20, 15)
+# print(samsung_x)
+# print(amore_x)
+# print(samsung_x.shape)
+
+# predict_samsung
 
 # 스케일링
 samsung_x = samsung_x.reshape(4329*20, 16)
 amore_x = amore_x.reshape(4329*20 ,16)
-scaler = MaxAbsScaler()
+scaler = RobustScaler()
 scaler.fit(samsung_x)
 # print(samsung_x.shape)  # (4329, 20, 16)
 samsung_x = scaler.transform(samsung_x)
@@ -126,26 +132,43 @@ amore_x = scaler.transform(amore_x)
 samsung_x = samsung_x.reshape(-1,20,16)
 amore_x = amore_x.reshape(-1,20,16)
 
-# print(samsung_y)
-# print(amore_y)
 
-# predict 데이터 만들기
-predict_samsung = samsung_concat[samsung_concat['일자'] > '2024/01/08']
-predict_samsung = predict_samsung.set_index('일자')
-    # print(predict_samsung.shape)
 
-predict_amore = amore_concat[amore_concat['일자'] > '2024/01/08']
-predict_amore = predict_amore.set_index('일자')
+
+#######################################태홍  predict 데이터 만들기 ##############################################
+# predict_samsung = samsung_concat[samsung_concat['일자'] > '2024/01/08']
+# predict_samsung = predict_samsung.set_index('일자')
+#     # print(predict_samsung.shape)
+
+# predict_amore = amore_concat[amore_concat['일자'] > '2024/01/08']
+# predict_amore = predict_amore.set_index('일자')
 
     # print(predict_amore.shape)
 
 # 최종 predict 데이터 스케일링
-predict_samsung = pd.DataFrame(columns = predict_samsung.columns, index=predict_samsung.index)
-predict_amore = pd.DataFrame(columns=predict_amore.columns, index = predict_amore.index)
+# predict_samsung = pd.DataFrame(columns = predict_samsung.columns, index=predict_samsung.index)
+# predict_amore = pd.DataFrame(columns=predict_amore.columns, index = predict_amore.index)
 
-predict_samsung = predict_samsung.values.reshape(1,20,16)
-predict_amore = predict_amore.values.reshape(1,20,16)
+# predict_samsung = predict_samsung.values.reshape(1,20,16)
+# predict_amore = predict_amore.values.reshape(1,20,16)
+# print(predict_samsung.dtype)
+# print(samsung_x.dtype)
 
+
+predict_samsung = samsung.to_numpy()
+predict_amore = amore.to_numpy()
+
+predict_samsung = predict_samsung[-20:]
+predict_amore = predict_amore[-20:]
+
+
+# print(predict_samsung)
+# print(predict_samsung.shape)
+# print(predict_amore)
+predict_samsung = predict_samsung.reshape(1,20,16)
+predict_amore = predict_amore.reshape(1,20,16)
+
+###################################################################################################################
 # train_test_val_split
 samsung_x_train, samsung_x_split, samsung_y_train, samsung_y_split = train_test_split(samsung_x, samsung_y, test_size=0.4, random_state= 0 , shuffle=False)
 samsung_x_val, samsung_x_test, samsung_y_val, samsung_y_test = train_test_split(samsung_x_split, samsung_y_split, test_size=0.5, random_state= 0 , shuffle=False)
@@ -162,28 +185,29 @@ amore_x_val, amore_x_test, amore_y_val, amore_y_test = train_test_split(amore_x_
 
 # 2-1 ss
 input_ss = Input(shape=(20,16))
-dense1 = Dense(64, name='ss1')(input_ss)
-dense2 = Dense(32, name='ss2')(dense1)
-dense3 = Dense(16, name='ss3')(dense2)
-dense4 = Dense(4, name='ss4')(dense3)
-flat1 = Flatten()(dense4)
-output_ss = Dense(1, activation='linear', name='ssout')(flat1)
+dense1 = Bidirectional(LSTM(32, return_sequences=True, name='ss1'))(input_ss)
+dense2 = LSTM(64, name='ss2')(dense1)
+dense3 = Dense(128, name='ss3')(dense2)
+dense4 = Dense(32, name='ss4')(dense3)
+dense5 = Dense(16, name='ss5')(dense4)
+output_ss = Dense(1, activation='linear', name='ssout')(dense5)
 
 # 2-2 am
 input_am = Input(shape=(20,16))
-dense11 = Dense(64, name='am1')(input_am)
-dense12 = Dense(32, name='am2')(dense11)
-dense13 = Dense(16, name='am3')(dense12)
-dense14 = Dense(4, name='am4')(dense13)
-flat11 = Flatten()(dense14)
-output_am = Dense(1, activation='linear', name='amout')(flat11)
+dense11 = Bidirectional(LSTM(32, return_sequences=True, name='am1'))(input_am)
+dense12 = LSTM(64, name='am2')(dense11)
+dense13 = Dense(128, name='am3')(dense12)
+dense14 = Dense(32, name='am4')(dense13)
+dense15 = Dense(16, name='am5')(dense14)
+output_am = Dense(1, activation='linear', name='amout')(dense15)
 
 # 2-3 concatenate
 merge1 = concatenate([output_ss, output_am], name='mg1')
-merge2 = Dense(16, name='mg2')(merge1)
-merge3 = Dense(4, name = 'mg3')(merge2)
-last_ss = Dense(1, name='ss_last')(merge3)
-last_am = Dense(1, name='am_last')(merge3)
+merge2 = Dense(64, name='mg2')(merge1)
+merge3 = Dense(32, name = 'mg3')(merge2)
+merge4 = Dense(16, name = 'mg4')(merge3)
+last_ss = Dense(1, name='ss_last')(merge4)
+last_am = Dense(1, name='am_last')(merge4)
 
 model = Model(inputs = [input_ss, input_am], outputs = [last_ss,last_am])
 
@@ -203,6 +227,7 @@ y_predict = model.predict([samsung_x_test, amore_x_test])
 
 test_ss = y_predict[0]
 test_am = y_predict[1]
+
 # print(test_ss.shape, test_am.shape)
 
 # print(samsung_x_test.shape, test_ss.shape)  # (866, 20, 16) (866, 20, 1)
@@ -218,21 +243,20 @@ loss = model.evaluate([samsung_x_test, amore_x_test], [samsung_y_test, amore_y_t
 
 # print(samsung_y_test.shape, test_ss.shape)   # (866,) (1,)
 
+# r2_ss = r2_score(samsung_y_test, test_ss)
+# r2_am = r2_score(amore_y_test, test_am)
+# print('r2:', r2_ss, r2_am)
 # print('test_ss', test_ss)
 # print('test_am', test_am)
 
-# print('loss:', loss)
+# print('test_ss', test_ss.shape)
+# print('test_am', test_am.shape)
+print('loss:', loss)
 # test_ss = np.round(test_ss,2)
-# print(test_ss[-1:])
+# print('7일 삼성전자 시가:', test_ss[-1:])
 # test_am = np.round(test_am,2)
-# print(test_am[-1:])
+# print('7일 아모레 종가:', test_am[-1:])
 
-
-
-# print(predict_samsung.shape) # (4350, 16)
-
-predict_samsung = predict_samsung.reshape(1,20,16)
-predict_amore = predict_amore.reshape(1,20,16)
 
 pred_sihum = model.predict([predict_samsung, predict_amore])
 sihum_ss = pred_sihum[0]
@@ -242,3 +266,4 @@ sihum_ss = np.round(sihum_ss,2)
 print('7일 삼성전자 시가:', sihum_ss[-1:])
 sihum_am = np.round(sihum_am,2)
 print('7일 아모레 종가:', sihum_am[-1:])
+
