@@ -54,7 +54,7 @@ y = y.values.reshape(-1,1)
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y_ohe, stratify=y, test_size = 0.18, random_state = 996 )     
+    x, y_ohe, stratify=y, test_size = 0.18, random_state = 181718)     
 # 1785 / 1818 / 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler
@@ -130,7 +130,7 @@ y_submit = np.argmax(y_submit, axis=1)
 y_submit = le_grade.inverse_transform(y_submit)
 
 submission_csv['대출등급'] = y_submit
-submission_csv.to_csv(path + "submission_0204_1.csv", index=False)
+submission_csv.to_csv(path + "submission_0205_1.csv", index=False)
 # https://dacon.io/competitions/official/236214/mysubmission
 
 acc = accuracy_score(y_test, y_predict)
