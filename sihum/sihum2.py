@@ -97,7 +97,7 @@ x1_predict = x1_predict.reshape(10,80)
 x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-scaler = StandardScaler()
+scaler = RobustScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
 
@@ -159,7 +159,7 @@ import datetime
 date = datetime.datetime.now() 
 date = date.strftime("%m%d_%H%M")
 
-es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200 , 
+es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 50 , 
                    restore_best_weights=True)
 mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, 
                 save_best_only=True, 
@@ -182,12 +182,23 @@ print('7일 삼성전자 시가:', ss[-1:])
 print('7일 아모레 종가:', am[-1:])
 print('합계:', ss[-1:] + am[-1:])
 
-# 74200
-# 125300
-# 199500 ~ 199400
+# 74200 
+# 125300 
+# 199500 
 
-# sihum_0206_1207_0133-5182.92
-# 7일 삼성전자 시가: [[74531.3]]
-# 7일 아모레 종가: [[131342.73]]
-# 205,874.03
+# sihum_0206_1521_0116-7941.28  # standard?
+# loss: [9072.9365234375, 1447.607177734375, 7625.3291015625]
+# 7일 삼성전자 시가: [[75798.4]]
+# 7일 아모레 종가: [[126436.61]]
+# 합계: [[202235.]]
+
+
+# RobustScaler
+# sihum_0206_1637_0140-7207.09
+# loss: [6180.25732421875, 1085.841796875, 5094.416015625]
+# 7일 삼성전자 시가: [[74566.88]]
+# 7일 아모레 종가: [[126625.66]]
+# 합계: [[201192.53]]
+
+
 
