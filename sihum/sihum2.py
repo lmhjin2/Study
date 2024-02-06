@@ -1,5 +1,11 @@
 import numpy as np
 import pandas as pd
+import tensorflow as tf
+import random as rn
+
+rn.seed(98)
+tf.random.set_seed(10)
+np.random.seed(13)
 
 path = 'c:/_data/sihum/'
 
@@ -81,7 +87,7 @@ x2_predict = x2[-10:]
 from sklearn.model_selection import train_test_split
 x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(
     x1, x2, y1, y2, 
-    random_state = 121913 , 
+    random_state = 171819 , 
     train_size = 0.9 , 
     shuffle=False
 )
@@ -97,7 +103,7 @@ x1_predict = x1_predict.reshape(10,80)
 x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-scaler = RobustScaler()
+scaler = MaxAbsScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
 
