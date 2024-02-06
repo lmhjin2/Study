@@ -1,5 +1,11 @@
 import numpy as np
 import pandas as pd
+import tensorflow as tf
+import random as rn
+
+rn.seed(98)
+tf.random.set_seed(10)
+np.random.seed(13)
 
 path = 'c:/_data/sihum/'
 
@@ -81,7 +87,8 @@ x2_predict = x2[-10:]
 from sklearn.model_selection import train_test_split
 x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(
     x1, x2, y1, y2, 
-    random_state = 121913 , 
+    # random_state = 121913 , 
+    random_state = 158796 , 
     train_size = 0.9 , 
     shuffle=False
 )
@@ -188,18 +195,18 @@ print('합계:', ss[-1:] + am[-1:])
 
 # Standard
 
-# sihum_0206_1500_0153-17234.72
+# sihum_0206_1500_0153-17234.72     # Standard
 # loss: [17587.95703125, 1234.08056640625, 16353.8798828125]
 # 7일 삼성전자 시가: [[73813.12]]
 # 7일 아모레 종가: [[122339.48]]
 # 합계: [[196152.6]]
 
-# sihum_0206_1207_0133-5182.92
+# sihum_0206_1207_0133-5182.92      # MinMax
 # 7일 삼성전자 시가: [[74531.3]]
 # 7일 아모레 종가: [[131342.73]]
 # 합계: [[205874.03]]
 
-# sihum_0206_1648_0174-6349.60
+# sihum_0206_1648_0174-6349.60      # MaxAbs
 # loss: [9184.806640625, 1000.1015014648438, 8184.70458984375]
 # 7일 삼성전자 시가: [[74068.54]]
 # 7일 아모레 종가: [[130236.34]]
