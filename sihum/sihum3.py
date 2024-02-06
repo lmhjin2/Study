@@ -81,7 +81,7 @@ x2_predict = x2[-10:]
 from sklearn.model_selection import train_test_split
 x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(
     x1, x2, y1, y2, 
-    random_state = 112233 , 
+    random_state = 121913 , 
     train_size = 0.9 , 
     shuffle=False
 )
@@ -184,6 +184,7 @@ print('합계:', ss[-1:] + am[-1:])
 
 # 74200
 # 125300
+# 199500 ~ 199400
 
 # sihum_0206_1207_0133-5182.92
 # 7일 삼성전자 시가: [[74531.3]]
@@ -195,5 +196,9 @@ print('합계:', ss[-1:] + am[-1:])
 # 7일 아모레 종가: [[127291.34]]
 # 합계: [[203236.1]]
 
-
+# sihum_0206_1246_0078-7478.02
+# loss: [8323.6708984375, 1322.6815185546875, 7000.98828125]
+# 7일 삼성전자 시가: [[72400.3]]
+# 7일 아모레 종가: [[118789.22]]
+# 합계: [[191189.52]]
 

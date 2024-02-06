@@ -89,7 +89,7 @@ x2_test = x2_test.reshape(141,10,8)
 x1_predict = x1_predict.reshape(10,10,8)
 x2_predict = x2_predict.reshape(10,10,8)
 
-model = load_model(path + 'sihum_0206_1223_0102-5319.89.hdf5')
+model = load_model(path + 'sihum_0206_1246_0078-7478.02.hdf5')
 
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
 
