@@ -36,12 +36,12 @@ datasets2 = datasets2.sort_values('일자', ascending=True)
 # print(datasets1.head)
 # print(datasets1.shape)  # (1418, 10)
 
-# datasets2['시가'] = datasets2['시가'].str.replace(',','') # 서브컴은 주석 해야 되네?
+# datasets2['시가'] = datasets2['시가'].str.replace(',','') # 서브컴은 주석 해야 됨. 대체 왜?
 
-datasets1 = datasets1.astype('float64')
-datasets2 = datasets2.astype('float64')
+# datasets1 = datasets1.astype('float64')
+# datasets2 = datasets2.astype('float64')
 
-# print(datasets2.dtypes)
+print(datasets2.dtypes)
 
 x1 = datasets1.drop(['시가'], axis=1)
 # x1 = datasets1.drop(['종가'], axis=1)
@@ -167,7 +167,7 @@ date = datetime.datetime.now()
 date = date.strftime("%m%d_%H%M")
 
 es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200, restore_best_weights=True)
-mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, save_best_only=True, filepath ="".join([filepath,'시험_',date,'_',filename]))
+mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, save_best_only=True, filepath ="".join([filepath,'sihum_',date,'_',filename]))
 model.fit([x1_train, x2_train],[y1_train, y2_train], epochs=10000, batch_size=10, validation_split=0.2, callbacks=[es,mcp])
 
 #평가 예측
@@ -192,5 +192,3 @@ print('7일 아모레 종가:', am[-1:])
 #0143_0180
 # 7일 삼성전자 시가: [[74839.96]]
 # 7일 아모레 종가: [[146881.56]]
-
-
