@@ -35,8 +35,7 @@ datasets2 = datasets2.sort_values('일자', ascending=True)
 # print(datasets1.head)
 # print(datasets1.shape)  # (1418, 10)
 
-print(datasets2.dtypes)
-
+# print(datasets2.dtypes)
 
 x1 = datasets1.drop(['시가'], axis=1)
 x1 = x1.drop(['종가'], axis=1)
@@ -49,7 +48,6 @@ y2 = datasets2['종가']
 # print(x1.isnull().sum())
 # print(x2.isnull().sum())
 # print(x1.shape) # (1418, 8)
-
 
 # import matplotlib.pyplot as plt
 # # plt.plot(x1['거래량']) #거래량 robust
@@ -99,7 +97,7 @@ x1_predict = x1_predict.reshape(10,80)
 x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-scaler = MinMaxScaler()
+scaler = StandardScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
 
@@ -115,7 +113,6 @@ x2_train = x2_train.reshape(1266,10,8)
 x2_test = x2_test.reshape(141,10,8)
 x1_predict = x1_predict.reshape(10,10,8)
 x2_predict = x2_predict.reshape(10,10,8)
-
 
 #모델구성
 from keras.models import Model
@@ -166,28 +163,35 @@ es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200 , restore_
 mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, 
                       save_best_only=True, filepath ="".join([filepath,'sihum_',date,'_',filename]))
 model.fit([x1_train, x2_train],[y1_train, y2_train], 
-          epochs=100000 , batch_size = 33 , validation_split= 0.2 , 
+          epochs= 100000 , batch_size = 33 , validation_split= 0.2 , 
           callbacks=[es,mcp])
 
 #평가 예측
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
-print('loss:',loss)
 
 y_predict =np.round(model.predict([x1_predict, x2_predict]),2)
 
 ss = y_predict[0]
 am = y_predict[1]
 
+
+print('loss:',loss)
 print('7일 삼성전자 시가:', ss[-1:])
 print('7일 아모레 종가:', am[-1:])
+print('합계:', ss[-1:] + am[-1:])
 
 # 74200
 # 125300
 
-# sihum_0206_1105_0043-7108.93
-# 7일 삼성전자 시가: [[75180.61]]
-# 7일 아모레 종가: [[139686.98]]
-
 # sihum_0206_1207_0133-5182.92
 # 7일 삼성전자 시가: [[74531.3]]
 # 7일 아모레 종가: [[131342.73]]
+# 205,874.03
+
+# sihum_0206_1223_0102-5319.89.hdf5
+# 7일 삼성전자 시가: [[75944.74]]
+# 7일 아모레 종가: [[127291.34]]
+# 합계: [[203236.1]]
+
+
+
