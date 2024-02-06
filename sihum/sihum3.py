@@ -34,11 +34,19 @@ datasets1 = datasets1.sort_values('일자', ascending=True)
 datasets2 = datasets2.sort_values('일자', ascending=True)
 
 # print(datasets1.head)
+# print(datasets1.shape)  # (1418, 10)
+
+datasets2['시가'] = datasets2['시가'].str.replace(',','')
+
+datasets1 = datasets1.astype('float64')
+datasets2 = datasets2.astype('float64')
+
+# print(datasets2.dtypes)
 
 x1 = datasets1.drop(['시가'], axis=1)
-x1 = datasets1.drop(['종가'], axis=1)
-x2 = datasets2.drop(['시가'], axis=1)
-x2 = datasets2.drop(['시가'], axis=1)
+# x1 = datasets1.drop(['종가'], axis=1)
+# x2 = datasets2.drop(['시가'], axis=1)
+x2 = datasets2.drop(['종가'], axis=1)
 y1 = datasets1['시가']
 y2 = datasets2['종가']
 
@@ -74,13 +82,13 @@ y2 = y2[timesteps+1:]
 x1_predict = x1[-10:]
 x2_predict = x2[-10:]
 #########################################################
-
+# print(x2[-1])
 
 from sklearn.model_selection import train_test_split
 # x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(x1,x2,y1,y2, random_state = 158796, train_size = 0.9, shuffle=False)
 x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(
     x1, x2, y1, y2, 
-    random_state = 158796 , 
+    random_state = 981013 , 
     train_size = 0.9 , 
     shuffle=False
 )
@@ -106,14 +114,12 @@ x2_test = scaler.transform(x2_test)
 x1_predict = scaler.transform(x1_predict)
 x2_predict = scaler.transform(x2_predict)
 
-
 x1_train = x1_train.reshape(1266,10,9)
 x1_test = x1_test.reshape(141,10,9)
 x2_train = x2_train.reshape(1266,10,9)
 x2_test = x2_test.reshape(141,10,9)
 x1_predict = x1_predict.reshape(10,10,9)
 x2_predict = x2_predict.reshape(10,10,9)
-
 
 
 #모델구성
@@ -140,14 +146,14 @@ output2 = Dense(16)(dense14)
 from keras.layers import concatenate
 merge1 = concatenate([output1, output2])
 out1 = Dense(32)(merge1)
-out1 = Dense(16)(out1)
-out1 = Dense(1)(out1)
+out2 = Dense(16)(out1)
+out3 = Dense(1)(out2)
 
-out2 = Dense(32)(merge1)
-out2 = Dense(64)(out2)
-out2 = Dense(1)(out2)
+out21 = Dense(32)(merge1)
+out22 = Dense(64)(out21)
+out23 = Dense(1)(out22)
 
-model = Model(inputs = [input1,input2], outputs = [out1, out2])
+model = Model(inputs = [input1,input2], outputs = [out3, out23])
 model.summary()
 
 #컴파일 훈련
@@ -160,15 +166,13 @@ import datetime
 date = datetime.datetime.now() 
 date = date.strftime("%m%d_%H%M")
 
-es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 150, restore_best_weights=True)
+es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200, restore_best_weights=True)
 mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, save_best_only=True, filepath ="".join([filepath,'시험_',date,'_',filename]))
-model.fit([x1_train, x2_train],[y1_train, y2_train], epochs=10000, batch_size=16, validation_split=0.2, callbacks=[es,mcp])
+model.fit([x1_train, x2_train],[y1_train, y2_train], epochs=10000, batch_size=1, validation_split=0.2, callbacks=[es,mcp])
 
 #평가 예측
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
 print('loss:',loss)
-
-
 
 y_predict =np.round(model.predict([x1_predict, x2_predict]),2)
 
@@ -177,6 +181,7 @@ am = y_predict[1]
 
 print('7일 삼성전자 시가:', ss[-1:])
 print('7일 아모레 종가:', am[-1:])
+
 #74200
 #1204006
 
@@ -187,6 +192,5 @@ print('7일 아모레 종가:', am[-1:])
 #0143_0180
 # 7일 삼성전자 시가: [[74839.96]]
 # 7일 아모레 종가: [[146881.56]]
-
 
 
