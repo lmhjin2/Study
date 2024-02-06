@@ -40,15 +40,16 @@ print(datasets2.dtypes)
 
 
 x1 = datasets1.drop(['시가'], axis=1)
-# x1 = datasets1.drop(['종가'], axis=1)
-# x2 = datasets2.drop(['시가'], axis=1)
-x2 = datasets2.drop(['종가'], axis=1)
+x1 = x1.drop(['종가'], axis=1)
+x2 = datasets2.drop(['시가'], axis=1)
+x2 = x2.drop(['종가'], axis=1)
+
 y1 = datasets1['시가']
 y2 = datasets2['종가']
 
 # print(x1.isnull().sum())
 # print(x2.isnull().sum())
-# print(x1.shape) # (1418, 9)
+# print(x1.shape) # (1418, 8)
 
 
 # import matplotlib.pyplot as plt
@@ -91,12 +92,12 @@ x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = tra
 # print(x2_train.shape, x2_test.shape) #(1266, 10, 9) (141, 10, 9)
 # print(x1_predict.shape, x2_predict.shape) #(10, 10, 9) (10, 10, 9)
 
-x1_train = x1_train.reshape(1266,90)
-x1_test = x1_test.reshape(141,90)
-x2_train = x2_train.reshape(1266,90)
-x2_test = x2_test.reshape(141,90)
-x1_predict = x1_predict.reshape(10,90)
-x2_predict = x2_predict.reshape(10,90)
+x1_train = x1_train.reshape(1266,80)
+x1_test = x1_test.reshape(141,80)
+x2_train = x2_train.reshape(1266,80)
+x2_test = x2_test.reshape(141,80)
+x1_predict = x1_predict.reshape(10,80)
+x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 scaler = MinMaxScaler()
@@ -109,19 +110,19 @@ x2_test = scaler.transform(x2_test)
 x1_predict = scaler.transform(x1_predict)
 x2_predict = scaler.transform(x2_predict)
 
-x1_train = x1_train.reshape(1266,10,9)
-x1_test = x1_test.reshape(141,10,9)
-x2_train = x2_train.reshape(1266,10,9)
-x2_test = x2_test.reshape(141,10,9)
-x1_predict = x1_predict.reshape(10,10,9)
-x2_predict = x2_predict.reshape(10,10,9)
+x1_train = x1_train.reshape(1266,10,8)
+x1_test = x1_test.reshape(141,10,8)
+x2_train = x2_train.reshape(1266,10,8)
+x2_test = x2_test.reshape(141,10,8)
+x1_predict = x1_predict.reshape(10,10,8)
+x2_predict = x2_predict.reshape(10,10,8)
 
 
 #모델구성
 from keras.models import Model
 from keras.layers import LSTM, Input, Bidirectional, Flatten, Dropout, Dense
 #모델1
-input1 = Input(shape = (10,9))
+input1 = Input(shape = (10,8))
 lstm1  = Bidirectional(LSTM(32, return_sequences=True, name = 'ls1'))(input1)
 lstm2 = Bidirectional(LSTM(64, return_sequences=True, name='ls2'))(lstm1)
 lstm3 = LSTM(32, name='ls3')(lstm2)
@@ -131,7 +132,7 @@ dense3 = Dense(16, name='d3')(dense2)
 output1 = Dense(8, name='o1')(dense3)
 
 #모델2
-input2 = Input(shape = (10,9))
+input2 = Input(shape = (10,8))
 lstm11 = LSTM(32, return_sequences=True, name='ls11')(input2)
 lstm12 = Bidirectional(LSTM(64, return_sequences=True, name='ls12'))(lstm11)
 lstm13 = Bidirectional(LSTM(32, name='ls13'))(lstm12)
