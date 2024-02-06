@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 
 path = 'c:/_data/sihum/'
-path_save = 'c:/_data/sihum/save/'
 
 datasets1 = pd.read_csv(path + '삼성 240205.csv', index_col = 0, encoding = 'euc-kr', thousands = ',')
 datasets2 = pd.read_csv(path + '아모레 240205.csv', index_col = 0, encoding = 'euc-kr', thousands = ',')
@@ -156,7 +155,7 @@ model.summary()
 #컴파일 훈련
 model.compile(loss='mae', optimizer='adamax', loss_weights=[1.0, 1.0])
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-filepath = 'c:/_data/sihum/'
+filepath = 'c:/_data/sihum/save/'
 filename = '{epoch:04d}-{val_loss:.2f}.hdf5'
 
 import datetime
