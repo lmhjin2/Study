@@ -159,9 +159,11 @@ import datetime
 date = datetime.datetime.now() 
 date = date.strftime("%m%d_%H%M")
 
-es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200 , restore_best_weights=True)
+es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200 , 
+                   restore_best_weights=True)
 mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, 
-                      save_best_only=True, filepath ="".join([filepath,'sihum_',date,'_',filename]))
+                save_best_only=True, 
+                filepath ="".join([filepath,'sihum_',date,'_',filename]))
 model.fit([x1_train, x2_train],[y1_train, y2_train], 
           epochs= 100000 , batch_size = 33 , validation_split= 0.2 , 
           callbacks=[es,mcp])
