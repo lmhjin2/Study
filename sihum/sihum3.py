@@ -97,7 +97,7 @@ x1_predict = x1_predict.reshape(10,80)
 x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-scaler = StandardScaler()
+scaler = MaxAbsScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
 
@@ -159,7 +159,7 @@ import datetime
 date = datetime.datetime.now() 
 date = date.strftime("%m%d_%H%M")
 
-es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200 , 
+es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 50 , 
                    restore_best_weights=True)
 mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, 
                 save_best_only=True, 
@@ -182,34 +182,30 @@ print('7일 삼성전자 시가:', ss[-1:])
 print('7일 아모레 종가:', am[-1:])
 print('합계:', ss[-1:] + am[-1:])
 
-# 74200
-# 125300
-# 199500 ~ 199400
+#  74200     74400
+# 125300    124900
+# 199500    199300
+
+# Standard
+
+# sihum_0206_1500_0153-17234.72
+# loss: [17587.95703125, 1234.08056640625, 16353.8798828125]
+# 7일 삼성전자 시가: [[73813.12]]
+# 7일 아모레 종가: [[122339.48]]
+# 합계: [[196152.6]]
 
 # sihum_0206_1207_0133-5182.92
 # 7일 삼성전자 시가: [[74531.3]]
 # 7일 아모레 종가: [[131342.73]]
-# 205,874.03
+# 합계: [[205874.03]]
 
-# sihum_0206_1223_0102-5319.89.hdf5
-# 7일 삼성전자 시가: [[75944.74]]
-# 7일 아모레 종가: [[127291.34]]
-# 합계: [[203236.1]]
+# sihum_0206_1648_0174-6349.60
+# loss: [9184.806640625, 1000.1015014648438, 8184.70458984375]
+# 7일 삼성전자 시가: [[74068.54]]
+# 7일 아모레 종가: [[130236.34]]
+# 합계: [[204304.88]]
 
-# sihum_0206_1246_0078-7478.02
-# loss: [8323.6708984375, 1322.6815185546875, 7000.98828125]
-# 7일 삼성전자 시가: [[72400.3]]
-# 7일 아모레 종가: [[118789.22]]
-# 합계: [[191189.52]]
 
-# sihum_0206_1258_0035-9663.24
-# loss: [13164.5576171875, 8197.9716796875, 4966.5859375]
-# 7일 삼성전자 시가: [[63773.62]]
-# 7일 아모레 종가: [[135001.7]]
-# 합계: [[198775.33]]
 
-# sihum_0206_1308_0272-6979.07
-# loss: [10374.9345703125, 1778.8380126953125, 8596.09765625]
-# 7일 삼성전자 시가: [[76568.99]]
-# 7일 아모레 종가: [[133082.14]]
-# 합계: [[209651.12]]
+
+
