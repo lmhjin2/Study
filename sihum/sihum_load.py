@@ -35,6 +35,7 @@ datasets2['시가'] = datasets2['시가'].str.replace(',','') # 서브컴은 주
 datasets1 = datasets1.astype('float64')
 datasets2 = datasets2.astype('float64')
 
+
 x1 = datasets1.drop(['시가'], axis=1)
 x2 = datasets2.drop(['종가'], axis=1)
 y1 = datasets1['시가']
@@ -103,3 +104,4 @@ am = y_predict[1]
 
 print('7일 삼성전자 시가:', ss[-1:])
 print('7일 아모레 종가:', am[-1:])
+
