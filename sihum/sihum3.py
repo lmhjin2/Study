@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 path = 'c:/_data/sihum/'
-path_save = 'c:/_data/sihum/'
+path_save = 'c:/_data/sihum/save/'
 
 datasets1 = pd.read_csv(path + '삼성 240205.csv', index_col = 0, encoding = 'euc-kr', thousands = ',')
 datasets2 = pd.read_csv(path + '아모레 240205.csv', index_col = 0, encoding = 'euc-kr', thousands = ',')
@@ -154,7 +154,7 @@ model = Model(inputs = [input1,input2], outputs = [out3, out23])
 model.summary()
 
 #컴파일 훈련
-model.compile(loss='mae', optimizer='adamax')
+model.compile(loss='mae', optimizer='adamax', loss_weights=[1.0, 1.0])
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 filepath = 'c:/_data/sihum/'
 filename = '{epoch:04d}-{val_loss:.2f}.hdf5'
@@ -182,18 +182,13 @@ am = y_predict[1]
 print('7일 삼성전자 시가:', ss[-1:])
 print('7일 아모레 종가:', am[-1:])
 
-#74200
-#1204006
-
-#0137_0091 
-#7일 삼성전자 시가: [[69425.64]]
-# 7일 아모레 종가: [[137076.58]]
-
-#0143_0180
-# 7일 삼성전자 시가: [[74839.96]]
-# 7일 아모레 종가: [[146881.56]]
+# 74200
+# 125300
 
 # sihum_0206_1105_0043-7108.93
 # 7일 삼성전자 시가: [[75180.61]]
 # 7일 아모레 종가: [[139686.98]]
 
+# sihum_0206_1207_0133-5182.92
+# 7일 삼성전자 시가: [[74531.3]]
+# 7일 아모레 종가: [[131342.73]]
