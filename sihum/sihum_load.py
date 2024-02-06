@@ -30,14 +30,11 @@ datasets2 = datasets2.iloc[:1418]
 datasets1 = datasets1.sort_values('일자', ascending=True)
 datasets2 = datasets2.sort_values('일자', ascending=True)
 
-datasets2['시가'] = datasets2['시가'].str.replace(',','') # 서브컴은 주석 해야 됨. 대체 왜?
-
-datasets1 = datasets1.astype('float64')
-datasets2 = datasets2.astype('float64')
-
-
 x1 = datasets1.drop(['시가'], axis=1)
-x2 = datasets2.drop(['종가'], axis=1)
+x1 = x1.drop(['종가'], axis=1)
+x2 = datasets2.drop(['시가'], axis=1)
+x2 = x2.drop(['종가'], axis=1)
+
 y1 = datasets1['시가']
 y2 = datasets2['종가']
 
@@ -67,12 +64,12 @@ x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = tra
     shuffle=False
 )
 
-x1_train = x1_train.reshape(1266,90)
-x1_test = x1_test.reshape(141,90)
-x2_train = x2_train.reshape(1266,90)
-x2_test = x2_test.reshape(141,90)
-x1_predict = x1_predict.reshape(10,90)
-x2_predict = x2_predict.reshape(10,90)
+x1_train = x1_train.reshape(1266,80)
+x1_test = x1_test.reshape(141,80)
+x2_train = x2_train.reshape(1266,80)
+x2_test = x2_test.reshape(141,80)
+x1_predict = x1_predict.reshape(10,80)
+x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, RobustScaler
 scaler = MinMaxScaler()
@@ -85,14 +82,14 @@ x2_test = scaler.transform(x2_test)
 x1_predict = scaler.transform(x1_predict)
 x2_predict = scaler.transform(x2_predict)
 
-x1_train = x1_train.reshape(1266,10,9)
-x1_test = x1_test.reshape(141,10,9)
-x2_train = x2_train.reshape(1266,10,9)
-x2_test = x2_test.reshape(141,10,9)
-x1_predict = x1_predict.reshape(10,10,9)
-x2_predict = x2_predict.reshape(10,10,9)
+x1_train = x1_train.reshape(1266,10,8)
+x1_test = x1_test.reshape(141,10,8)
+x2_train = x2_train.reshape(1266,10,8)
+x2_test = x2_test.reshape(141,10,8)
+x1_predict = x1_predict.reshape(10,10,8)
+x2_predict = x2_predict.reshape(10,10,8)
 
-model = load_model(path + '시험_0206_1033_0069-5174.09.hdf5')
+model = load_model(path + 'sihum_0206_1142_0088-16867.21.hdf5')
 
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
 print('loss:',loss)
