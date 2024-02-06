@@ -81,10 +81,9 @@ x2_predict = x2[-10:]
 # print(x2[-1])
 
 from sklearn.model_selection import train_test_split
-# x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(x1,x2,y1,y2, random_state = 158796, train_size = 0.9, shuffle=False)
 x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(
     x1, x2, y1, y2, 
-    random_state = 981013 , 
+    random_state = 112233 , 
     train_size = 0.9 , 
     shuffle=False
 )
@@ -99,7 +98,7 @@ x2_test = x2_test.reshape(141,90)
 x1_predict = x1_predict.reshape(10,90)
 x2_predict = x2_predict.reshape(10,90)
 
-from sklearn.preprocessing import MinMaxScaler, RobustScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 scaler = MinMaxScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
@@ -123,31 +122,32 @@ from keras.models import Model
 from keras.layers import LSTM, Input, Bidirectional, Flatten, Dropout, Dense
 #모델1
 input1 = Input(shape = (10,9))
-lstm1  = Bidirectional(LSTM(32, return_sequences=True))(input1)
-lstm2 = Bidirectional(LSTM(64, return_sequences=True))(lstm1)
-lstm3 = LSTM(32)(lstm2)
-dense1 = Dense(64)(lstm3)
-dense2 = Dense(32)(dense1)
-dense3 = Dense(16)(dense2)
-output1 = Dense(8)(dense3)
+lstm1  = Bidirectional(LSTM(32, return_sequences=True, name = 'ls1'))(input1)
+lstm2 = Bidirectional(LSTM(64, return_sequences=True, name='ls2'))(lstm1)
+lstm3 = LSTM(32, name='ls3')(lstm2)
+dense1 = Dense(64, name='d1')(lstm3)
+dense2 = Dense(32, name='d2')(dense1)
+dense3 = Dense(16, name='d3')(dense2)
+output1 = Dense(8, name='o1')(dense3)
+
 #모델2
 input2 = Input(shape = (10,9))
-lstm11 = LSTM(32, return_sequences=True)(input2)
-lstm12 = Bidirectional(LSTM(64, return_sequences=True))(lstm11)
-lstm13 = Bidirectional(LSTM(32))(lstm12)
-dense11 = Dense(64)(lstm13)
-dense14 = Dense(32)(dense11)
-output2 = Dense(16)(dense14)
+lstm11 = LSTM(32, return_sequences=True, name='ls11')(input2)
+lstm12 = Bidirectional(LSTM(64, return_sequences=True, name='ls12'))(lstm11)
+lstm13 = Bidirectional(LSTM(32, name='ls13'))(lstm12)
+dense11 = Dense(64, name='d11')(lstm13)
+dense12 = Dense(32, name='d12')(dense11)
+output2 = Dense(16, name='o2')(dense12)
 #머지
 from keras.layers import concatenate
 merge1 = concatenate([output1, output2])
-out1 = Dense(32)(merge1)
-out2 = Dense(16)(out1)
-out3 = Dense(1)(out2)
+out1 = Dense(32, name='out1')(merge1)
+out2 = Dense(16, name='out2')(out1)
+out3 = Dense(1, name = 'ss')(out2)
 
-out21 = Dense(32)(merge1)
-out22 = Dense(64)(out21)
-out23 = Dense(1)(out22)
+out21 = Dense(32, name='out21')(merge1)
+out22 = Dense(64, name='out22')(out21)
+out23 = Dense(1, name = 'am')(out22)
 
 model = Model(inputs = [input1,input2], outputs = [out3, out23])
 model.summary()
@@ -162,9 +162,12 @@ import datetime
 date = datetime.datetime.now() 
 date = date.strftime("%m%d_%H%M")
 
-es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200, restore_best_weights=True)
-mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, save_best_only=True, filepath ="".join([filepath,'sihum_',date,'_',filename]))
-model.fit([x1_train, x2_train],[y1_train, y2_train], epochs=1, batch_size=10, validation_split=0.2, callbacks=[es,mcp])
+es = EarlyStopping(monitor = 'val_loss', mode = 'min', patience = 200 , restore_best_weights=True)
+mcp = ModelCheckpoint(monitor = 'val_loss', mode = 'min',verbose=1, 
+                      save_best_only=True, filepath ="".join([filepath,'sihum_',date,'_',filename]))
+model.fit([x1_train, x2_train],[y1_train, y2_train], 
+          epochs=100000 , batch_size = 33 , validation_split= 0.2 , 
+          callbacks=[es,mcp])
 
 #평가 예측
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
@@ -188,4 +191,8 @@ print('7일 아모레 종가:', am[-1:])
 #0143_0180
 # 7일 삼성전자 시가: [[74839.96]]
 # 7일 아모레 종가: [[146881.56]]
+
+# sihum_0206_1105_0043-7108.93
+# 7일 삼성전자 시가: [[75180.61]]
+# 7일 아모레 종가: [[139686.98]]
 
