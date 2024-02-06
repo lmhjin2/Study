@@ -4,10 +4,9 @@ from keras.models import load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 path = 'c:/_data/sihum/'
-path_save = 'c:/_data/sihum/'
 
 datasets1 = pd.read_csv(path + '삼성 240205.csv', index_col = 0, encoding = 'euc-kr', thousands = ',')
-datasets2 = pd.read_csv(path + '아모레 240205.csv', index_col =0, encoding = 'euc-kr', thousands = ',')
+datasets2 = pd.read_csv(path + '아모레 240205.csv', index_col = 0, encoding = 'euc-kr', thousands = ',')
 
 # print(datasets1.head)
 
@@ -56,7 +55,6 @@ x1_predict = x1[-10:]
 x2_predict = x2[-10:]
 
 from sklearn.model_selection import train_test_split
-# x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(x1,x2,y1,y2, random_state = 158796, train_size = 0.9, shuffle=False)
 x1_train, x1_test, x2_train, x2_test, y1_train, y1_test, y2_train, y2_test = train_test_split(
     x1, x2, y1, y2, 
     random_state = 981013 , 
@@ -71,8 +69,8 @@ x2_test = x2_test.reshape(141,80)
 x1_predict = x1_predict.reshape(10,80)
 x2_predict = x2_predict.reshape(10,80)
 
-from sklearn.preprocessing import MinMaxScaler, RobustScaler
-scaler = MinMaxScaler()
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+scaler = StandardScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
 
@@ -89,7 +87,7 @@ x2_test = x2_test.reshape(141,10,8)
 x1_predict = x1_predict.reshape(10,10,8)
 x2_predict = x2_predict.reshape(10,10,8)
 
-model = load_model(path + 'sihum_0206_1246_0078-7478.02.hdf5')
+model = load_model(path + 'sihum_0206_1308_0272-6979.07.hdf5')
 
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
 
