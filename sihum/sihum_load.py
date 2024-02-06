@@ -70,7 +70,7 @@ x1_predict = x1_predict.reshape(10,80)
 x2_predict = x2_predict.reshape(10,80)
 
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-scaler = MaxAbsScaler()
+scaler = StandardScaler()
 x1_train = scaler.fit_transform(x1_train)
 x1_test = scaler.transform(x1_test)
 
@@ -87,7 +87,7 @@ x2_test = x2_test.reshape(141,10,8)
 x1_predict = x1_predict.reshape(10,10,8)
 x2_predict = x2_predict.reshape(10,10,8)
 
-model = load_model(path + 'sihum_0206_1648_0174-6349.60.hdf5')
+model = load_model(path + 'sihum_0206_1308_0272-6979.07.hdf5')
 
 loss = model.evaluate([x1_test, x2_test],[y1_test, y2_test])
 
