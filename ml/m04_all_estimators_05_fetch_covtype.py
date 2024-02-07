@@ -85,5 +85,30 @@ for name, algorithm in allAlgorithms:
 # DecisionTreeClassifier() acc 0.9386332538746848 
 # RandomForestClassifier() acc 0.9546397253082967 =========================================================================================
 
-
+# AdaBoostClassifier 의 정답률: 0.44818980577093537
+# BaggingClassifier 의 정답률: 0.9608874125452871
+# BernoulliNB 의 정답률: 0.6612651996936396
+# CalibratedClassifierCV 의 정답률: 0.7130366685885906
+# DecisionTreeClassifier 의 정답률: 0.9384267187594124
+# DummyClassifier 의 정답률: 0.48760359026875383
+# ExtraTreeClassifier 의 정답률: 0.8757605225338416
+# ExtraTreesClassifier 의 정답률: 0.9538652186260251
+# GaussianNB 의 정답률: 0.09089266197946697
+# GradientBoostingClassifier 의 정답률: 0.7722864297823636
+# HistGradientBoostingClassifier 의 정답률: 0.7780952298994002
+# KNeighborsClassifier 의 정답률: 0.9283323150004733
+# LinearDiscriminantAnalysis 의 정답률: 0.6794919236164298
+# LinearSVC 의 정답률: 0.7124686970215915
+# LogisticRegression 의 정답률: 0.7252480572790719
+# LogisticRegressionCV 의 정답률: 0.7253082966876931
+# MLPClassifier 의 정답률: 0.8773439584175968
+# NearestCentroid 의 정답률: 0.44946343898178187
+# PassiveAggressiveClassifier 의 정답률: 0.5666893281584813
+# Perceptron 의 정답률: 0.606714112372314
+# QuadraticDiscriminantAnalysis 의 정답률: 0.08509246749223343
+# RandomForestClassifier 의 정답률: 0.9549581336110083
+# RidgeClassifier 의 정답률: 0.7009199418259425
+# RidgeClassifierCV 의 정답률: 0.7009113361961395
+# SGDClassifier 의 정답률: 0.7103861346092614
+# SVC 의 정답률: 0.8334380351626034
 
