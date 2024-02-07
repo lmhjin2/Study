@@ -81,7 +81,40 @@ for name, algorithm in allAlgorithms:
 
 
 
-
+# AdaBoostClassifier 의 정답률: 0.9166666666666666
+# BaggingClassifier 의 정답률: 0.9583333333333334
+# BernoulliNB 의 정답률: 0.3333333333333333
+# CalibratedClassifierCV 의 정답률: 1.0
+# CategoricalNB 의 정답률: 0.9583333333333334
+# ComplementNB 의 정답률: 0.6666666666666666
+# DecisionTreeClassifier 의 정답률: 0.9166666666666666
+# DummyClassifier 의 정답률: 0.3333333333333333
+# ExtraTreeClassifier 의 정답률: 0.9583333333333334
+# ExtraTreesClassifier 의 정답률: 0.9583333333333334
+# GaussianNB 의 정답률: 0.9583333333333334
+# GaussianProcessClassifier 의 정답률: 1.0
+# GradientBoostingClassifier 의 정답률: 0.9166666666666666
+# HistGradientBoostingClassifier 의 정답률: 0.9583333333333334
+# KNeighborsClassifier 의 정답률: 0.9583333333333334
+# LabelPropagation 의 정답률: 0.9583333333333334
+# LabelSpreading 의 정답률: 0.9583333333333334
+# LinearDiscriminantAnalysis 의 정답률: 1.0
+# LinearSVC 의 정답률: 1.0
+# LogisticRegression 의 정답률: 1.0
+# LogisticRegressionCV 의 정답률: 0.9583333333333334
+# MLPClassifier 의 정답률: 0.9583333333333334
+# MultinomialNB 의 정답률: 0.875
+# NearestCentroid 의 정답률: 0.9166666666666666
+# NuSVC 의 정답률: 0.9583333333333334
+# PassiveAggressiveClassifier 의 정답률: 0.7916666666666666
+# Perceptron 의 정답률: 0.9583333333333334
+# QuadraticDiscriminantAnalysis 의 정답률: 0.9583333333333334
+# RadiusNeighborsClassifier 의 정답률: 0.9583333333333334
+# RandomForestClassifier 의 정답률: 0.9583333333333334
+# RidgeClassifier 의 정답률: 0.9166666666666666
+# RidgeClassifierCV 의 정답률: 0.9166666666666666
+# SGDClassifier 의 정답률: 0.6666666666666666
+# SVC 의 정답률: 0.9583333333333334
 
 
 
