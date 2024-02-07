@@ -122,4 +122,4 @@ for model in models :
 # LinearRegression() r2 0.6189894726936527
 # KNeighborsRegressor() r2 0.6930000271623358
 # DecisionTreeRegressor() r2 0.5887680535218736
-# RandomForestRegressor() r2 0.8111208077261252
+# RandomForestRegressor() r2 0.8111208077261252 =========================================================================================

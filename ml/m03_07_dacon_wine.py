@@ -124,4 +124,4 @@ model_R = RandomForestRegressor()
 # LogisticRegression() acc 0.5236363636363637
 # KNeighborsClassifier() acc 0.5463636363636364
 # DecisionTreeClassifier() acc 0.5918181818181818
-# RandomForestClassifier() acc 0.6727272727272727
+# RandomForestClassifier() acc 0.6727272727272727 =========================================================================================

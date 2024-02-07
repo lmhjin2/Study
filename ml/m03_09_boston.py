@@ -91,5 +91,6 @@ for model in models :
 # LinearRegression() acc 0.7634174432138483
 # KNeighborsRegressor() acc 0.5401612153026705
 # DecisionTreeRegressor() acc 0.7268459868747735
-# RandomForestRegressor() acc 0.9132005612253553
+# RandomForestRegressor() acc 0.9132005612253553 =========================================================================================
+
 

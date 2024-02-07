@@ -87,8 +87,8 @@ model_K = KNeighborsRegressor()
 model_D = DecisionTreeRegressor()
 model_R = RandomForestRegressor()  
 
-# Perceptron() acc 0.9722222222222222
+# Perceptron() acc 0.9722222222222222 =========================================================================================
 # LogisticRegression() acc 1.0
-# KNeighborsClassifier() acc 0.9722222222222222
+# KNeighborsClassifier() acc 0.9722222222222222 =========================================================================================
 # DecisionTreeClassifier() acc 0.9444444444444444
 # RandomForestClassifier() acc 1.0

@@ -75,7 +75,7 @@ model_D = DecisionTreeRegressor()
 model_R = RandomForestRegressor()
 
 # Perceptron() acc 0.9583333333333334
-# LogisticRegression() acc 1.0
+# LogisticRegression() acc 1.0 =========================================================================================
 # KNeighborsClassifier() acc 0.9583333333333334
 # DecisionTreeClassifier() acc 0.9166666666666666
 # RandomForestClassifier() acc 0.9166666666666666

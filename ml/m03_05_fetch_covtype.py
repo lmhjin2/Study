@@ -85,5 +85,5 @@ model_R = RandomForestRegressor()
 # Perceptron() acc 0.606714112372314
 # LogisticRegression() acc 0.7252480572790719
 # KNeighborsClassifier() acc 0.9283323150004733
-# DecisionTreeClassifier() acc 0.9386332538746848
-# RandomForestClassifier() acc 0.9546397253082967
+# DecisionTreeClassifier() acc 0.9386332538746848 
+# RandomForestClassifier() acc 0.9546397253082967 =========================================================================================

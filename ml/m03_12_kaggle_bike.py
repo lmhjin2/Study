@@ -109,6 +109,6 @@ for model in models :
 
 # Perceptron() r2 0.004898958971218616
 # LinearRegression() r2 0.25681551657626733
-# KNeighborsRegressor() r2 0.33272291579259483
+# KNeighborsRegressor() r2 0.33272291579259483 =========================================================================================
 # DecisionTreeRegressor() r2 -0.1315695374467396
 # RandomForestRegressor() r2 0.3195324663740633

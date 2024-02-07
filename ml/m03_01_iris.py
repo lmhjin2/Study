@@ -49,11 +49,11 @@ print("accuracy_score :", acc)
 # model.score : 0.9666666666666667
 # accuracy_score : 0.9666666666666667
 
-# model = LogisticRegression()
+# model = LogisticRegression()   =========================================================================================
 # model.score : 1.0
 # accuracy_score : 1.0
 
-# model = KNeighborsClassifier()
+# model = KNeighborsClassifier() =========================================================================================
 # model.score : 1.0
 # accuracy_score : 1.0
 
@@ -65,33 +65,4 @@ print("accuracy_score :", acc)
 # model.score : 0.9666666666666667
 # accuracy_score : 0.9666666666666667
 
-
-# =============================================================
-# from sklearn.svm import LinearSVC, LinearSVR, SVC
-# from sklearn.linear_model import Perceptron, LogisticRegression, LinearRegression
-# from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-# from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-# from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-
-
-# model = Perceptron()
-# model = LogisticRegression()
-# model = KNeighborsClassifier()
-# model = DecisionTreeClassifier()
-# model = RandomForestClassifier()
-
-
-# model = Perceptron()
-
-
-# model = LogisticRegression()
-
-
-# model = KNeighborsClassifier()
-
-
-# model = DecisionTreeClassifier()
-
-
-# model = RandomForestClassifier()
 

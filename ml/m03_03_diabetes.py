@@ -90,13 +90,7 @@ for model in models :
 # diabetes
 
 # Perceptron() r2 0.014925373134328358
-# LogisticRegression() r2 0.0
-# KNeighborsClassifier() r2 0.0
-# DecisionTreeClassifier() r2 0.0
-# RandomForestClassifier() r2 0.014925373134328358
-
-# Perceptron() r2 0.014925373134328358
-# LinearRegression() r2 0.2303903470818217
+# LinearRegression() r2 0.2303903470818217 =========================================================================================
 # KNeighborsRegressor() r2 -0.0004412413104994961
 # DecisionTreeRegressor() r2 -0.884614950894437
 # RandomForestRegressor() r2 0.1295744088399613
