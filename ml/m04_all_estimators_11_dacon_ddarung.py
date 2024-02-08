@@ -172,3 +172,4 @@ for name, algorithm in allAlgorithms:
 # TransformedTargetRegressor 의 정답률: 0.6189894726936527
 # TweedieRegressor 의 정답률: 0.5695226375541397
 
+# HistGradientBoostingRegressor 의 정답률: 0.8275995871226449

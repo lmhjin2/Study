@@ -112,3 +112,4 @@ for name, algorithm in allAlgorithms:
 # SGDClassifier 의 정답률: 0.7103861346092614
 # SVC 의 정답률: 0.8334380351626034
 
+# BaggingClassifier 의 정답률: 0.9608874125452871

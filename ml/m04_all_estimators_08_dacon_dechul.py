@@ -170,3 +170,7 @@ for name, algorithm in allAlgorithms:
 # RidgeClassifierCV 의 정답률: 0.3627185138175734
 # SGDClassifier 의 정답률: 0.4291813304102002
 # SVC 의 정답률: 0.2997749956729937
+
+
+
+# BaggingClassifier 의 정답률: 0.863324294697975

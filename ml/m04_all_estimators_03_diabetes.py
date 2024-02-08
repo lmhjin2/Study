@@ -149,3 +149,5 @@ for name, algorithm in allAlgorithms:
 # TheilSenRegressor 의 정답률: 0.19025531678382046
 # TransformedTargetRegressor 의 정답률: 0.2303903470818217
 # TweedieRegressor 의 정답률: -0.01119102243814285
+
+# ElasticNetCV 의 정답률: 0.26655983401648775

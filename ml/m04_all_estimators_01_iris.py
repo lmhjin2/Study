@@ -75,6 +75,15 @@ for name, algorithm in allAlgorithms:
 # TypeError: __init__() missing 1 required positional argument: 'base_estimator'
 # argument = 하이퍼 파라미터
 
+# GaussianProcessClassifier 의 정답률: 1.0
+# KNeighborsClassifier 의 정답률: 1.0
+# LinearDiscriminantAnalysis 의 정답률: 1.0
+# LogisticRegression 의 정답률: 1.0
+# LogisticRegressionCV 의 정답률: 1.0
+# MLPClassifier 의 정답률: 1.0
+# NuSVC 의 정답률: 1.0
+# QuadraticDiscriminantAnalysis 의 정답률: 1.0
+# SVC 의 정답률: 1.0
 
 '''
 #3

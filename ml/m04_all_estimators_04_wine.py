@@ -122,3 +122,18 @@ for name, algorithm in allAlgorithms:
 # RidgeClassifierCV 의 정답률: 1.0
 # SGDClassifier 의 정답률: 1.0
 # SVC 의 정답률: 1.0
+
+# BaggingClassifier 의 정답률: 1.0
+# CalibratedClassifierCV 의 정답률: 1.0
+# DecisionTreeClassifier 의 정답률: 1.0
+# ExtraTreesClassifier 의 정답률: 1.0
+# GaussianNB 의 정답률: 1.0
+# LogisticRegression 의 정답률: 1.0
+# LogisticRegressionCV 의 정답률: 1.0
+# MLPClassifier 의 정답률: 1.0
+# NuSVC 의 정답률: 1.0
+# PassiveAggressiveClassifier 의 정답률: 1.0
+# QuadraticDiscriminantAnalysis 의 정답률: 1.0
+# RidgeClassifierCV 의 정답률: 1.0
+# SGDClassifier 의 정답률: 1.0
+# SVC 의 정답률: 1.0

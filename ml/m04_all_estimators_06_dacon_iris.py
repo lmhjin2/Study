@@ -117,4 +117,8 @@ for name, algorithm in allAlgorithms:
 # SVC 의 정답률: 0.9583333333333334
 
 
-
+# CalibratedClassifierCV 의 정답률: 1.0
+# GaussianProcessClassifier 의 정답률: 1.0
+# LinearDiscriminantAnalysis 의 정답률: 1.0
+# LinearSVC 의 정답률: 1.0
+# LogisticRegression 의 정답률: 1.0

@@ -161,3 +161,6 @@ for name, algorithm in allAlgorithms:
 # TheilSenRegressor 의 정답률: 0.24700863895623404
 # TransformedTargetRegressor 의 정답률: 0.25681551657626733
 # TweedieRegressor 의 정답률: 0.03343719546389723
+
+# HistGradientBoostingRegressor 의 정답률: 0.3659113592085417
+
