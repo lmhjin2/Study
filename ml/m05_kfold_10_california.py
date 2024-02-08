@@ -10,6 +10,7 @@ from sklearn.datasets import fetch_california_housing
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from sklearn.svm import LinearSVR
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.preprocessing import LabelEncoder
 
 plt.rcParams['font.family'],"Malgun Gothic"
 plt.rcParams['axes.unicode_minus']=False
@@ -18,6 +19,11 @@ plt.rcParams['axes.unicode_minus']=False
 datasets = fetch_california_housing()
 x = datasets.data
 y = datasets.target
+
+# 라벨 인코딩. StratifiedKFold 할때만 필요
+label_endcoer = LabelEncoder()
+y = label_endcoer.fit_transform(y)
+# 라벨 인코딩. StratifiedKFold 할때만 필요
 
 n_splits =  10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
@@ -40,3 +46,7 @@ print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 # acc: [0.83959202 0.83979848 0.84652567 0.8575718  0.83906609 0.83876288
 #  0.83122632 0.82068198 0.8285659  0.82990476]
 #  평균 acc: 0.8372
+
+# acc: [0.84078301 0.85270921 0.84025083 0.81923533 0.85904233 0.85285232
+#  0.84569715 0.8378194  0.85035462 0.85126993]
+#  평균 acc: 0.845

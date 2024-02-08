@@ -11,13 +11,19 @@ from sklearn.metrics import r2_score
 from sklearn.datasets import load_boston
 from sklearn.svm import LinearSVC, LinearSVR
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.preprocessing import LabelEncoder
+
 #1
 datasets = load_boston()
 
 x = datasets.data
 y = datasets.target
 
-random_state_value = 1
+# 라벨 인코딩. StratifiedKFold 할때만 필요
+label_endcoer = LabelEncoder()
+y = label_endcoer.fit_transform(y)
+# 라벨 인코딩. StratifiedKFold 할때만 필요
+
 
 n_splits =  10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
@@ -51,3 +57,7 @@ print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 #  0.91297627 0.87654233 0.86300465 0.88762141]
 #  평균 acc: 0.8716
 
+# StratifiedKFold = y 라벨 인코딩 필요
+# acc: [0.86940933 0.93149314 0.8635876  0.90785021 0.87027344 0.95898994
+#  0.87159253 0.8201312  0.90246358 0.83439128]
+#  평균 acc: 0.883
