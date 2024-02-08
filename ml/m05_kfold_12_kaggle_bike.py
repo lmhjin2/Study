@@ -19,7 +19,7 @@ submission_csv = pd.read_csv(path+"sampleSubmission.csv")
 x = train_csv.drop(['casual', 'registered', 'count'], axis=1)
 y = train_csv['count']
 
-n_splits =  10
+n_splits =10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
@@ -50,3 +50,7 @@ print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 # acc: [0.30965479 0.36720921 0.35261475 0.34470105 0.34090175 0.35392407
 #  0.37865916 0.38332136 0.40563247 0.36554041]
 #  평균 acc: 0.3602
+
+# acc: [0.35450298 0.34232768 0.34843274 0.36470743 0.36212217 0.39114579
+#  0.37858529 0.35442292 0.38099563 0.36114753]
+#  평균 acc: 0.3638
