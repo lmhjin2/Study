@@ -22,9 +22,6 @@ le_work_period.fit(train_csv['근로기간'])
 train_csv['근로기간'] = le_work_period.transform(train_csv['근로기간'])
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
 
-le_grade = LabelEncoder()
-le_grade.fit(train_csv['대출등급'])
-train_csv['대출등급'] = le_grade.transform(train_csv['대출등급'])
 
 le_purpose = LabelEncoder()
 test_csv.iloc[34486,7] = '이사'     # 결혼 -> 이사 로 임의로 바꿈
@@ -42,6 +39,9 @@ le_loan_period.fit(train_csv['대출기간'])
 train_csv['대출기간'] = le_loan_period.transform(train_csv['대출기간'])
 test_csv['대출기간'] = le_loan_period.transform(test_csv['대출기간'])
 
+le_grade = LabelEncoder()
+le_grade.fit(train_csv['대출등급'])
+train_csv['대출등급'] = le_grade.transform(train_csv['대출등급'])
 
 x = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
