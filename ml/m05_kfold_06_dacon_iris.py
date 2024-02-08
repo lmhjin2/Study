@@ -5,7 +5,7 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.callbacks import EarlyStopping
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score,StratifiedKFold
 from sklearn.metrics import accuracy_score
 import time as tm
 from sklearn.svm import LinearSVC, LinearSVR
@@ -19,7 +19,7 @@ x = train_csv.drop(['species'], axis = 1)
 y = train_csv['species']
 
 n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 # #2
 model = LinearSVC()

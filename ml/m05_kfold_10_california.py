@@ -4,7 +4,7 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error,mean_absolute_error
 from sklearn.datasets import fetch_california_housing
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
@@ -20,7 +20,7 @@ x = datasets.data
 y = datasets.target
 
 n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 scaler = MaxAbsScaler()
 
 scaler.fit(x)

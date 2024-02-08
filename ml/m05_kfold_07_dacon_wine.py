@@ -5,7 +5,7 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import accuracy_score
 import time as tm
 from sklearn.svm import LinearSVC, LinearSVR
@@ -26,7 +26,7 @@ y = train_csv['quality']
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 
 n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 scaler = MaxAbsScaler()
 

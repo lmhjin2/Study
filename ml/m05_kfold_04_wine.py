@@ -4,7 +4,7 @@ from sklearn.datasets import load_wine
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import accuracy_score
 from sklearn.svm import LinearSVR, LinearSVC, SVC
 #1
@@ -16,7 +16,7 @@ x = x.astype(np.float32)
 y = y.astype(np.float32)
 
 n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 # x_train, x_test, y_train, y_test = train_test_split(
 #     x, y, stratify=y, train_size = 0.8, random_state = 4 )
@@ -58,5 +58,9 @@ print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 # SVC 의 정답률: 1.0
 
 # acc: [1.         1.         1.         0.94444444 1.         1.
+#  0.94444444 1.         1.         0.94117647]
+#  평균 acc: 0.983
+
+# acc: [1.         1.         1.         1.         0.94444444 1.
 #  0.94444444 1.         1.         0.94117647]
 #  평균 acc: 0.983

@@ -6,7 +6,7 @@ import pandas as pd
 from keras.models import Sequential, load_model
 from keras.layers import Dense, Dropout, LSTM, Conv1D, Flatten
 from keras.callbacks import EarlyStopping
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import r2_score
 from sklearn.datasets import load_boston
 from sklearn.svm import LinearSVC, LinearSVR
@@ -20,7 +20,7 @@ y = datasets.target
 random_state_value = 1
 
 n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 from sklearn.preprocessing import StandardScaler, RobustScaler

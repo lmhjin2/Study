@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.datasets import load_breast_cancer
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import r2_score, accuracy_score
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ x = datasets.data
 y = datasets.target
 
 n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 # x_train, x_test, y_train, y_test = train_test_split(
 #     x, y, train_size = 0.85, random_state = 1 )
@@ -50,3 +50,7 @@ print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 # acc: [0.96491228 0.94736842 0.98245614 0.96491228 0.94736842 0.92982456
 #  0.96491228 0.94736842 0.96491228 0.89285714]
 #  평균 acc: 0.9507
+
+# acc: [0.92982456 0.92982456 0.9122807  0.98245614 0.94736842 0.96491228
+#  0.92982456 0.96491228 0.94736842 0.98214286]
+#  평균 acc: 0.9491

@@ -6,7 +6,7 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Conv1D, Conv2D, SimpleRNN, LSTM, GRU, Dropout, Flatten, Embedding, Reshape, Input
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.preprocessing.text import Tokenizer
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, cross_val_predict, StratifiedKFold
 from sklearn.metrics import r2_score, mean_squared_error, mean_squared_log_error, accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 import matplotlib as plt

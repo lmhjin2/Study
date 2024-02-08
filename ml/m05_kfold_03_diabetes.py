@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import r2_score, mean_absolute_error,mean_squared_error,mean_squared_log_error
 from sklearn.datasets import load_diabetes
 from sklearn.svm import LinearSVC, LinearSVR, SVC
@@ -21,8 +21,8 @@ datasets = load_diabetes()
 x = datasets.data
 y = datasets.target
 
-n_splits =  10
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+n_splits =  5
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 # x_train, x_test, y_train, y_test = train_test_split(
 #     x, y, train_size = 0.85, random_state = 0 )
@@ -44,3 +44,6 @@ print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 # acc: [0.49154706 0.4308831  0.36568874 0.42604099 0.39912763 0.49807795
 #  0.46417987 0.45828219 0.37906082 0.36389147]
 #  평균 acc: 0.4277
+
+# acc: [0.39761427 0.50790494 0.41064636 0.43083409 0.45718859] 
+#  평균 acc: 0.4408
