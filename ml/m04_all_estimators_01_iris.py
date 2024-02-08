@@ -20,8 +20,8 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, stratify= y, train_siz
 #2
 allAlgorithms = all_estimators(type_filter='classifier')
 # allAlgorithms = all_estimators(type_filter='regressor')
-# print(allAlgorithms)
-# print(len(allAlgorithms)) # classifier: 41 / regressor: 55
+    # print(allAlgorithms)
+    # print(len(allAlgorithms)) # classifier: 41 / regressor: 55
 
 for name, algorithm in allAlgorithms:
     try:
@@ -33,8 +33,9 @@ for name, algorithm in allAlgorithms:
         acc = model.score(x_test, y_test)
         print(name, '의 정답률:', acc)
     except Exception as e:
-        print(name, '에러', e)
-        # continue
+        # print(name, '에러', e)
+        continue
+    
 
 # AdaBoostClassifier 의 정답률: 0.9333333333333333
 # BaggingClassifier 의 정답률: 0.9333333333333333
