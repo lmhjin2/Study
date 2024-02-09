@@ -64,40 +64,57 @@ test_csv = scaler.transform(test_csv)
 n_splits =10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
-# import warnings
-# warnings.filterwarnings('ignore')
-
-from sklearn.utils import all_estimators
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, r2_score
-
+from xgboost import XGBClassifier
 #2
-model = RandomForestClassifier()
+model = XGBClassifier(n_estimators = 1000 , 
+                      learning_rate = 0.1 , 
+                      max_depth = 4 ,
+                      min_child_weight= 1 ,
+                      gamma = 0 ,  
+                      subsample=0.8 ,
+                      colsample_bytree= 0.8 ,
+                      objective= 'binary:logistic' ,
+                      nthread= 4 ,
+                      seed= 27 ,
+                    #   scale_pos_weight= 1 ,
+                      )
+
 #3
 model.fit(x_train, y_train)
 #4
 results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
 y_submit = model.predict(test_csv)
-
 acc = accuracy_score(y_test, y_predict)
 
-y_test = np.argmax(y_test, axis = 1)
-y_predict = np.argmax(y_predict, axis =1)
-y_submit = np.argmax(y_submit, axis=1)
-y_submit = lae_NObeyesdad.inverse_transform(y_submit)
-
+y_test = np.argmax(y_test, axis = 1)            # argmax주석하면 에러
+y_predict = np.argmax(y_predict, axis =1)       # argmax주석하면 에러
+y_submit = np.argmax(y_submit, axis=1)          # argmax주석하면 에러
+y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
-print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0208_1.csv", index=False)
+submission_csv.to_csv(path + "submission_0209_2.csv", index=False)
 
+print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
 print('acc:', acc)
 
 # https://www.kaggle.com/c/playground-series-s4e2/overview
 
-# results: 0.8564547206165704
-# acc: 0.8564547206165704
-# r2: 0.7301180374269683
+
+# 점수 : 0.88114
+# results: 0.8629576107899807
+# acc: 0.8629576107899807
+
+
+# 점수 : 0.89776
+# results: 0.8735549132947977
+# acc: 0.8735549132947977
+
+
+
+
+
+
