@@ -48,7 +48,7 @@ x = train_csv.drop(['NObeyesdad'], axis = 1)
 y = train_csv['NObeyesdad']
 
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split, KFold, cross_val_predict, cross_val_score, StratifiedKFold
+from sklearn.model_selection import train_test_split, KFold, cross_val_predict, cross_val_score, StratifiedKFold, cross_validate
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
 
 y = np.array(y.values.reshape(-1,1))
@@ -95,7 +95,7 @@ y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0209_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0209_3.csv", index=False)
 
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
