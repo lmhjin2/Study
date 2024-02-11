@@ -51,10 +51,10 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split, KFold, cross_val_predict, cross_val_score, StratifiedKFold, cross_validate, GridSearchCV
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
 
-y = np.array(y.values.reshape(-1,1))
-y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
+# y = np.array(y.values.reshape(-1,1))
+# y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify=y, test_size=0.2, random_state= 5 )
+x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=0.2, random_state= 5 )
 
 scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
@@ -66,13 +66,14 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 5 )
 
 from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
+from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'learning_rate':range(0.1,1,0.1),
+parameters = [{'min_child_weight':range(1,10,1),
                'max_depth':range(3,9,1)}
 ]
 
 #2
-model = XGBClassifier(n_estimators = 1000 , 
+model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 
                       learning_rate = 0.1 , 
                       max_depth = 9 ,
                       min_child_weight= 3 ,
@@ -82,34 +83,54 @@ model = XGBClassifier(n_estimators = 1000 ,
                       objective= 'binary:logistic' ,
                       nthread= 4 ,
                       seed= 27 ,
-                      scale_pos_weight= 1 ,
-                      )
+                    #   scale_pos_weight= 1 ,
+                      ), parameters, cv=kfold, refit=True)
 
-model = GridSearchCV(XGBClassifier(), parameters, cv = kfold,
-                    #  verbose=1,
-                     refit=True,
-                    #  n_jobs=-1,
-                     )
+# model = GridSearchCV(XGBClassifier(), parameters, cv = kfold,
+#                     #  verbose=1,
+#                      refit=True,
+#                     #  n_jobs=-1,
+#                      )
 #3
+import time as tm
+strat_time = tm.time()
 model.fit(x_train, y_train)
+end_time = tm.time()
 #4
+
 results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
+y_pred_best = model.best_estimator_.predict(x_test)
 y_submit = model.predict(test_csv)
+y_submit_best = model.best_estimator_.predict(test_csv)
 acc = accuracy_score(y_test, y_predict)
 
-y_test = np.argmax(y_test, axis = 1)            # argmax주석하면 에러
-y_predict = np.argmax(y_predict, axis =1)       # argmax주석하면 에러
-y_submit = np.argmax(y_submit, axis=1)          # argmax주석하면 에러
+# y_test = np.argmax(y_test, axis = 1)            # argmax주석하면 에러
+# y_predict = np.argmax(y_predict, axis =1)       # argmax주석하면 에러
+# y_submit = np.argmax(y_submit, axis=1)          # argmax주석하면 에러
+# y_submit_best = np.argmax(y_submit_best, axis = 1)
+
 y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
+y_submit_best = lae_NObeyesdad.inverse_transform(y_submit_best)
+
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
 submission_csv.to_csv(path + "submission_0210_3.csv", index=False)
 
+submission_csv['NObeyesdad'] = y_submit_best
+submission_csv.to_csv(path + "submission_b_0211_1.csv", index=False)
+
+
+print("최적의 매개변수 : ", model.best_estimator_)
+print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
+print('best_score :', model.best_score_)
+print('model.score :', model.score(x_test, y_test))
+print('최적 튠 ACC:', accuracy_score(y_test,y_pred_best))
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
-print('results:', results)
+print('model.score:', results)
 print('acc:', acc)
+print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 
 # https://www.kaggle.com/c/playground-series-s4e2/overview
 

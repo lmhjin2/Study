@@ -54,7 +54,7 @@ from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, Stan
 y = np.array(y.values.reshape(-1,1))
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify=y, test_size=0.2, random_state= 5 )
+x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify=y, test_size=0.2, random_state= 2 )
 
 scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
@@ -62,22 +62,21 @@ x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
 n_splits =10
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 5 )
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 0 )   # kfold 의 random_state는 점수에 영향 X
 
 from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 #2
 model = XGBClassifier(n_estimators = 1000 , 
                       learning_rate = 0.1 , 
-                      max_depth = 9 ,
-                      min_child_weight= 3 ,
+                      max_depth = 4 ,
+                      min_child_weight= 1 ,
                       gamma = 0 ,  
                       subsample=0.8 ,
                       colsample_bytree= 0.8 ,
                       objective= 'binary:logistic' ,
                       nthread= 4 ,
                       seed= 27 ,
-                    #   scale_pos_weight= 1 ,
                       )
 
 #3
@@ -95,7 +94,7 @@ y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0210_3.csv", index=False)
+submission_csv.to_csv(path + "submission_0211_3.csv", index=False)
 
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
@@ -128,7 +127,10 @@ print('acc:', acc)
 
 
 
-
+# 점수 : 0.89884
+# results: 0.8802986512524085
+# acc: 0.8802986512524085
+# tts_random = 2
 
 
 
