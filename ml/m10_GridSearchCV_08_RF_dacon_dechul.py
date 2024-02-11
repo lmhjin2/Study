@@ -83,24 +83,24 @@ strat_time = tm.time()
 model.fit(x_train, y_train)
 end_time = tm.time()
 print("최적의 매개변수 : ", model.best_estimator_)
-    # 최적의 매개변수 :  RandomForestClassifier(min_samples_split=3, n_jobs=4)
+    # 최적의 매개변수 :  RandomForestClassifier(min_samples_split=3, n_jobs=2)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
-    # 최적의 파라미터 :  {'min_samples_split': 3, 'n_jobs': 4}
+    # 최적의 파라미터 :  {'min_samples_split': 3, 'n_jobs': 2}
 print('best_score :', model.best_score_)
-    # best_score : 0.9742424242424242
+    # best_score : 0.8032572758895912
 print('model.score :', model.score(x_test, y_test))
-    # model.score : 0.9298245614035088
+    # model.score : 0.8046500894247967
 
 y_predict = model.predict(x_test)
 print('accuracy_score:', accuracy_score(y_test,y_predict))
-    # accuracy_score: 0.9298245614035088
+    # accuracy_score: 0.8046500894247967
 y_pred_best = model.best_estimator_.predict(x_test)
             # 최적의 매개변수.predict(x_test)
 print('최적 튠 ACC:', accuracy_score(y_test,y_pred_best))
-    # 최적 튠 ACC: 0.9298245614035088
+    # 최적 튠 ACC: 0.8046500894247967
 
 print('걸린시간:', np.round(end_time - strat_time, 2), '초')
-
+# 걸린시간: 2783.57 초
 
 
 #3
@@ -124,6 +124,12 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # https://dacon.io/competitions/official/236214/mysubmission
 
 
-
+# 최적의 매개변수 :  RandomForestClassifier(min_samples_split=3, n_jobs=2)
+# 최적의 파라미터 :  {'min_samples_split': 3, 'n_jobs': 2}
+# best_score : 0.8032572758895912
+# model.score : 0.8046500894247967
+# accuracy_score: 0.8046500894247967
+# 최적 튠 ACC: 0.8046500894247967
+# 걸린시간: 2783.57 초
 
 

@@ -70,3 +70,4 @@ print('최적 튠 R2:', r2_score(y_test,y_pred_best))
     # 최적 튠 R2: 0.3158090196960497
 
 print('걸린시간:', np.round(end_time - strat_time, 2), '초')
+
