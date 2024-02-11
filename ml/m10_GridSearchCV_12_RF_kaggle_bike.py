@@ -51,21 +51,28 @@ strat_time = tm.time()
 model.fit(x_train, y_train)
 end_time = tm.time()
 print("최적의 매개변수 : ", model.best_estimator_)
-    # 최적의 매개변수 :  RandomForestRegressor(max_depth=10, min_samples_leaf=10)
+    # 최적의 매개변수 :  RandomForestRegressor(max_depth=10, min_samples_leaf=3, n_estimators=200)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
-    # 최적의 파라미터 :  {'max_depth': 10, 'min_samples_leaf': 10, 'n_estimators': 100}
+    # 최적의 파라미터 :  {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 200}
 print('best_score :', model.best_score_)
-    # best_score : 0.47998972089553804
+    # best_score : 0.36621115980651897
 print('model.score :', model.score(x_test, y_test))
-    # model.score : 0.3158090196960497
+    # model.score : 0.3537637566261046
 y_predict = model.predict(x_test)
 print('r2_score:', r2_score(y_test,y_predict))
-    # r2_score: 0.3158090196960497
+    # r2_score: 0.3537637566261046
 y_pred_best = model.best_estimator_.predict(x_test)
             # 최적의 매개변수.predict(x_test)
 print('최적 튠 R2:', r2_score(y_test,y_pred_best))
-    # 최적 튠 R2: 0.3158090196960497
+    # 최적 튠 R2: 0.3537637566261046
 
 print('걸린시간:', np.round(end_time - strat_time, 2), '초')
+# 걸린시간: 494.15 초
 
-
+# 최적의 매개변수 :  RandomForestRegressor(max_depth=10, min_samples_leaf=3, n_estimators=200)
+# 최적의 파라미터 :  {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 200}
+# best_score : 0.36621115980651897
+# model.score : 0.3537637566261046
+# r2_score: 0.3537637566261046
+# 최적 튠 R2: 0.3537637566261046
+# 걸린시간: 494.15 초
