@@ -68,15 +68,15 @@ from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'min_child_weight':range(1,10,1),
-               'max_depth':range(3,9,1)}
+parameters = [{'gamma':range(1,11,1),
+               'nthread':range(1,11,1), }
 ]
 
 #2
 model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 
                       learning_rate = 0.1 , 
-                      max_depth = 9 ,
-                      min_child_weight= 3 ,
+                      max_depth = 3 ,
+                      min_child_weight= 7 ,
                       gamma = 0 ,  
                       subsample=0.8 ,
                       colsample_bytree= 0.8 ,
@@ -84,7 +84,7 @@ model = GridSearchCV(XGBClassifier(n_estimators = 1000 ,
                       nthread= 4 ,
                       seed= 27 ,
                     #   scale_pos_weight= 1 ,
-                      ), parameters, cv=kfold, refit=True)
+                      ), parameters, cv=kfold, refit=True, n_jobs=-1)
 
 # model = GridSearchCV(XGBClassifier(), parameters, cv = kfold,
 #                     #  verbose=1,
@@ -136,7 +136,27 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 
 
 
-
+# 최적의 매개변수 :  XGBClassifier(base_score=None, booster=None, callbacks=None,
+#               colsample_bylevel=None, colsample_bynode=None,
+#               colsample_bytree=0.8, device=None, early_stopping_rounds=None,
+#               enable_categorical=False, eval_metric=None, feature_types=None,
+#               gamma=0, grow_policy=None, importance_type=None,
+#               interaction_constraints=None, learning_rate=0.1, max_bin=None,
+#               max_cat_threshold=None, max_cat_to_onehot=None,
+#               max_delta_step=None, max_depth=3, max_leaves=None,
+#               min_child_weight=7, missing=nan, monotone_constraints=None,
+#               multi_strategy=None, n_estimators=1000, n_jobs=None, nthread=4,
+#               num_parallel_tree=None, ...)
+# 최적의 파라미터 :  {'max_depth': 3, 'min_child_weight': 7}
+# best_score : 0.9048532963884435
+# model.score : 0.9164258188824663
+# 최적 튠 ACC: 0.9164258188824663
+# acc: [0.91105769 0.90384615 0.88915663 0.87951807 0.90361446 0.88915663
+#  0.91084337 0.90120482 0.90120482 0.91566265]
+#  평균 acc: 0.9005
+# model.score: 0.9164258188824663
+# acc: 0.9164258188824663
+# 걸린시간: 1985.7 초
 
 
 
