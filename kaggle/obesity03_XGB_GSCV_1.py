@@ -68,9 +68,9 @@ from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'seed':range(1,10,1)}]
+parameters = [{'seed':range(700,10701,1)}]
 
-#2
+
 model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 
                       learning_rate = 0.1 , 
                       max_depth = 3 ,
@@ -80,15 +80,22 @@ model = GridSearchCV(XGBClassifier(n_estimators = 1000 ,
                       colsample_bytree= 0.8 ,
                       objective= 'binary:logistic' ,
                       nthread= 1 ,
-                      seed= 27 ,
+                      seed= 3 ,
                     #   scale_pos_weight= 1 ,
                       ), parameters, cv=kfold, refit=True, n_jobs=-1)
 
-# model = GridSearchCV(XGBClassifier(), parameters, cv = kfold,
-#                     #  verbose=1,
-#                      refit=True,
-#                     #  n_jobs=-1,
-#                      )
+# model = XGBClassifier(n_estimators = 1000,
+#                       learning_rate = 0.1 , 
+#                       max_depth = 3 ,
+#                       min_child_weight= 7 ,
+#                       gamma = 1 ,  
+#                       subsample=0.8 ,
+#                       colsample_bytree= 0.8 ,
+#                       objective= 'binary:logistic' ,
+#                       nthread= 1 ,
+#                       seed= 34 ,
+#                     #   scale_pos_weight= 1 ,
+#                       )
 #3
 import time as tm
 strat_time = tm.time()
@@ -133,7 +140,14 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # https://www.kaggle.com/c/playground-series-s4e2/overview
 
 
+# 최적의 파라미터 :  {'seed': 47}
+# model.score : 0.9200385356454721
+# 최적 튠 ACC: 0.9200385356454721
+# 위아래 두개 왜 같음???
+# 최적의 파라미터 :  {'seed': 34}
+# model.score : 0.9200385356454721
+# 최적 튠 ACC: 0.9200385356454721
 
-
-
-
+# 최적의 파라미터 :  {'seed': 315}
+# model.score : 0.9210019267822736
+# 최적 튠 ACC: 0.9210019267822736
