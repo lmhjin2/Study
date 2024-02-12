@@ -116,10 +116,10 @@ y_submit_best = lae_NObeyesdad.inverse_transform(y_submit_best)
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0210_3.csv", index=False)
+submission_csv.to_csv(path + "submission_0212_3.csv", index=False)
 
 submission_csv['NObeyesdad'] = y_submit_best
-submission_csv.to_csv(path + "submission_b_0211_1.csv", index=False)
+submission_csv.to_csv(path + "submission_b_0212_1.csv", index=False)
 
 
 print("최적의 매개변수 : ", model.best_estimator_)
