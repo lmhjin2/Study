@@ -68,7 +68,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'seed':range(700,801,1)}]
+parameters = [{'seed':range(740,750,1)}]
 
 
 model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 
@@ -81,7 +81,9 @@ model = GridSearchCV(XGBClassifier(n_estimators = 1000 ,
                       objective= 'binary:logistic' ,
                       nthread= 1 ,
                       seed= 3 ,
-                    #   scale_pos_weight= 1 ,
+                      # tree_method = 'gpu_hist' 
+                      # conda install -c conda-forge xgboost-gpu <- cmd에서 gpu버전 xgboost설치해야함
+                      # scale_pos_weight= 1 ,
                       ), parameters, cv=kfold, refit=True, n_jobs=-1)
 
 # model = XGBClassifier(n_estimators = 1000,
@@ -148,6 +150,7 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # model.score : 0.9200385356454721
 # 최적 튠 ACC: 0.9200385356454721
 
+# 점수 : 0.91221
 # 최적의 파라미터 :  {'seed': 315}
 # model.score : 0.9210019267822736
 # 최적 튠 ACC: 0.9210019267822736
