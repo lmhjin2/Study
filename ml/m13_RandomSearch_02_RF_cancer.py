@@ -36,7 +36,7 @@ n_splits =  10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 parameters = [
-    {'n_estimators':[100,200], 'max_depth':[6,10,12], 'min_samples_leaf':[3,10]},
+    {'n_estimators':[100,200,300], 'max_depth':[6,8,10,12], 'min_samples_leaf':[3,5,7,10]},
     {'max_depth':[6,8,10,12], 'min_samples_leaf':[3,5,7,10]},
     {'min_samples_leaf':[3,5,7,10], 'min_samples_split': [2,3,5,10]},
     {'min_samples_split': [2,3,5,10]}
@@ -81,10 +81,10 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # 최적 튠 ACC: 0.9298245614035088
 # 걸린시간: 45.73 초
 
-# 최적의 매개변수 :  RandomForestClassifier(max_depth=10, min_samples_leaf=10)
-# 최적의 파라미터 :  {'min_samples_leaf': 10, 'max_depth': 10}
-# best_score : 0.956060606060606
-# model.score : 0.9298245614035088
-# accuracy_score: 0.9298245614035088
-# 최적 튠 ACC: 0.9298245614035088
-# 걸린시간: 2.38 초
+# 최적의 매개변수 :  RandomForestClassifier(max_depth=8, min_samples_leaf=3)
+# 최적의 파라미터 :  {'n_estimators': 100, 'min_samples_leaf': 3, 'max_depth': 8}
+# best_score : 0.9643939393939395
+# model.score : 0.9320175438596491
+# accuracy_score: 0.9320175438596491
+# 최적 튠 ACC: 0.9320175438596491
+# 걸린시간: 2.68 초

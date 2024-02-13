@@ -41,11 +41,10 @@ x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
 parameters = [
-    {'n_estimators':[100,200], 'max_depth':[6,10,12], 'min_samples_leaf':[3,10]},
+    {'n_estimators':[100,200,300], 'max_depth':[6,8,10,12], 'min_samples_leaf':[3,5,7,10]},
     {'max_depth':[6,8,10,12], 'min_samples_leaf':[3,5,7,10]},
     {'min_samples_leaf':[3,5,7,10], 'min_samples_split': [2,3,5,10]},
-    {'min_samples_split': [2,3,5,10]},
-    {'n_jobs':[-1,2,4], 'min_samples_split': [2,3,5,10]}
+    {'min_samples_split': [2,3,5,10]}
     ]
 
 #2
@@ -89,3 +88,11 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # r2_score: 0.7883677786831836
 # 최적 튠 R2: 0.7883677786831836
 # 걸린시간: 103.13 초
+
+# 최적의 매개변수 :  RandomForestRegressor(min_samples_split=3, n_jobs=4)
+# 최적의 파라미터 :  {'n_jobs': 4, 'min_samples_split': 3}
+# best_score : 0.7655992400245797
+# model.score : 0.7867217494003083
+# r2_score: 0.7867217494003083
+# 최적 튠 R2: 0.7867217494003083
+# 걸린시간: 11.49 초
