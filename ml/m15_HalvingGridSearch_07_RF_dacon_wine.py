@@ -5,7 +5,9 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold,\
+    cross_val_predict, GridSearchCV, RandomizedSearchCV, HalvingGridSearchCV
 from sklearn.metrics import accuracy_score
 import time as tm
 from sklearn.svm import LinearSVC, LinearSVR
@@ -46,11 +48,12 @@ parameters = [
 
 #2 모델
 
-model = RandomizedSearchCV(RandomForestClassifier(), parameters, cv = kfold,
-                    # verbose=1, 
+model = HalvingGridSearchCV(RandomForestClassifier(), parameters, cv = kfold,
+                    verbose=1, 
                     refit = True, 
-                    # n_jobs=-1     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
-                    n_iter=100
+                    n_jobs=-1,     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
+                    # factor=2,
+                    # min_resources=30
                     )
 strat_time = tm.time()
 model.fit(x_train, y_train)
@@ -88,4 +91,12 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # model.score : 0.6790909090909091
 # accuracy_score: 0.6790909090909091
 # 최적 튠 ACC: 0.6790909090909091
-# 걸린시간: 162.35 초
+# 걸린시간: 162.35 초 
+
+# 최적의 매개변수 :  RandomForestClassifier(max_depth=10, min_samples_leaf=3)
+# 최적의 파라미터 :  {'max_depth': 10, 'min_samples_leaf': 3, 'n_estimators': 100}
+# best_score : 0.5935343073274109
+# model.score : 0.6063636363636363
+# accuracy_score: 0.6063636363636363
+# 최적 튠 ACC: 0.6063636363636363
+# 걸린시간: 7.63 초

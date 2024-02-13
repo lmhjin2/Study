@@ -5,7 +5,9 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold,\
+    cross_val_predict, GridSearchCV, RandomizedSearchCV, HalvingGridSearchCV
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
@@ -73,11 +75,14 @@ parameters = [
 
 #2 모델
 
-model = RandomizedSearchCV(RandomForestClassifier(), parameters, cv = kfold,
-                    # verbose=1, 
+model = HalvingGridSearchCV(RandomForestClassifier(), parameters, 
+                    # cv = kfold,
+                    cv = 3,
+                    verbose=1, 
                     refit = True, 
-                    # n_jobs=-1     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
-                    n_iter=100
+                    n_jobs=-1,     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
+                    # factor=2,
+                    # min_resources=30,
                     )
 strat_time = tm.time()
 model.fit(x_train, y_train)
@@ -139,3 +144,17 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # accuracy_score: 0.8067847458604973
 # 최적 튠 ACC: 0.8067847458604973
 # 걸린시간: 487.12 초
+
+
+# ----------
+# iter: 4
+# n_candidates: 2
+# n_resources: 78894
+# Fitting 3 folds for each of 2 candidates, totalling 6 fits
+# 최적의 매개변수 :  RandomForestClassifier(min_samples_split=5)
+# 최적의 파라미터 :  {'min_samples_split': 5}
+# best_score : 0.7936545689743856
+# model.score : 0.8032077539952691
+# accuracy_score: 0.8032077539952691
+# 최적 튠 ACC: 0.8032077539952691
+# 걸린시간: 28.07 초

@@ -5,7 +5,9 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold,\
+    cross_val_predict, GridSearchCV, RandomizedSearchCV, HalvingGridSearchCV
 from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error, mean_absolute_error
 from sklearn.svm import LinearSVR
 from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
@@ -48,11 +50,12 @@ parameters = [
     ]
 
 #2
-model = RandomizedSearchCV(RandomForestRegressor(), parameters, cv = kfold,
-                    # verbose=1, 
+model = HalvingGridSearchCV(RandomForestRegressor(), parameters, cv = kfold,
+                    verbose=1, 
                     refit = True, 
-                    # n_jobs=-1     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
-                    n_iter=30
+                    # n_jobs=-1,     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
+                    # factor=2,
+                    # min_resources=20,
                     )
 strat_time = tm.time()
 model.fit(x_train, y_train)
@@ -97,3 +100,16 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # r2_score: 0.7904932568912093
 # 최적 튠 R2: 0.7904932568912093
 # 걸린시간: 203.43 초
+
+# ----------
+# iter: 4
+# n_candidates: 2
+# n_resources: 1053
+# Fitting 5 folds for each of 2 candidates, totalling 10 fits
+# 최적의 매개변수 :  RandomForestRegressor(min_samples_leaf=3)
+# 최적의 파라미터 :  {'min_samples_leaf': 3, 'min_samples_split': 2}
+# best_score : 0.7576531865506909
+# model.score : 0.779269383042866
+# r2_score: 0.779269383042866
+# 최적 튠 R2: 0.779269383042866
+# 걸린시간: 42.62 초
