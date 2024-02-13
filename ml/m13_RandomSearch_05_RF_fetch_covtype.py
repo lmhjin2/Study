@@ -4,7 +4,7 @@ from sklearn.datasets import fetch_covtype
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, LSTM, Conv1D, Flatten, GRU
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict, GridSearchCV
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import accuracy_score
 import time as tm
 from sklearn.svm import LinearSVC, LinearSVR
@@ -18,7 +18,7 @@ y = datasets.target
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0, stratify=y)
 
-n_splits =  10
+n_splits =  4
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
@@ -40,10 +40,12 @@ parameters = [
 
 #2 모델
 
-model = GridSearchCV(RandomForestClassifier(), parameters, cv = kfold,
+model = RandomizedSearchCV(RandomForestClassifier(), parameters, 
+                    # cv = kfold,
+                    cv = 4,
                     # verbose=1, 
                     refit = True, 
-                    # n_jobs=-1     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
+                    n_jobs=-1     # cpu 코어 몇개 쓸지 정하는거. -1이면 다씀
                     )
 strat_time = tm.time()
 model.fit(x_train, y_train)
@@ -77,3 +79,10 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # 걸린시간: 21265.71초
 # kfold 10 줘서 10배 더걸림;;
 
+# 최적의 매개변수 :  RandomForestClassifier(min_samples_split=3, n_jobs=2)
+# 최적의 파라미터 :  {'n_jobs': 2, 'min_samples_split': 3}
+# best_score : 0.9482303509570649
+# model.score : 0.9537103172895708
+# accuracy_score: 0.9537103172895708
+# 최적 튠 ACC: 0.9537103172895708
+# 걸린시간: 360.88 초
