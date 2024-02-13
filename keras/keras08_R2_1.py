@@ -21,11 +21,14 @@ print(y_train)
 print(y_test)
 '''
 
-model = Sequential()
-model.add(Dense(10, input_dim = 1))
-model.add(Dense(10000))
-model.add(Dense(1))
+# model = Sequential()
+# model.add(Dense(10, input_dim = 1))
+# model.add(Dense(10000))
+# model.add(Dense(1))
 
+model = Sequential([Dense(10, input_dim=1),
+                    Dense(10000),
+                    Dense(1)])
 
 model.compile(loss='mse', optimizer='adam')
 model.fit(x_train, y_train, epochs=3000, batch_size=1)
@@ -37,7 +40,7 @@ y_predict = model.predict(x_test)
 from sklearn.metrics import r2_score
 r2 = r2_score(y_test, y_predict)
 print("R2 스코어 : " , r2)
-
+ 
 '''
 results = model.predict(x)
 
