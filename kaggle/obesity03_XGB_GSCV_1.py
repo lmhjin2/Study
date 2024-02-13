@@ -93,7 +93,7 @@ model = GridSearchCV(XGBClassifier(n_estimators = 1000 ,
 #                       colsample_bytree= 0.8 ,
 #                       objective= 'binary:logistic' ,
 #                       nthread= 1 ,
-#                       seed= 34 ,
+#                       seed= 315 ,
 #                     #   scale_pos_weight= 1 ,
 #                       )
 #3
