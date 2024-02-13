@@ -100,3 +100,16 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # accuracy_score: 0.6063636363636363
 # 최적 튠 ACC: 0.6063636363636363
 # 걸린시간: 7.63 초
+
+# ----------
+# iter: 3
+# n_candidates: 4
+# n_resources: 1890
+# Fitting 5 folds for each of 4 candidates, totalling 20 fits
+# 최적의 매개변수 :  RandomForestClassifier(max_depth=10, min_samples_leaf=10, n_estimators=200)
+# 최적의 파라미터 :  {'max_depth': 10, 'min_samples_leaf': 10, 'n_estimators': 200}
+# best_score : 0.5760234656786382
+# model.score : 0.5845454545454546
+# accuracy_score: 0.5845454545454546
+# 최적 튠 ACC: 0.5845454545454546
+# 걸린시간: 8.28 초
