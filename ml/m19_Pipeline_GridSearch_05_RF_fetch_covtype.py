@@ -42,7 +42,7 @@ parameters = [
 
 #2 모델
 pipe = Pipeline([('Robust', RobustScaler()), ('RF', RandomForestClassifier(max_depth=12, min_samples_leaf=5, n_estimators=300))])
-model = GridSearchCV(pipe, parameters, cv=5, verbose=1)
+model = GridSearchCV(pipe, parameters, cv=2, verbose=1)
 # model = RandomizedSearchCV(pipe, parameters, cv=5, verbose=1)
 # model = HalvingGridSearchCV(pipe, parameters, cv=5, verbose=1)
 strat_time = tm.time()
@@ -65,7 +65,6 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # accuracy_score: 0.9553539925819471
 # 최적 튠 ACC: 0.9553539925819471
 # 걸린시간: 21265.71초
-# kfold 10 줘서 10배 더걸림;;
 
 # iter: 4
 # n_candidates: 2
@@ -79,8 +78,12 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # 최적 튠 ACC: 0.9549925561302204
 # 걸린시간: 170.87 초
 
-
 # pipeline
 # model.score : 0.9541922325585398
 # accuracy_score: 0.9541922325585398
 # 걸린시간: 30.7 초
+
+# Pipeline
+
+
+

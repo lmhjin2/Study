@@ -76,3 +76,8 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # model.score : 0.8103574698657563
 # r2_score: 0.8103574698657563
 # 걸린시간: 2.81 초
+
+# Pipeline
+# model.score : 0.808833963853372
+# r2_score: 0.808833963853372
+# 걸린시간: 2790.1 초

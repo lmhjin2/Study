@@ -86,3 +86,11 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # model.score : 0.9583333333333334
 # accuracy_score: 0.9583333333333334
 # 걸린시간: 0.04 초
+
+# Pipeline
+# Fitting 5 folds for each of 84 candidates, totalling 420 fits
+# model.score : 0.9166666666666666
+# accuracy_score: 0.9166666666666666
+# 걸린시간: 29.67 초
+
+

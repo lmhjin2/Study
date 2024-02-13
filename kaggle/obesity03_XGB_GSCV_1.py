@@ -68,7 +68,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'seed':range(750,760,1)}]
+parameters = [{'seed':range(310,320,1)}]
 
 
 model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 

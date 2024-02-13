@@ -76,7 +76,7 @@ parameters = [
 
 #2 모델
 pipe = Pipeline([('Robust', RobustScaler()), ('RF', RandomForestClassifier(min_samples_split= 2))])
-model = GridSearchCV(pipe, parameters, cv=5, verbose=1)
+model = GridSearchCV(pipe, parameters, cv=2, verbose=1)
 # model = RandomizedSearchCV(pipe, parameters, cv=5, verbose=1)
 # model = HalvingGridSearchCV(pipe, parameters, cv=5, verbose=1)
 
@@ -127,3 +127,9 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # model.score : 0.8077078405353949
 # accuracy_score: 0.8077078405353949
 # 걸린시간: 7.98 초
+
+# Pipeline
+# model.score : 0.8053424104309699
+# accuracy_score: 0.8053424104309699
+# 걸린시간: 637.79 초
+
