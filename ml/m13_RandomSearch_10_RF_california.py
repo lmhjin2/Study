@@ -37,11 +37,10 @@ n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 parameters = [
-    {'n_estimators':[100,200], 'max_depth':[6,10,12], 'min_samples_leaf':[3,10]},
+    {'n_estimators':[100,200,300], 'max_depth':[6,8,10,12], 'min_samples_leaf':[3,5,7,10]},
     {'max_depth':[6,8,10,12], 'min_samples_leaf':[3,5,7,10]},
     {'min_samples_leaf':[3,5,7,10], 'min_samples_split': [2,3,5,10]},
-    {'min_samples_split': [2,3,5,10]},
-    {'n_jobs':[-1,2,4], 'min_samples_split': [2,3,5,10]}
+    {'min_samples_split': [2,3,5,10]}
     ]
 
 #2
@@ -79,3 +78,11 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # r2_score: 0.807860614649011
 # 최적 튠 R2: 0.807860614649011
 # 걸린시간: 1891.86 초
+
+# 최적의 매개변수 :  RandomForestRegressor(n_jobs=2)
+# 최적의 파라미터 :  {'n_jobs': 2, 'min_samples_split': 2}
+# best_score : 0.8117560013468781
+# model.score : 0.8110732528984922
+# r2_score: 0.8110732528984922
+# 최적 튠 R2: 0.8110732528984922
+# 걸린시간: 156.97 초
