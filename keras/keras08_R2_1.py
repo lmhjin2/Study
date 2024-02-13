@@ -38,7 +38,7 @@ print("로스 : ", loss)
 y_predict = model.predict(x_test)
 
 from sklearn.metrics import r2_score
-r2 = r2_score(y_test, y_predict)
+r2 = r2_score(y_test, y_predict)  
 print("R2 스코어 : " , r2)
  
 '''
