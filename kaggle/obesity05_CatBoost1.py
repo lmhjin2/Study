@@ -68,7 +68,9 @@ from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 import catboost as cbt
 #2
-model = cbt.CatBoostClassifier()
+model = cbt.CatBoostClassifier(
+    random_seed=111,
+    )
 
 #3
 model.fit(x_train, y_train)
@@ -101,7 +103,7 @@ print('acc:', acc)
 # border_count: 이산화를 위한 데이터 분할 포인트 수
 # loss_function: 손실 함수
 # eval_metric: 평가 지표
-# random_seed: 랜덤 시드
+# random_seed: 랜덤 시드        ## 바뀜. // random_state 뭘 쓰던 상관 x
 # verbose: 학습 과정의 출력 레벨
 # task_type: 문제 유형 (GPU를 사용할 경우 'GPU'로 설정 가능)
 # class_weights: 클래스 가중치
@@ -123,3 +125,9 @@ print('acc:', acc)
 #  평균 acc: 0.8979
 # results: 0.9171483622350675
 # acc: 0.9171483622350675
+
+# acc: [0.91826923 0.91346154 0.88915663 0.8746988  0.89638554 0.90120482
+#  0.9060241  0.90361446 0.8939759  0.92048193]
+#  평균 acc: 0.9017
+# results: 0.9161849710982659
+# acc: 0.9161849710982659
