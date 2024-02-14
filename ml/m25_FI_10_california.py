@@ -30,6 +30,8 @@ y = datasets.target
 label_endcoer = LabelEncoder()
 y = label_endcoer.fit_transform(y)
 # 라벨 인코딩. StratifiedKFold 할때만 필요
+print(x.shape, y.shape)
+
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0)
 
 # scaler = MaxAbsScaler()
@@ -51,7 +53,7 @@ for model in models:
         print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
 
         # 남길 상위 특성 선택
-        num_features_to_keep = 10
+        num_features_to_keep = 6
         sorted_indices = np.argsort(model.feature_importances_)[::-1]
         selected_features = sorted_indices[:num_features_to_keep]
 
@@ -75,30 +77,33 @@ for model in models:
         print("에러:", e)
         continue
 
-# 최적의 매개변수 :  RandomForestRegressor(n_jobs=2)
-# 최적의 파라미터 :  {'n_jobs': 2, 'min_samples_split': 2}
-# best_score : 0.8117560013468781
-# model.score : 0.8110732528984922
-# r2_score: 0.8110732528984922
-# 최적 튠 R2: 0.8110732528984922
-# 걸린시간: 156.97 초
-
-# DecisionTreeRegressor r2 score 0.6174329720487597
 # DecisionTreeRegressor model.score 0.6272926026169132
 # DecisionTreeRegressor : [0.5218018  0.05339749 0.05275489 0.02633996 0.03248298 0.12972827
 #  0.08809633 0.09539829]
 
-# RandomForestRegressor r2 score 0.7537426848866107
+# 선택된 특성 수: 6
+# 컬럼 줄인 DecisionTreeRegressor 의 정확도: 0.6198107538238058
+
+
 # RandomForestRegressor model.score 0.8094045957505897
 # RandomForestRegressor : [0.52366743 0.05262664 0.05287442 0.02778925 0.03226622 0.13032447
 #  0.08954688 0.0909047 ]
 
-# GradientBoostingRegressor r2 score 0.7131243655416415
+# 선택된 특성 수: 6
+# 컬럼 줄인 RandomForestRegressor 의 정확도: 0.8152804499656907
+
+
 # GradientBoostingRegressor model.score 0.7862973452347977
 # GradientBoostingRegressor : [0.59661078 0.02952792 0.02894911 0.00425026 0.00330772 0.11928432
 #  0.09363868 0.12443121]
 
-# XGBRegressor r2 score 0.8211145459282574
+# 선택된 특성 수: 6
+# 컬럼 줄인 GradientBoostingRegressor 의 정확도: 0.7850895823036456
+
+
 # XGBRegressor model.score 0.8442317685995901
 # XGBRegressor : [0.48233894 0.06352142 0.04919809 0.02387741 0.02384355 0.1421112
 #  0.10367327 0.11143605]
+
+# 선택된 특성 수: 6
+# 컬럼 줄인 XGBRegressor 의 정확도: 0.851658363966794

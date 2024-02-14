@@ -1,6 +1,3 @@
-# restore_best_weights 와
-# save_best_only 에 대한 고찰
-
 import numpy as np
 import pandas as pd
 from keras.models import Sequential, load_model
@@ -30,6 +27,7 @@ y = datasets.target
 label_endcoer = LabelEncoder()
 y = label_endcoer.fit_transform(y)
 # 라벨 인코딩. StratifiedKFold 할때만 필요
+print(x.shape, y.shape)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0)
 
 # scaler = MaxAbsScaler()
@@ -76,33 +74,37 @@ for model in models:
         continue
 
 
-# Pipeline
-# model.score : 0.7524490468170687
-# r2_score: 0.7524490468170687
-# 걸린시간: 0.07 초
-
-# DecisionTreeRegressor r2 score 0.6254936466858083
 # DecisionTreeRegressor model.score 0.6165248747431489
-# DecisionTreeRegressor : [2.80391263e-02 5.30081536e-06 1.73500104e-02 1.43646413e-03
-#  4.13817924e-02 1.58813444e-01 2.25367034e-02 2.10915163e-02
-#  2.24402025e-03 1.21938754e-02 1.07782890e-02 4.71049759e-03
-#  6.79418960e-01]
+# DecisionTreeRegressor : [0.02803913 0.0000053  0.01735001 0.00143646 0.04138179 0.15881344
+#  0.0225367  0.02109152 0.00224402 0.01219388 0.01077829 0.0047105
+#  0.67941896]
 
-# RandomForestRegressor r2 score 0.658086048366294
+# 선택된 특성 수: 10
+# 컬럼 줄인 DecisionTreeRegressor 의 정확도: 0.6147180604941925
+
+
 # RandomForestRegressor model.score 0.7418415344287195
 # RandomForestRegressor : [0.05243644 0.001352   0.00863553 0.00085234 0.02121723 0.1763693
 #  0.01447535 0.02985291 0.00249164 0.01548248 0.0182484  0.01329596
 #  0.64529042]
 
-# GradientBoostingRegressor r2 score 0.6527391158359996
-# GradientBoostingRegressor model.score 0.7362122111949143
-# GradientBoostingRegressor : [2.79437518e-02 1.53135969e-04 3.17765328e-03 4.02544684e-04
-#  2.66875679e-02 1.59624425e-01 9.23671737e-03 3.53640662e-02
-#  3.99603768e-04 1.27868130e-02 4.77135577e-02 1.05294229e-02
-#  6.65980740e-01]
+# 선택된 특성 수: 10
+# 컬럼 줄인 RandomForestRegressor 의 정확도: 0.740213696219874
 
-# XGBRegressor r2 score 0.6879833206583839
+
+# GradientBoostingRegressor model.score 0.7362122111949143
+# GradientBoostingRegressor : [0.02794375 0.00015314 0.00317765 0.00040254 0.02668757 0.15962443
+#  0.00923672 0.03536407 0.0003996  0.01278681 0.04771356 0.01052942
+#  0.66598074]
+
+# 선택된 특성 수: 10
+# 컬럼 줄인 GradientBoostingRegressor 의 정확도: 0.7202414164308785
+
+
 # XGBRegressor model.score 0.7622746562973528
 # XGBRegressor : [0.02382473 0.00130383 0.02772509 0.01033411 0.05156561 0.10908394
 #  0.01620274 0.0178323  0.0057355  0.03537114 0.02386856 0.00930779
 #  0.66784465]
+
+# 선택된 특성 수: 10
+# 컬럼 줄인 XGBRegressor 의 정확도: 0.7506577472287113

@@ -27,9 +27,9 @@ submission_csv = pd.read_csv(path+"submission.csv")
 
 train_csv = train_csv.dropna()  # 결측치 드랍.
 test_csv = test_csv.fillna(test_csv.mean()) # 결측치에 평균치넣기
-x = train_csv.drop(['count'], axis=1)
+x = train_csv #.drop(['count'], axis=1)
 y = train_csv['count']
-
+print(x.shape, y.shape)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0)
 
 n_splits = 5
@@ -55,76 +55,62 @@ for model in models:
     try:
         model.fit(x_train, y_train)
         results = model.score(x_test, y_test)
-        y_predict = model.predict(x_test)
-        print(type(model).__name__, "model.score", results)
-        print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
-
-        # 남길 상위 특성 선택
-        num_features_to_keep = 10
-        sorted_indices = np.argsort(model.feature_importances_)[::-1]
-        selected_features = sorted_indices[:num_features_to_keep]
-
+        print(type(model).__name__, "모델의 정확도:", results)
+        
+        # 특성 중요도 출력
+        if hasattr(model, 'feature_importances_'):
+            print("특성 중요도:", model.feature_importances_)
+        
         # 선택된 특성 수 출력
-        print("선택된 특성 수:", len(selected_features))
-
-        # 상위컬럼 데이터로 변환
-        x_train_selected = x_train[:, selected_features]
-        x_test_selected = x_test[:, selected_features]
-
-        # 재학습, 평가
-        model_selected = model.__class__(random_state=0)
-        model_selected.fit(x_train_selected, y_train)
-        y_predict_selected = model_selected.predict(x_test_selected)
-        r2_selected = r2_score(y_test, y_predict_selected)
-
-        # 프린트
-        print("컬럼 줄인", type(model).__name__,"의 정확도:", r2_selected)
+        num_features_to_keep = 7
+        if hasattr(model, 'feature_importances_'):
+            sorted_indices = np.argsort(model.feature_importances_)[::-1]
+            selected_features = sorted_indices[:num_features_to_keep]
+            print("선택된 특성 수:", len(selected_features))
+        
+            # 선택된 특성으로 다시 모델 훈련 및 평가
+            x_train_selected = x_train.iloc[:, selected_features]
+            x_test_selected = x_test.iloc[:, selected_features]
+            model_selected = model.__class__(random_state=0)
+            model_selected.fit(x_train_selected, y_train)
+            y_predict_selected = model_selected.predict(x_test_selected)
+            r2_selected = r2_score(y_test, y_predict_selected)
+            print("컬럼 줄인", type(model).__name__, "모델의 정확도:", r2_selected)
+        
         print('\n')
     except Exception as e:
         print("에러:", e)
         continue
 
 # #4
-# y_submit = model.predict(test_csv)
+y_submit = model.predict(test_csv)
 
-# submission_csv['count']=y_submit
-# submission_csv.to_csv(path+"submission_0131.csv",index=False)
+submission_csv['count']=y_submit
+submission_csv.to_csv(path+"submission_0131.csv",index=False)
 
-# 최적의 매개변수 :  RandomForestRegressor()
-# 최적의 파라미터 :  {'min_samples_split': 2}
-# best_score : 0.7652611100092658
-# model.score : 0.7904932568912093
-# r2_score: 0.7904932568912093
-# 최적 튠 R2: 0.7904932568912093
-# 걸린시간: 203.43 초
-
-# pipeline
-# model.score : 0.7903707059202136
-# r2_score: 0.7903707059202136
-# 걸린시간: 0.24 초
+# DecisionTreeRegressor 모델의 정확도: 0.9993249171489649
+# 특성 중요도: [0.00000365 0.00000231 0.         0.00000127 0.00000303 0.00000095
+#  0.00010541 0.00000156 0.00000325 0.99987858]
+# 선택된 특성 수: 7
+# 컬럼 줄인 DecisionTreeRegressor 모델의 정확도: 0.9998959726344715
 
 
-# Pipeline
-# model.score : 0.7953029668997788
-# r2_score: 0.7953029668997788
-# 걸린시간: 0.82 초
+# RandomForestRegressor 모델의 정확도: 0.9998649738483251
+# 특성 중요도: [0.0000116  0.00003357 0.00000005 0.00003166 0.00003645 0.00000952
+#  0.00003024 0.00005648 0.00003096 0.99975948]
+# 선택된 특성 수: 7
+# 컬럼 줄인 RandomForestRegressor 모델의 정확도: 0.9998489975992835
 
-# DecisionTreeRegressor r2 score 0.6381858402876152
-# DecisionTreeRegressor model.score 0.5930602764010395
-# DecisionTreeRegressor : [0.58366329 0.19587694 0.00651891 0.02859404 0.04551763 0.05413454
-#  0.0287678  0.03429513 0.02263172]
 
-# RandomForestRegressor r2 score 0.7378440612432596
-# RandomForestRegressor model.score 0.7906523416159639
-# RandomForestRegressor : [0.59509245 0.1776177  0.01620756 0.03118662 0.03771075 0.03792288
-#  0.04163992 0.0390983  0.02352382]
+# GradientBoostingRegressor 모델의 정확도: 0.999900322197269
+# 특성 중요도: [0.00000034 0.00000555 0.00000016 0.00000152 0.00000294 0.00000045
+#  0.00000083 0.00000201 0.00000072 0.99998549]
+# 선택된 특성 수: 7
+# 컬럼 줄인 GradientBoostingRegressor 모델의 정확도: 0.9999002282242246
 
-# GradientBoostingRegressor r2 score 0.7089835742657045
-# GradientBoostingRegressor model.score 0.7764621639045257
-# GradientBoostingRegressor : [0.65092741 0.20562871 0.02037336 0.01067317 0.01459179 0.03031671
-#  0.0271698  0.02988211 0.01043695]
 
-# XGBRegressor r2 score 0.7666172493922796
-# XGBRegressor model.score 0.7949821360117232
-# XGBRegressor : [0.38300964 0.11773865 0.27954364 0.02146033 0.03986756 0.03715678
-#  0.03737744 0.04594545 0.03790054]
+# XGBRegressor 모델의 정확도: 0.9996573304871267
+# 특성 중요도: [0.00002322 0.00031825 0.00000735 0.00008117 0.00006925 0.00007944
+#  0.00004593 0.00018307 0.00007511 0.9991172 ]
+# 선택된 특성 수: 7
+# 컬럼 줄인 XGBRegressor 모델의 정확도: 0.9997294183637274
