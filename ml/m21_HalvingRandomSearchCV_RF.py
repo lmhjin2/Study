@@ -24,7 +24,7 @@ parameters = [
 ]
 
 #2 모델
-
+######### 버전이슈 ##### sklearn 1.1.3 에서는 그냥 되는데 1.3.0 에서 HalvingRandomSearchCV 문법이 바뀌어서 안돌아감
 print("=============== HalvingRandomSearchCV 시작 =======================================")
 model = HalvingRandomSearchCV(SVC(), parameters, cv = kfold,
                     verbose=1, 
