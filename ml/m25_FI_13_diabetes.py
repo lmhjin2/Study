@@ -74,37 +74,33 @@ for model in models:
         print("에러:", e)
         continue
 
-# ----------
-# iter: 3
-# n_candidates: 3
-# n_resources: 351
-# Fitting 5 folds for each of 3 candidates, totalling 15 fits
-# c:\Users\AIA\anaconda3\envs\tf290gpu\lib\site-packages\sklearn\model_selection\_split.py:684: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
-#   warnings.warn(
-# 최적의 매개변수 :  RandomForestRegressor(max_depth=10, min_samples_leaf=5)
-# 최적의 파라미터 :  {'max_depth': 10, 'min_samples_leaf': 5}
-# best_score : 0.46630723859494444
-# model.score : 0.33819940383645386
-# r2_score: 0.33819940383645386
-# 최적 튠 R2: 0.33819940383645386
-# 걸린시간: 4.1 초
-
-# DecisionTreeRegressor accuracy score -0.22597054366821778
 # DecisionTreeRegressor model.score -0.2471473515268876
 # DecisionTreeRegressor : [0.05142539 0.02613193 0.35947563 0.11750633 0.07023149 0.06085748
 #  0.02810653 0.03833231 0.1937202  0.05421271]
 
-# RandomForestRegressor accuracy score -0.45545914660015385
+# 선택된 특성 수: 10
+# 컬럼 줄인 DecisionTreeRegressor 의 정확도: -0.22257739220797057
+
+
 # RandomForestRegressor model.score 0.27454472427110677
 # RandomForestRegressor : [0.05658985 0.01185235 0.31936517 0.11881664 0.04230416 0.04186389
 #  0.04750551 0.02722755 0.26951248 0.0649624 ]
 
-# GradientBoostingRegressor accuracy score -0.3092658847722032
+# 선택된 특성 수: 10
+# 컬럼 줄인 RandomForestRegressor 의 정확도: 0.28970309183148335
+
+
 # GradientBoostingRegressor model.score 0.28959743715858377
 # GradientBoostingRegressor : [0.03238974 0.01826308 0.34699758 0.12723599 0.04246017 0.04122778
 #  0.03334123 0.03933527 0.27158532 0.04716383]
 
-# XGBRegressor accuracy score -0.5109193671160241
+# 선택된 특성 수: 10
+# 컬럼 줄인 GradientBoostingRegressor 의 정확도: 0.30015395004491496
+
+
 # XGBRegressor model.score 0.12475668653462724
 # XGBRegressor : [0.02937298 0.06713533 0.26994804 0.10587011 0.05830657 0.04529607
 #  0.03794642 0.11817201 0.19436061 0.07359192]
+
+# 선택된 특성 수: 10
+# 컬럼 줄인 XGBRegressor 의 정확도: 0.16385569817684442
