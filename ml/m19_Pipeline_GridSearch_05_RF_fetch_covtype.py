@@ -84,6 +84,7 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 # 걸린시간: 30.7 초
 
 # Pipeline
-
-
+# model.score : 0.784024508833679
+# accuracy_score: 0.784024508833679
+# 걸린시간: 6750.72 초
 
