@@ -15,58 +15,50 @@ x,y = load_iris(return_X_y=True)
 ## numpy
 x = np.delete(x, 0, axis=1)
 # print(x.shape, y.shape)       # (150, 4) (150,)
+print(x.shape, y.shape)
 # print(x)
 x_train, x_test, y_train, y_test = train_test_split(x, y, stratify= y, train_size = 0.8, random_state = 0 )
 
 ## pandas
-# pd.DataFrame
-# 컬럼명 : datasets.feature_names 안에 있음
-
-# aaa = ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
-# df = pd.DataFrame(data = x, columns=aaa, index=y)
-# # print(load_iris().feature_names)
-# # ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
-# df = df.drop('sepal length (cm)', axis=1)
 df = pd.DataFrame(data=load_iris().data, columns = load_iris().feature_names)
-df = df.drop('sepal length (cm)', axis=1)
-# print(df)
-X = df #.drop(columns=['sepal length (cm)'])
-Y = load_iris().target
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42, stratify=Y)
+# df = df.drop('sepal length (cm)', axis=1)
+# x = df 
+# y = load_iris().target
+# x_train, x_test, y_train, y_test = train_test_split(x, x, test_size=0.2, random_state=42, stratify=y)
 
 #2
 models = [DecisionTreeClassifier(random_state= 0), RandomForestClassifier(random_state= 0),
           GradientBoostingClassifier(random_state= 0), XGBClassifier(random_state= 0)]
 
-# np.set_printoptions(suppress=True)
-
-# for model in models:
-#     try:
-#         model.fit(x_train, y_train)
-#         results = model.score(x_test, y_test)
-#         y_predict = model.predict(x_test)
-#         print(type(model).__name__, "accuracy score", accuracy_score(y_predict, y_test))
-#         print(type(model).__name__, "model.score", results)
-#         print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
-#         ## type(model).__name__ == 모델 이름만 뽑기
-#         # end = '\n\n' == print('\n') 한줄 추가
-#     except Exception as e:
-#         print("에러:", e)
-#         continue
+np.set_printoptions(suppress=True)
 
 for model in models:
     try:
-        model.fit(X_train, Y_train)
-        results = model.score(X_test, Y_test)
-        y_predict = model.predict(X_test)
-        print(type(model).__name__, "accuracy score", accuracy_score(y_predict, Y_test))
+        model.fit(x_train, y_train)
+        results = model.score(x_test, y_test)
+        y_predict = model.predict(x_test)
         print(type(model).__name__, "model.score", results)
         print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
-        ## type(model).__name__ == 모델 이름만 뽑기
-        # end = '\n\n' == print('\n') 한줄 추가
+        # 상위 특성 선택
+        num_features_to_keep = 50
+        sorted_indices = np.argsort(model.feature_importances_)[::-1]
+        selected_features = sorted_indices[:num_features_to_keep]
+        # 상위컬럼 데이터로 변환
+        x_train_selected = x_train[:,selected_features]
+        x_test_selected = x_test[:,selected_features]
+        # 재학습, 평가
+        model_selected = model.__class__(random_state=0)
+        model_selected.fit(x_train_selected, y_train)
+        y_predict_selected = model.predict(x_test_selected)
+        accuracy_selected = accuracy_score(y_test, y_predict_selected)
+        # 프린트
+        print("선택된 특성 수:", num_features_to_keep)
+        print("컬럼 줄인", type(model).__name__,"의 정확도:", accuracy_selected)
+        print('\n')
     except Exception as e:
         print("에러:", e)
         continue
+
     
 # DecisionTreeClassifier(random_state=0) model.score : 0.9666666666666667
 # DecisionTreeClassifier(random_state=0) accuracy_score : 0.9666666666666667

@@ -49,20 +49,40 @@ from sklearn.preprocessing import StandardScaler, RobustScaler
 models = [DecisionTreeRegressor(random_state= 0), RandomForestRegressor(random_state= 0),
           GradientBoostingRegressor(random_state= 0), XGBRegressor(random_state= 0)]
 
+np.set_printoptions(suppress=True)
+
 for model in models:
     try:
         model.fit(x_train, y_train)
         results = model.score(x_test, y_test)
         y_predict = model.predict(x_test)
-        print(type(model).__name__, "r2 score", r2_score(y_predict, y_test))
         print(type(model).__name__, "model.score", results)
         print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
-        ## type(model).__name__ == 모델 이름만 뽑기
-        # end = '\n\n' == print('\n') 한줄 추가
+
+        # 남길 상위 특성 선택
+        num_features_to_keep = 10
+        sorted_indices = np.argsort(model.feature_importances_)[::-1]
+        selected_features = sorted_indices[:num_features_to_keep]
+
+        # 선택된 특성 수 출력
+        print("선택된 특성 수:", len(selected_features))
+
+        # 상위컬럼 데이터로 변환
+        x_train_selected = x_train[:, selected_features]
+        x_test_selected = x_test[:, selected_features]
+
+        # 재학습, 평가
+        model_selected = model.__class__(random_state=0)
+        model_selected.fit(x_train_selected, y_train)
+        y_predict_selected = model_selected.predict(x_test_selected)
+        r2_selected = r2_score(y_test, y_predict_selected)
+
+        # 프린트
+        print("컬럼 줄인", type(model).__name__,"의 정확도:", r2_selected)
+        print('\n')
     except Exception as e:
         print("에러:", e)
         continue
-
 
 # #4
 # y_submit = model.predict(test_csv)
