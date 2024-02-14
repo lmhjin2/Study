@@ -51,10 +51,10 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split, KFold, cross_val_predict, cross_val_score, StratifiedKFold
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
 
-y = np.array(y.values.reshape(-1,1))
-y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
+# y = np.array(y.values.reshape(-1,1))
+# y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify=y, test_size=0.2, random_state=0 )
+x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size = 0.2, random_state=0 )
 
 scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
@@ -65,20 +65,9 @@ n_splits =10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 from sklearn.metrics import accuracy_score, r2_score
-from xgboost import XGBClassifier
+import lightgbm as lgb
 #2
-model = XGBClassifier(# n_estimators = 1000 , 
-                      # learning_rate = 0.1 , 
-                      # max_depth = 4 ,
-                      # min_child_weight= 1 ,
-                      # gamma = 0 ,  
-                      # subsample=0.8 ,
-                      # colsample_bytree= 0.8 ,
-                      # objective= 'binary:logistic' ,
-                      # nthread= 4 ,
-                      # seed= 27 ,
-                    #   scale_pos_weight= 1 ,
-                      )
+model = lgb.LGBMClassifier()
 
 #3
 model.fit(x_train, y_train)
@@ -88,9 +77,9 @@ y_predict = model.predict(x_test)
 y_submit = model.predict(test_csv)
 acc = accuracy_score(y_test, y_predict)
 
-y_test = np.argmax(y_test, axis = 1)            # argmax주석하면 에러
-y_predict = np.argmax(y_predict, axis =1)       # argmax주석하면 에러
-y_submit = np.argmax(y_submit, axis=1)          # argmax주석하면 에러
+# y_test = np.argmax(y_test, axis = 1)            # argmax주석해야함
+# y_predict = np.argmax(y_predict, axis =1)       # argmax주석해야함
+# y_submit = np.argmax(y_submit, axis=1)          # argmax주석해야함
 y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
@@ -103,26 +92,22 @@ print('acc:', acc)
 
 # https://www.kaggle.com/c/playground-series-s4e2/overview
 
-# XGBoost 하이퍼 파라미터
-# max_depth: 트리의 최대 깊이
+
+
+# LGBM 하이퍼 파라미터
+# num_leaves: 트리에 존재할 수 있는 최대 잎의 수
 # learning_rate: 학습률
 # n_estimators: 생성할 트리의 수
 # subsample: 각 트리에서 사용할 샘플의 비율
 # colsample_bytree: 각 트리 생성 시 특성을 사용하는 비율
 # objective: 목적 함수(손실 함수)
-# eval_metric: 평가 지표
-# gamma: 트리가 추가 분할되는 것을 제어하는 매개변수
-# lambda: L2 정규화 항의 가중치
-# alpha: L1 정규화 항의 가중치
-# min_child_weight: 리프 노드에서 추가적인 가중치 적용을 위한 최소한의 데이터 수
-# scale_pos_weight: 양성 클래스의 가중치 균형을 조정하는 매개변수
-# eta: 이전 버전에서의 learning_rate에 대한 별칭
-# tree_method: 트리를 구축하는 데 사용되는 방법
-# max_delta_step: 각 트리의 가중치 추정에서 사용되는 최대 델타 단계 크기
+# metric: 평가 지표
+# max_depth: 트리의 최대 깊이
+# min_child_samples: 리프 노드에 필요한 최소 데이터 수
+# lambda_l1: L1 정규화 항의 가중치
+# lambda_l2: L2 정규화 항의 가중치
+# min_split_gain: 분할을 수행하기 위한 최소 이득
+# boosting_type: 부스팅 유형
+# early_stopping_rounds: 조기 종료를 위한 반복 횟수
+# verbose: 출력 메시지의 세부 수준
 # seed: 랜덤 시드
-# verbosity: 출력 메시지의 세부 수준
-
-
-
-
-
