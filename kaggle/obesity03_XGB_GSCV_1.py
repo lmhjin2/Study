@@ -68,8 +68,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'seed':range(310,320,1)}]
-
+parameters = [{'seed':range(760,800,1)}]
 
 model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 
                       learning_rate = 0.1 , 
@@ -81,30 +80,18 @@ model = GridSearchCV(XGBClassifier(n_estimators = 1000 ,
                       objective= 'binary:logistic' ,
                       nthread= 1 ,
                       seed= 3 ,
-                      # tree_method = 'gpu_hist' 
+                      tree_method = 'hist' ,
+                      device = 'cuda'
                       # conda install -c conda-forge xgboost-gpu <- cmd에서 gpu버전 xgboost설치해야함
                       # scale_pos_weight= 1 ,
                       ), parameters, cv=kfold, refit=True, n_jobs=-1)
 
-# model = XGBClassifier(n_estimators = 1000,
-#                       learning_rate = 0.1 , 
-#                       max_depth = 3 ,
-#                       min_child_weight= 7 ,
-#                       gamma = 1 ,  
-#                       subsample=0.8 ,
-#                       colsample_bytree= 0.8 ,
-#                       objective= 'binary:logistic' ,
-#                       nthread= 1 ,
-#                       seed= 315 ,
-#                     #   scale_pos_weight= 1 ,
-#                       )
 #3
 import time as tm
 strat_time = tm.time()
 model.fit(x_train, y_train)
 end_time = tm.time()
 #4
-
 results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
 y_pred_best = model.best_estimator_.predict(x_test)
@@ -128,7 +115,6 @@ submission_csv.to_csv(path + "submission_0212_3.csv", index=False)
 submission_csv['NObeyesdad'] = y_submit_best
 submission_csv.to_csv(path + "submission_b_0212_1.csv", index=False)
 
-
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
 print('best_score :', model.best_score_)
@@ -141,11 +127,10 @@ print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 
 # https://www.kaggle.com/c/playground-series-s4e2/overview
 
-
 # 최적의 파라미터 :  {'seed': 47}
 # model.score : 0.9200385356454721
 # 최적 튠 ACC: 0.9200385356454721
-# 위아래 두개 왜 같음???
+
 # 최적의 파라미터 :  {'seed': 34}
 # model.score : 0.9200385356454721
 # 최적 튠 ACC: 0.9200385356454721
