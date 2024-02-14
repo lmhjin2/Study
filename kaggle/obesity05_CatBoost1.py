@@ -152,29 +152,3 @@ print('acc:', acc)
 # cat_features (범주형 특성): 범주형 특성의 인덱스를 지정합니다. 기본값은 None으로, 자동으로 인식됩니다.
 # bootstrap_type (부트스트랩 방법): 트리를 훈련하는 데 사용할 부트스트랩 방법을 지정합니다. 기본값은 'Bayesian'입니다.
 # subsample (샘플링 비율): 각 트리를 훈련할 때 사용할 샘플링 비율을 지정합니다. 기본값은 1입니다.
-
-
-# 부모 클래스 정의
-class Detector:
-    def __init__(self, model_name):
-        self.model_name = model_name
-    def detect(self, image):
-        print(f"{self.model_name} detects objects in the image")
-
-# 자식 클래스 정의 (상속)
-class PersonDetector(Detector):
-    def __init__(self, model_name, confidence_threshold):
-        # 부모 클래스의 생성자 호출
-        super().__init__(model_name)
-        self.confidence_threshold = confidence_threshold
-    def detect(self, image):
-        # 부모 클래스의 detect메서드 호출
-        super().detect(image)
-        print(f"Detecting persons with confidence threshold {self.confidence_threshold}")
-
-# 자식 클래스의 인스턴스 생성
-person_detector = PersonDetector("YOLOv3", 0.8)
-
-# 메서드 호출
-person_detector.detect("test_image.jpg")
-
