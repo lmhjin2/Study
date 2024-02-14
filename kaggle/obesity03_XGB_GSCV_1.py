@@ -79,12 +79,12 @@ model = GridSearchCV(XGBClassifier(n_estimators = 1000 ,
                       colsample_bytree= 0.8 ,
                       objective= 'binary:logistic' ,
                       nthread= 1 ,
-                      seed= 3 ,
-                      tree_method = 'hist' ,
-                      device = 'cuda'
-                      # conda install -c conda-forge xgboost-gpu <- cmd에서 gpu버전 xgboost설치해야함
-                      # scale_pos_weight= 1 ,
-                      ), parameters, cv=kfold, refit=True, n_jobs=-1)
+                    #   seed= 3 ,   # 찾는중
+                    #   tree_method = 'hist' ,      # xgb-gpu
+                    #   device = 'cuda' ,           # xgb-gpu 
+                    # conda install -c conda-forge xgboost-gpu <- cmd에서 gpu버전 xgboost설치해야함
+                      # scale_pos_weight= 1 , # 양수데이터가 적을때 양수 데이터 중요도 올리기. 10 = 10배
+                      ), parameters, cv=kfold, refit=True, n_jobs=-1 )
 
 #3
 import time as tm
