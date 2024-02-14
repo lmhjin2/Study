@@ -56,7 +56,7 @@ from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, Stan
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=0.2, random_state= 5 )
 
-scaler = MinMaxScaler()
+scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
@@ -65,12 +65,23 @@ n_splits =10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 5 )   # kfold 의 random_state는 점수에 영향 X
 
 from sklearn.metrics import accuracy_score, r2_score
-from xgboost import XGBClassifier
 import catboost as cbt
+
 #2
 model = cbt.CatBoostClassifier(
-        random_seed=1,
-                               )
+    learning_rate = 0.03 ,
+    iterations= 1000 ,
+    depth= 6 ,
+    l2_leaf_reg= 3 ,
+    # loss_function= 'Logloss',
+    # eval_metric= 'LogLoss',
+    subsample= 1 ,
+    task_type= 'GPU',
+    random_seed= 0 , # 기본값 None
+    # cat_features= # 기본값 None // 자동인식
+    # bootstrap_type= 'Bayesian',
+    # verbose = 1, 
+    )
 
 #3
 model.fit(x_train, y_train)
@@ -120,14 +131,18 @@ print('acc:', acc)
 # permutation_count: 순열 특성 중요도 계산을 위한 횟수
 
 
-
 # 점수 : 0.90498
 #  평균 acc: 0.8979
 # results: 0.9171483622350675
 # acc: 0.9171483622350675
 
-# acc: [0.91586538 0.91346154 0.88433735 0.88192771 0.8939759  0.88674699
-#  0.90120482 0.90843373 0.9060241  0.9060241 ]
-#  평균 acc: 0.8998
-# results: 0.9152215799614644
-# acc: 0.9152215799614644
+# learning_rate (학습률): 트리를 얼마나 빠르게 학습할지를 결정합니다. 기본값은 0.03입니다.
+# iterations (반복 횟수): 트리의 수 또는 라운드 수를 결정합니다. 기본값은 1000입니다.
+# depth (트리의 최대 깊이): 각 트리의 최대 깊이를 결정합니다. 기본값은 6입니다.
+# l2_leaf_reg (L2 정규화 파라미터): 모델의 복잡도를 제어하기 위한 L2 정규화 파라미터입니다. 기본값은 3입니다.
+# random_seed (랜덤 시드): 랜덤 시드를 설정하여 결과를 재현할 수 있도록 합니다. 기본값은 None으로, 랜덤 시드를 자동으로 설정합니다.
+# loss_function (손실 함수): 모델이 최적화할 손실 함수를 지정합니다. 기본값은 'Logloss'입니다.
+# eval_metric (평가 메트릭): 모델을 평가할 때 사용할 메트릭을 지정합니다. 기본값은 'Logloss'입니다.
+# cat_features (범주형 특성): 범주형 특성의 인덱스를 지정합니다. 기본값은 None으로, 자동으로 인식됩니다.
+# bootstrap_type (부트스트랩 방법): 트리를 훈련하는 데 사용할 부트스트랩 방법을 지정합니다. 기본값은 'Bayesian'입니다.
+# subsample (샘플링 비율): 각 트리를 훈련할 때 사용할 샘플링 비율을 지정합니다. 기본값은 1입니다.
