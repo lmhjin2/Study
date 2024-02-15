@@ -15,17 +15,10 @@ import time as tm
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 
 #1
-import numpy as np
-from sklearn.datasets import load_wine
-from keras.models import Sequential
-from keras.layers import Dense
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import StratifiedKFold
 
 #1
 datasets = load_wine()
@@ -34,7 +27,12 @@ y = datasets.target
 
 x = x.astype(np.float32)
 y = y.astype(np.float32)
-print(x.shape, y.shape)   # (178, 13)
+# print(x.shape, y.shape)   # (178, 13)
+
+scaler = StandardScaler()
+x = scaler.fit_transform(x)
+pca = PCA(n_components=10)
+x = pca.fit_transform(x)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0, stratify=y)
 
@@ -56,7 +54,7 @@ for model in models:
         print(type(model).__name__, ":", model.feature_importances_)
 
         # 남길 상위 특성 선택
-        num_features_to_keep = 10
+        num_features_to_keep = 8
         sorted_indices = np.argsort(model.feature_importances_)[::-1]
         selected_features = sorted_indices[:num_features_to_keep]
 
@@ -80,37 +78,29 @@ for model in models:
         print("에러:", e)
         continue
 
-# DecisionTreeClassifier model.score 0.9444444444444444
-# DecisionTreeClassifier : [0.         0.         0.02018719 0.0209047  0.         0.
-#  0.1281229  0.         0.         0.33554694 0.         0.04122818
-#  0.4540101 ]
-
-# 선택된 특성 수: 10
-# 컬럼 줄인 DecisionTreeClassifier 의 정확도: 0.9722222222222222
+# DecisionTreeClassifier model.score 0.9722222222222222
+# DecisionTreeClassifier : [0.44014694 0.46155997 0.         0.         0.07320809 0.
+#  0.         0.025085   0.         0.        ]
+# 선택된 특성 수: 8
+# 컬럼 줄인 DecisionTreeClassifier 의 정확도: 0.9444444444444444
 
 
-# RandomForestClassifier model.score 1.0
-# RandomForestClassifier : [0.12930939 0.02858818 0.01005337 0.02107876 0.02670528 0.04826478
-#  0.17041694 0.01237242 0.01801449 0.17606478 0.06869346 0.09987653
-#  0.19056163]
-
-# 선택된 특성 수: 10
-# 컬럼 줄인 RandomForestClassifier 의 정확도: 1.0
+# RandomForestClassifier model.score 0.9444444444444444
+# RandomForestClassifier : [0.34417887 0.38753581 0.03770863 0.02623851 0.04230586 0.03899558
+#  0.03790202 0.03099527 0.03472095 0.0194185 ]
+# 선택된 특성 수: 8
+# 컬럼 줄인 RandomForestClassifier 의 정확도: 0.9722222222222222
 
 
 # GradientBoostingClassifier model.score 0.9722222222222222
-# GradientBoostingClassifier : [0.01412274 0.01043494 0.0351641  0.00260472 0.01326166 0.00192114
-#  0.26411514 0.0004652  0.00255949 0.34061822 0.0041362  0.00731209
-#  0.30328436]
-
-# 선택된 특성 수: 10
+# GradientBoostingClassifier : [0.47360181 0.40229697 0.02625738 0.01137791 0.03416737 0.02556084
+#  0.00162363 0.00756435 0.01423837 0.00331137]
+# 선택된 특성 수: 8
 # 컬럼 줄인 GradientBoostingClassifier 의 정확도: 0.9722222222222222
 
 
 # XGBClassifier model.score 0.9722222222222222
-# XGBClassifier : [0.02263726 0.05461496 0.05084845 0.0081804  0.02534876 0.01520464
-#  0.27298525 0.         0.001672   0.2607776  0.04897151 0.00864236
-#  0.23011674]
-
-# 선택된 특성 수: 10
+# XGBClassifier : [0.43152648 0.27614516 0.0529668  0.05704446 0.03326662 0.04037267
+#  0.01660395 0.03777455 0.02104259 0.03325676]
+# 선택된 특성 수: 8
 # 컬럼 줄인 XGBClassifier 의 정확도: 0.9722222222222222
