@@ -68,13 +68,13 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multioutput import MultiOutputClassifier
 import catboost as cbt
 
-parameters = [{'l2_leaf_reg':np.arange(1,10,1)}]
+parameters = [{'random_seed':np.arange(0,100,1)}]
 
 model = GridSearchCV(cbt.CatBoostClassifier(
                         learning_rate = 0.08 ,
                         iterations= 1000 ,
                         depth= 6 ,
-                        l2_leaf_reg= 3 ,
+                        l2_leaf_reg= 8 ,
                         # loss_function= 'Logloss',
                         # eval_metric= 'LogLoss',
                         # subsample= 1 ,
