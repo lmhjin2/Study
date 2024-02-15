@@ -7,8 +7,8 @@ from sklearn.datasets import load_iris, load_breast_cancer, load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 np.set_printoptions(suppress=True)
 #1 data
 datasets = load_iris()  # 아래 두개중 아무렇게나 써도됨
@@ -38,3 +38,5 @@ model.fit(x_train,y_train)
 results = model.score(x_test,y_test)
 # print(x.shape)
 print(f"model.score : {results}")
+
+# model.score : 0.9666666666666667
