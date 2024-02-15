@@ -18,18 +18,17 @@ from sklearn.utils import all_estimators
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+from sklearn.decomposition import PCA
 
 path = "c:/_data/dacon/dechul/"
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
 test_csv = pd.read_csv(path + 'test.csv', index_col=0)
 submission_csv = pd.read_csv(path + 'sample_submission.csv')
 
-
 le_work_period = LabelEncoder() 
 le_work_period.fit(train_csv['근로기간'])
 train_csv['근로기간'] = le_work_period.transform(train_csv['근로기간'])
 test_csv['근로기간'] = le_work_period.transform(test_csv['근로기간'])
-
 
 le_purpose = LabelEncoder()
 test_csv.iloc[34486,7] = '이사'     # 결혼 -> 이사 로 임의로 바꿈
@@ -54,7 +53,7 @@ train_csv['대출등급'] = le_grade.transform(train_csv['대출등급'])
 x = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
 
-print(x.shape, y.shape) # 13
+# print(x.shape, y.shape) # 13 columns
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, stratify=y, test_size = 0.18, random_state = 1818 )
@@ -62,11 +61,15 @@ x_train, x_test, y_train, y_test = train_test_split(
 
 from sklearn.preprocessing import StandardScaler, RobustScaler
 
-# scaler = RobustScaler()
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
 
-# x_train = scaler.fit_transform(x_train)
-# x_test = scaler.transform(x_test)
-# test_csv = scaler.transform(test_csv)
+pca = PCA(n_components=11)
+x_train = pca.fit_transform(x_train)
+x_test = pca.transform(x_test)
+test_csv = pca.transform(test_csv)
 
 #2 모델
 models = [DecisionTreeClassifier(random_state= 0), RandomForestClassifier(random_state= 0),
@@ -78,28 +81,30 @@ for model in models:
     try:
         model.fit(x_train, y_train)
         results = model.score(x_test, y_test)
-        print(type(model).__name__, "모델의 정확도:", results)
-        
-        # 특성 중요도 출력
-        if hasattr(model, 'feature_importances_'):
-            print("특성 중요도:", model.feature_importances_)
-        
+        y_predict = model.predict(x_test)
+        print(type(model).__name__, "model.score", results)
+        print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
+
+        # 남길 상위 특성 선택
+        num_features_to_keep = 8
+        sorted_indices = np.argsort(model.feature_importances_)[::-1]
+        selected_features = sorted_indices[:num_features_to_keep]
+
         # 선택된 특성 수 출력
-        num_features_to_keep = 7
-        if hasattr(model, 'feature_importances_'):
-            sorted_indices = np.argsort(model.feature_importances_)[::-1]
-            selected_features = sorted_indices[:num_features_to_keep]
-            print("선택된 특성 수:", len(selected_features))
-        
-            # 선택된 특성으로 다시 모델 훈련 및 평가
-            x_train_selected = x_train.iloc[:, selected_features]
-            x_test_selected = x_test.iloc[:, selected_features]
-            model_selected = model.__class__(random_state=0)
-            model_selected.fit(x_train_selected, y_train)
-            y_predict_selected = model_selected.predict(x_test_selected)
-            r2_selected = accuracy_score(y_test, y_predict_selected)
-            print("컬럼 줄인", type(model).__name__, "모델의 정확도:", r2_selected)
-        
+        print("선택된 특성 수:", len(selected_features))
+
+        # 상위컬럼 데이터로 변환
+        x_train_selected = x_train[:, selected_features]
+        x_test_selected = x_test[:, selected_features]
+
+        # 재학습, 평가
+        model_selected = model.__class__(random_state=0)
+        model_selected.fit(x_train_selected, y_train)
+        y_predict_selected = model_selected.predict(x_test_selected)
+        accuracy_selected = accuracy_score(y_test, y_predict_selected)
+
+        # 프린트
+        print("컬럼 줄인", type(model).__name__,"의 정확도:", accuracy_selected)
         print('\n')
     except Exception as e:
         print("에러:", e)

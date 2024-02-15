@@ -17,6 +17,7 @@ import time as tm
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
+from sklearn.decomposition import  PCA
 
 plt.rcParams['font.family'],"Malgun Gothic"
 plt.rcParams['axes.unicode_minus']=False
@@ -30,13 +31,16 @@ y = datasets.target
 label_endcoer = LabelEncoder()
 y = label_endcoer.fit_transform(y)
 # 라벨 인코딩. StratifiedKFold 할때만 필요
-print(x.shape, y.shape)
+# print(x.shape, y.shape)   # (20640, 8) (20640,)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0)
 
-# scaler = MaxAbsScaler()
-# x_train = scaler.fit_transform(x_train)
-# x_test = scaler.transform(x_test)
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+pca = PCA(n_components=7)
+x_train = pca.fit_transform(x_train)
+x_test = pca.transform(x_test)
 
 #2
 models = [DecisionTreeRegressor(random_state= 0), RandomForestRegressor(random_state= 0),
@@ -53,7 +57,7 @@ for model in models:
         print(type(model).__name__, ":", model.feature_importances_, end='\n\n')
 
         # 남길 상위 특성 선택
-        num_features_to_keep = 6
+        num_features_to_keep = 8
         sorted_indices = np.argsort(model.feature_importances_)[::-1]
         selected_features = sorted_indices[:num_features_to_keep]
 
@@ -77,33 +81,36 @@ for model in models:
         print("에러:", e)
         continue
 
-# DecisionTreeRegressor model.score 0.6272926026169132
-# DecisionTreeRegressor : [0.5218018  0.05339749 0.05275489 0.02633996 0.03248298 0.12972827
-#  0.08809633 0.09539829]
+evr = pca.explained_variance_ratio_
+print(np.cumsum(evr))
 
-# 선택된 특성 수: 6
-# 컬럼 줄인 DecisionTreeRegressor 의 정확도: 0.6198107538238058
+# DecisionTreeRegressor model.score 0.4517260341923206
+# DecisionTreeRegressor : [0.07070645 0.05098902 0.04743661 0.5176248  0.06680789 0.10378259
+#  0.14265263]
 
-
-# RandomForestRegressor model.score 0.8094045957505897
-# RandomForestRegressor : [0.52366743 0.05262664 0.05287442 0.02778925 0.03226622 0.13032447
-#  0.08954688 0.0909047 ]
-
-# 선택된 특성 수: 6
-# 컬럼 줄인 RandomForestRegressor 의 정확도: 0.8152804499656907
+# 선택된 특성 수: 7
+# 컬럼 줄인 DecisionTreeRegressor 의 정확도: 0.4514392677508926
 
 
-# GradientBoostingRegressor model.score 0.7862973452347977
-# GradientBoostingRegressor : [0.59661078 0.02952792 0.02894911 0.00425026 0.00330772 0.11928432
-#  0.09363868 0.12443121]
+# RandomForestRegressor model.score 0.7345613473710503
+# RandomForestRegressor : [0.06828464 0.05187796 0.04654574 0.52048253 0.06448964 0.10000733
+#  0.14831215]
 
-# 선택된 특성 수: 6
-# 컬럼 줄인 GradientBoostingRegressor 의 정확도: 0.7850895823036456
+# 선택된 특성 수: 7
+# 컬럼 줄인 RandomForestRegressor 의 정확도: 0.7342640108643828
 
 
-# XGBRegressor model.score 0.8442317685995901
-# XGBRegressor : [0.48233894 0.06352142 0.04919809 0.02387741 0.02384355 0.1421112
-#  0.10367327 0.11143605]
+# GradientBoostingRegressor model.score 0.69454186085859
+# GradientBoostingRegressor : [0.02386883 0.02646107 0.00368475 0.66628036 0.02582674 0.09425217
+#  0.15962608]
 
-# 선택된 특성 수: 6
-# 컬럼 줄인 XGBRegressor 의 정확도: 0.851658363966794
+# 선택된 특성 수: 7
+# 컬럼 줄인 GradientBoostingRegressor 의 정확도: 0.69454186085859
+
+
+# XGBRegressor model.score 0.735695874046558
+# XGBRegressor : [0.04885179 0.04130459 0.03545461 0.58793354 0.0550629  0.09798978
+#  0.13340269]
+
+# 선택된 특성 수: 7
+# 컬럼 줄인 XGBRegressor 의 정확도: 0.7356383802720532
