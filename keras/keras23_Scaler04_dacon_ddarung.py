@@ -38,7 +38,6 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
-
 #2
 model = Sequential()
 model.add(Dense(108, input_dim = 9))
@@ -124,7 +123,4 @@ plt.show()
 # RMSE: 49.23782410543493
 # r2: 0.6189156804017729
 
-
-
 # StandardScaler
-

@@ -22,6 +22,10 @@ x = scaler.fit_transform(x)
 lda = LinearDiscriminantAnalysis(n_components=2)    # n_components 기본값 max
 # n_components는 min(n_features, n_classed -1)로 정한다
 x_lda = lda.fit_transform(x,y)
+# YH 코드
+# lda = LinearDiscriminantAnalysis(n_components=9).fit(x,y)
+# x1 = lda.transform(x)
+
 print(x_lda)
 print(x_lda.shape)  # n_componenets 의 갯수만큼 컬럼이 남음 // (150, n_components)
 

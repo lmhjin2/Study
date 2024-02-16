@@ -14,7 +14,6 @@ train_csv = pd.read_csv(path+"train.csv", index_col = 0)
 test_csv = pd.read_csv(path + "test.csv", index_col = 0)
 submission_csv = pd.read_csv(path + "submission.csv")
 
-
 # print(x.shape, y.shape) # (1459, 9), (1459,)
 # print(train_csv.isna().sum()) 결측치 확인
 train_csv = train_csv.dropna()  # 결측치가 존재하는 행 전체 삭제.
@@ -53,7 +52,6 @@ submission_csv.to_csv(path + "submisson_val.csv", index = False)
 
 print('loss:', loss)
 print('r2:', r2)
-
 
 # loss: 3801.428466796875
 # r2: 0.456643443045472

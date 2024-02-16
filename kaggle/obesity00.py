@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
-path = 'c:/_data/kaggle/Obesity_Risk/'
+path = 'c:/_data/kaggle/Obesity_Risk/' 
 
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+test_csv = pd.read_csv(path + 'test.csv', index_col=0) 
 submission_csv = pd.read_csv(path + 'sample_submission.csv')
 
 from sklearn.preprocessing import LabelEncoder
@@ -12,7 +12,7 @@ from sklearn.preprocessing import LabelEncoder
 lae_G = LabelEncoder()
 train_csv['Gender'] = lae_G.fit_transform(train_csv['Gender'])
 test_csv['Gender'] = lae_G.transform(test_csv['Gender'])
-
+ 
 lae_fhwo = LabelEncoder()
 train_csv['family_history_with_overweight'] = lae_fhwo.fit_transform(train_csv['family_history_with_overweight'])
 test_csv['family_history_with_overweight'] = lae_fhwo.transform(test_csv['family_history_with_overweight'])
