@@ -100,12 +100,13 @@ print("이상치의위치 :", outliers_loc)
 import matplotlib.pyplot as plt
 plt.boxplot(train_csv)
 plt.show()
+print(len(outliers_loc[0]))
 # 이상치 위치 전부 뽑는 코드
-for i in range(len(outliers_loc[0])):
-    print("이상치 위치", outliers_loc[0][i], ",", outliers_loc[1][i])
-
+# for i in range(len(outliers_loc[0])):
+#     print("이상치 위치", outliers_loc[0][i], ",", outliers_loc[1][i])
 # 1사분위 : 1.0
 # q2 :  12.3
 # 3사분위 : 37.88
 # iqr :  36.88
 # 이상치의위치 : (array([   13,    14,    15, ..., 10883, 10884, 10884], dtype=int64), array([10, 10, 10, ..., 10,  9, 10], dtype=int64))
+
