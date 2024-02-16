@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-path = 'c:/_data/kaggle/Obesity_Risk/'
+path = 'c:/_data/kaggle/Obesity_Risk/' 
 
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
 test_csv = pd.read_csv(path + 'test.csv', index_col=0) 
