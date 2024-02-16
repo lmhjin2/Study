@@ -12,7 +12,7 @@ from sklearn.preprocessing import LabelEncoder
 lae_G = LabelEncoder()
 train_csv['Gender'] = lae_G.fit_transform(train_csv['Gender'])
 test_csv['Gender'] = lae_G.transform(test_csv['Gender'])
-
+ 
 lae_fhwo = LabelEncoder()
 train_csv['family_history_with_overweight'] = lae_fhwo.fit_transform(train_csv['family_history_with_overweight'])
 test_csv['family_history_with_overweight'] = lae_fhwo.transform(test_csv['family_history_with_overweight'])
