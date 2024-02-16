@@ -51,6 +51,6 @@ print(datasets.iloc[[3,4]]['시가'])         # 3500  100
 print(datasets.loc[['045','023'],'시가'])   # 3500  100
 print(datasets.loc['045':'023', '시가'])    # 3500  100 슬라이싱 시 뒤쪽도 포함을 하는것에 유의
 
-for i in range(3):
-    print(datasets.iloc[i]['시가'])
-    print(datasets['시가'].iloc[i])
+# for i in range(3):
+#     print(datasets.iloc[i]['시가'])
+#     print(datasets['시가'].iloc[i])
