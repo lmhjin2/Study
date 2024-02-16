@@ -23,6 +23,7 @@ x = train_csv.drop(['count'], axis = 1)
 y = train_csv['count']
 
 x_train, x_test, y_train, y_test = train_test_split(
+<<<<<<< HEAD
     x, y, train_size = 0.85, random_state = 151717 )
 
 #2
@@ -34,6 +35,20 @@ model.add(Dense(180))
 model.add(Dense(108))
 model.add(Dense(52))
 model.add(Dense(27))
+=======
+    x, y, test_size = 0.85, random_state = 1234 )
+
+#2
+model = Sequential()
+model.add(Dense(250, input_dim = 9, activation = 'relu'))
+model.add(Dense(180, activation = 'relu'))
+model.add(Dense(110, activation = 'relu'))
+model.add(Dense(80, activation = 'relu'))
+model.add(Dense(70, activation = 'relu'))
+model.add(Dense(50, activation = 'relu'))
+model.add(Dense(30, activation = 'relu'))
+model.add(Dense(10, activation = 'relu'))
+>>>>>>> faa0e1cfdd5fe7c1df8683dad05a659a5e99e189
 model.add(Dense(1))
 
 #3
@@ -43,6 +58,7 @@ from keras.callbacks import EarlyStopping
 
 es = EarlyStopping(monitor = 'val_loss',
                    mode = 'min',
+<<<<<<< HEAD
                    patience = 200,
                    verbose = 1,
                    restore_best_weights=True)
@@ -55,6 +71,14 @@ es = EarlyStopping(monitor = 'val_loss',
 hist = model.fit(x_train, y_train, epochs = 3000,
                  batch_size = 109,
           validation_split = 0.13, verbose = 2,
+=======
+                   patience = 20,
+                   verbose = 1)
+
+hist = model.fit(x_train, y_train, epochs = 3000,
+                 batch_size = 1 ,
+          validation_split = 0.18, verbose = 2,
+>>>>>>> faa0e1cfdd5fe7c1df8683dad05a659a5e99e189
           callbacks=[es])
 
 #4
@@ -83,6 +107,7 @@ plt.grid()
 plt.show()
 '''
 
+<<<<<<< HEAD
 ## val_loss best ##
 # val_loss: val_loss: 1888.3268
 
@@ -97,3 +122,11 @@ plt.show()
 # restore   69.7278194041
 # loss: 2624.61181640625
 # r2: 0.558611087447247
+=======
+
+## val_loss best ##
+# val_loss: val_loss: 1888.3268
+
+## R2 best ##
+# R2: 0.5695930625541372
+>>>>>>> faa0e1cfdd5fe7c1df8683dad05a659a5e99e189
