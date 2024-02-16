@@ -25,7 +25,7 @@ datasets2 = datasets2.drop(['기관'], axis=1)
 
 datasets1 = datasets1.iloc[:1418]
 datasets2 = datasets2.iloc[:1418]
-###########################################################
+##########################################################
 datasets1 = datasets1.sort_values('일자', ascending=True)
 datasets2 = datasets2.sort_values('일자', ascending=True)
 
