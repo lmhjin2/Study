@@ -68,7 +68,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multioutput import MultiOutputClassifier
 import catboost as cbt
 
-parameters = [{'random_seed':np.arange(0,100,1)}]
+parameters = [{'random_seed':np.arange(210,250,1)}]
 
 model = GridSearchCV(cbt.CatBoostClassifier(
                         learning_rate = 0.08 ,
@@ -109,10 +109,10 @@ y_submit_best = lae_NObeyesdad.inverse_transform(y_submit_best)
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0215_C_1.csv", index=False)
+submission_csv.to_csv(path + "submission_0216_C_1.csv", index=False)
 
 submission_csv['NObeyesdad'] = y_submit_best
-submission_csv.to_csv(path + "submission_b_0215_C_1.csv", index=False)
+submission_csv.to_csv(path + "submission_b_0216_C_1.csv", index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
