@@ -69,15 +69,15 @@ import catboost as cbt
 
 #2
 model = cbt.CatBoostClassifier(
-    learning_rate = 0.03 ,
+    learning_rate = 0.08 ,
     iterations= 1000 ,
     depth= 6 ,
-    l2_leaf_reg= 3 ,
+    l2_leaf_reg= 8 ,
     # loss_function= 'Logloss',
     # eval_metric= 'LogLoss',
     # subsample= 1 ,
-    task_type= 'GPU',
-    random_seed= 0 , # 기본값 None
+    # task_type= 'GPU',
+    random_seed= 1 , # 기본값 None
     # cat_features= # 기본값 None // 자동인식
     # bootstrap_type= 'Bayesian',
     # verbose = 1, 
@@ -98,7 +98,7 @@ y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0214_C_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0217_C_2.csv", index=False)
 
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
@@ -106,7 +106,27 @@ print('acc:', acc)
 
 # https://www.kaggle.com/c/playground-series-s4e2/overview
 
-# Catboost 하이퍼 파라미터
+# 점수 : 0.90498
+#  평균 acc: 0.8979
+# results: 0.9171483622350675
+# acc: 0.9171483622350675
+
+# 점수 : 0.90498
+# random_seed = 0
+#  평균 acc: 0.8993
+# results: 0.9190751445086706
+# acc: 0.9190751445086706
+
+
+
+
+
+
+
+
+
+
+## Catboost 하이퍼 파라미터
 # iterations: 트리의 수(반복 횟수)
 # learning_rate: 학습률
 # depth: 트리의 최대 깊이
@@ -129,12 +149,6 @@ print('acc:', acc)
 # leaf_estimation_method: 리프 값 추정 방법
 # feature_border_type: 특성의 경계 처리 방식
 # permutation_count: 순열 특성 중요도 계산을 위한 횟수
-
-
-# 점수 : 0.90498
-#  평균 acc: 0.8979
-# results: 0.9171483622350675
-# acc: 0.9171483622350675
 
 # learning_rate (학습률): 트리를 얼마나 빠르게 학습할지를 결정합니다. 기본값은 0.03입니다.
 # iterations (반복 횟수): 트리의 수 또는 라운드 수를 결정합니다. 기본값은 1000입니다.
