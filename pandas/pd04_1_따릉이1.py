@@ -25,13 +25,36 @@ path = "c:/_data/dacon/ddarung/"
 train_csv = pd.read_csv(path+"train.csv",index_col=['id'])
 test_csv = pd.read_csv(path+"test.csv", index_col=0)
 submission_csv = pd.read_csv(path+"submission.csv")
+# 함수 생성
+def fit_outlier(data):  
+    data = pd.DataFrame(data)
+    for label in data:
+        series = data[label]        # data의 label이라는 컬럼의 데이터를 series에 담음
+        q1 = series.quantile(0.25)  # q1 = 25퍼센트 지점  
+        q3 = series.quantile(0.75)  # q3 = 75퍼센트 지점
+        iqr = q3 - q1
+        upper_bound = q3 + (iqr * 1.5)     # 이상치 범위 설정
+        lower_bound = q1 - (iqr * 1.5)
+        
+        series[series > upper_bound] = np.nan   # series안에 이상치들 전부 np.nan(결측치) 처리
+        series[series < lower_bound] = np.nan
+        print(series.isna().sum())      # series 안에 결측치 갯수
+        # series = series.interpolate()   # 결측치 interpolate()로 채우기
+        data[label] = series    # 원래 위치에 덮어쓰기
+        
+    # data = data.fillna(data.ffill())
+    # data = data.fillna(data.bfill())  
+    return data
+# print(x.isna().sum())
+train_csv1 = fit_outlier(train_csv)
+print(train_csv1.isna().sum())
 
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer, KNNImputer
 imputer = KNNImputer()  # 데이터셋 내에서 가장 비슷한 데이터와 비슷하게 결측치 바꿔줌
 # print(x.isnull().sum())
-train_csv1 = imputer.fit_transform(train_csv)
-# print(np.isnan(train_csv1).sum())
+train_csv1 = imputer.fit_transform(train_csv1)  # train_csv1 의 이상치 -> 결측치 처리 후 KNNimputer 적용
+print(np.isnan(train_csv1).sum())   # 0 
 
 column_names = ["hour","hour_bef_temperature","hour_bef_precipitation","hour_bef_windspeed","hour_bef_humidity","hour_bef_visibility","hour_bef_ozone","hour_bef_pm10","hour_bef_pm2.5","count"]
 train_csv1 = pd.DataFrame(train_csv1, columns = column_names )

@@ -49,7 +49,7 @@ data8 = imputer.fit_transform(data)
 
 imputer = IterativeImputer()    
 data9 = imputer.fit_transform(data)
-# print(data9)
+print(data9)
 
 print(np.__version__)   # 1.26.3 에서 mice 오류
                         # 1.22.4 에서 mice 정상
