@@ -53,14 +53,14 @@ data9 = imputer.fit_transform(data)
 
 print(np.__version__)   # 1.26.3 에서 mice 오류
                         # 1.22.4 에서 mice 정상
-from impyute.imputation.cs import mice    # predict 방식
+# from impyute.imputation.cs import mice    # predict 방식
 
-np.random.seed(3)
+# np.random.seed(3)
 
-aaa = mice(data.values,
-           n=10,    # 몇번 돌거냐.
-           random_seed=777 ) # seed, random_seed 안먹음. np.random.seed()로 고정해야됨
-print(aaa)
+# aaa = mice(data.values,
+#            n=10,    # 몇번 돌거냐.
+#            random_seed=777 ) # seed, random_seed 안먹음. np.random.seed()로 고정해야됨
+# print(aaa)
     # [[ 2.          2.          2.          1.99988929]
     #  [ 4.00022142  4.          4.          4.        ]
     #  [ 6.          5.99969225  6.          5.99986051]
