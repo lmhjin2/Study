@@ -44,8 +44,6 @@ test_csv['MTRANS'] = lae_MTRANS.transform(test_csv['MTRANS'])
 lae_NObeyesdad = LabelEncoder()
 train_csv['NObeyesdad'] = lae_NObeyesdad.fit_transform(train_csv['NObeyesdad'])
 
-x = train_csv.drop(['NObeyesdad'], axis = 1)
-y = train_csv['NObeyesdad']
 
 def fit_outlier(data):  
     data = pd.DataFrame(data)
@@ -66,30 +64,44 @@ def fit_outlier(data):
     # data = data.fillna(data.ffill())
     # data = data.fillna(data.bfill())  
     return data
-print(x.isna().sum())   # 원래의 결측치 = 0
-x = fit_outlier(x)
-print(x.isna().sum())   # 함수 실행 이후의 결측치 == 기존의 이상치
-# Gender                               0
-# Age                               1074
-# Height                               4
-# Weight                               0
-# family_history_with_overweight    3744
-# FAVC                              1776
-# FCVC                                 0
-# NCP                               6052
-# CAEC                              3229
-# SMOKE                              245
-# CH2O                                 0
-# SCC                                687
-# FAF                                  0
-# TUE                                  0
-# CALC                              5692
-# MTRANS                            4071
+print(train_csv.isna().sum())   # 원래의 결측치 = 0
+train_csv1 = fit_outlier(train_csv)
+print(train_csv1.isna().sum())   # 함수 실행 이후의 결측치 == 기존의 이상치
+    # 총합                             26570
+    # Gender                               0
+    # Age                               1074
+    # Height                               4
+    # Weight                               0
+    # family_history_with_overweight    3744
+    # FAVC                              1776
+    # FCVC                                 0
+    # NCP                               6052
+    # CAEC                              3229
+    # SMOKE                              245
+    # CH2O                                 0
+    # SCC                                687
+    # FAF                                  0
+    # TUE                                  0
+    # CALC                              5692
+    # MTRANS                            4071
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import KNNImputer, IterativeImputer
+
+imputer = IterativeImputer()
+train_csv1 = imputer.fit_transform(train_csv1)
+
+# train_csv1 = train_csv1.fillna(train_csv1.mean())
+# print(train_csv1.insull().sum())
+# print(np.isnan(train_csv1).sum)
+# print(train_csv1.info())
+
+
+x = train_csv.drop(['NObeyesdad'], axis = 1)
+y = train_csv['NObeyesdad']
 
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split, KFold, cross_val_predict, cross_val_score, StratifiedKFold, cross_validate
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
-'''
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=0.2, random_state= 5 )
 
@@ -114,7 +126,7 @@ model = cbt.CatBoostClassifier(
     # eval_metric= 'LogLoss',
     # subsample= 1 ,
     # task_type= 'GPU',
-    random_seed= 1 , # 기본값 None
+    random_seed= 0 , # 기본값 None
     # cat_features= # 기본값 None // 자동인식
     # bootstrap_type= 'Bayesian',
     # verbose = 1, 
@@ -154,5 +166,29 @@ print('acc:', acc)
 # results: 0.9190751445086706
 # acc: 0.9190751445086706
 
+# .dropna()
+# 점수 : 0.90245
+#  평균 acc: 0.8964
+# results: 0.9178709055876686
+# acc: 0.9178709055876686
 
-'''
+# .fillna(train_csv1.mean())
+# 점수 : 0.90245
+#  평균 acc: 0.8964
+# results: 0.9178709055876686
+# acc: 0.9178709055876686
+
+# KNNImputer
+# 점수 : 0.90245
+#  평균 acc: 0.8964
+# results: 0.9178709055876686
+# acc: 0.9178709055876686
+
+# IterativeImputer
+# 점수 : 
+#  평균 acc: 0.8964
+# results: 0.9178709055876686
+# acc: 0.9178709055876686
+
+
+
