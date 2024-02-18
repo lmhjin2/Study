@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-
+import time as tm
+strat_time = tm.time()
 path = 'c:/_data/kaggle/Obesity_Risk/'
 
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
@@ -68,7 +69,10 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multioutput import MultiOutputClassifier
 import catboost as cbt
 
-parameters = [{'random_seed':np.arange(210,211,1)}]
+parameters = [{'random_seed':np.arange(315,316,1),
+               'learning_rate':[0.01, 0.03, 0.08],
+               'depth':[3,6,8],
+               'l2_leaf_reg':[3,6,8]}]
 
 model = GridSearchCV(cbt.CatBoostClassifier(
                         learning_rate = 0.08 ,
@@ -86,10 +90,7 @@ model = GridSearchCV(cbt.CatBoostClassifier(
                         ), parameters, cv=kfold, refit=True, n_jobs=-1 )
 
 #3
-import time as tm
-strat_time = tm.time()
 model.fit(x_train, y_train)
-end_time = tm.time()
 #4
 results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
@@ -109,10 +110,10 @@ y_submit_best = lae_NObeyesdad.inverse_transform(y_submit_best)
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0216_C_1.csv", index=False)
+submission_csv.to_csv( path +  "submission_0218_C_1.csv", index=False)
 
 submission_csv['NObeyesdad'] = y_submit_best
-submission_csv.to_csv(path + "submission_b_0216_C_1.csv", index=False)
+submission_csv.to_csv(path + "submission_b_0218_C_1.csv", index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
@@ -122,6 +123,7 @@ print('최적 튠 ACC:', accuracy_score(y_test,y_pred_best))
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('model.score:', results)
 print('acc:', acc)
+end_time = tm.time()
 print('걸린시간:', np.round(end_time - strat_time, 2), '초')
 
 # https://www.kaggle.com/c/playground-series-s4e2/overview
