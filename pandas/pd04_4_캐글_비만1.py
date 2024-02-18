@@ -147,7 +147,7 @@ y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0217_C_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0218_C_2.csv", index=False)
 
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
@@ -185,7 +185,7 @@ print('acc:', acc)
 # acc: 0.9178709055876686
 
 # IterativeImputer
-# 점수 : 
+# 점수 : 0.90245
 #  평균 acc: 0.8964
 # results: 0.9178709055876686
 # acc: 0.9178709055876686

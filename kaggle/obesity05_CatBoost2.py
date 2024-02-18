@@ -77,7 +77,7 @@ model = cbt.CatBoostClassifier(
     # eval_metric= 'LogLoss',
     # subsample= 1 ,
     # task_type= 'GPU',
-    random_seed= 1 , # 기본값 None
+    random_seed= 315 , # 기본값 None
     # cat_features= # 기본값 None // 자동인식
     # bootstrap_type= 'Bayesian',
     # verbose = 1, 
@@ -98,7 +98,7 @@ y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0217_C_2.csv", index=False)
+submission_csv.to_csv(path + "submission_0218_C_2.csv", index=False)
 
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
@@ -117,9 +117,11 @@ print('acc:', acc)
 # results: 0.9190751445086706
 # acc: 0.9190751445086706
 
-
-
-
+# 점수 : 0.90426
+# random_seed = 3
+#  평균 acc: 0.8998
+# results: 0.9193159922928709
+# acc: 0.9193159922928709
 
 
 
