@@ -3,7 +3,8 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.experimental import enable_halving_search_cv
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, RandomizedSearchCV, GridSearchCV, HalvingGridSearchCV, HalvingRandomSearchCV
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, RandomizedSearchCV, \
+    GridSearchCV, HalvingGridSearchCV, HalvingRandomSearchCV, KFold
 from sklearn.metrics import r2_score
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -27,7 +28,7 @@ x_test = scaler.transform(x_test)
 # x_train = pca.fit_transform(x_train)
 # x_test = pca.transform(x_test)
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=777)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=777)
 parameters = {
     'n_estimators' : [100,200,300,400,500],
     'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1],
@@ -70,12 +71,12 @@ print('걸린시간:', np.round(end_time - start_time, 2), '초')
 # 선택된 특성 수: 9
 # 컬럼 줄인 XGBRegressor 의 정확도: 0.9943452254892629
 
-# 떨어짐
-# 최적의 파라미터 :  {'n_estimators': 500, 'max_depth': 2, 'learning_rate': 0.3, 'lambda': 0.01, 'gamma': 2, 'alpha': 0.01}
-# best_score : 0.3149038567950451
-# 최적 튠 R2: 0.32434166262548403
-# r2: [0.07587486 0.30901561 0.15603168]
-#  평균 r2: 0.1803
-# model.score: 0.32434166262548403
-# r2: 0.32434166262548403
-# 걸린시간: 2.72 초
+# 떨어짐 아마 이 전이 과적합이었는듯
+# 최적의 파라미터 :  {'n_estimators': 100, 'max_depth': 7, 'learning_rate': 0.1, 'lambda': 0.1, 'gamma': 1, 'alpha': 0.01}
+# best_score : 0.3410296277912012
+# 최적 튠 R2: 0.3366390065502427
+# r2: [0.28902049 0.32371887 0.30995076 0.13661532 0.16601557]
+#  평균 r2: 0.2451
+# model.score: 0.3366390065502427
+# r2: 0.3366390065502427
+# 걸린시간: 3.39 초

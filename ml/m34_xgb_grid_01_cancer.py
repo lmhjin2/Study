@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split, \
     HalvingGridSearchCV, HalvingRandomSearchCV,\
     cross_val_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import pickle
 
 # 1
 x, y = load_breast_cancer(return_X_y=True)

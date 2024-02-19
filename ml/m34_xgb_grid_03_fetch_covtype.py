@@ -17,7 +17,7 @@ from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier, XGBRegressor
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
-from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, LabelEncoder
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import OneHotEncoder
@@ -35,7 +35,8 @@ x = scaler.fit_transform(x)
 # y_ohe = ohe.fit_transform(y)
 # print(x.shape)
 
-y = y-1  ## 야매로 굴러가게한거임.
+label_endcoer = LabelEncoder()
+y = label_endcoer.fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0, stratify=y)
 n_splits = 3
@@ -75,3 +76,12 @@ print('acc:', acc)
 print('걸린시간:', np.round(end_time - start_time, 2), '초')
 
 # model.score : 0.8850976308701153
+# 오름
+# 최적의 파라미터 :  {'n_estimators': 200, 'max_depth': 9, 'learning_rate': 0.3, 'lambda': 0.01, 'gamma': 0, 'alpha': 0.1}
+# best_score : 0.9590369417328016
+# 최적 튠 ACC: 0.9620233556792854
+# acc: [0.89492707 0.92414268 0.89462588 0.90959552 0.90843373]
+#  평균 acc: 0.9063
+# model.score: 0.9620233556792854
+# acc: 0.9620233556792854
+# 걸린시간: 465.52 초

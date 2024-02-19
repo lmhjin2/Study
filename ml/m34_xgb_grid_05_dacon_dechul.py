@@ -104,3 +104,12 @@ print('acc:', acc)
 print('걸린시간:', np.round(end_time - start_time, 2), '초')
 
 # model.score : 0.5280101540414238
+# 오름
+# 최적의 파라미터 :  {'n_estimators': 200, 'max_depth': 9, 'learning_rate': 0.2, 'lambda': 0.1, 'gamma': 0, 'alpha': 0.1}
+# best_score : 0.8582211358308296
+# 최적 튠 ACC: 0.8637858420354237
+# acc: [0.79809634 0.82001731 0.8139602  0.81736872 0.80207732]
+#  평균 acc: 0.8103
+# model.score: 0.8637858420354237
+# acc: 0.8637858420354237
+# 걸린시간: 45.91 초

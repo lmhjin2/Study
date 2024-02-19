@@ -42,7 +42,7 @@ x_test = scaler.transform(x_test)
 # x_train = pca.fit_transform(x_train)
 # x_test = pca.transform(x_test)
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=777)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=777)
 parameters = {
     'n_estimators' : [100,200,300,400,500],
     'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1],
@@ -51,9 +51,6 @@ parameters = {
     'lambda' : [0, 0.1, 0.01],
     'alpha' : [0, 0.1, 0.01]
 }
-#2
-models = [DecisionTreeRegressor(random_state= 0), RandomForestRegressor(random_state= 0),
-          GradientBoostingRegressor(random_state= 0), XGBRegressor(random_state= 0)]
 #2 model
 xgb = XGBRegressor(random_state=0)
 model = RandomizedSearchCV(xgb, parameters, cv = kfold, refit=True, n_jobs= 22 )
@@ -89,11 +86,11 @@ print('걸린시간:', np.round(end_time - start_time, 2), '초')
 # 컬럼 줄인 XGBRegressor 의 정확도: 0.7356383802720532
 
 # 오름
-# 최적의 파라미터 :  {'n_estimators': 400, 'max_depth': 9, 'learning_rate': 0.1, 'lambda': 0, 'gamma': 1, 'alpha': 0}
-# best_score : 0.8387942382982437
-# 최적 튠 R2: 0.8498636076082375
-# r2: [0.81758901 0.81373334 0.8085021  0.79675985 0.79025596]
-#  평균 r2: 0.8054
-# model.score: 0.8498636076082375
-# r2: 0.8498636076082375
-# 걸린시간: 8.05 초
+# 최적의 파라미터 :  {'n_estimators': 300, 'max_depth': 6, 'learning_rate': 0.1, 'lambda': 0, 'gamma': 1, 'alpha': 0.01}
+# best_score : 0.8452104064289664
+# 최적 튠 R2: 0.8534372129491651
+# r2: [0.83175599 0.81555532 0.815072   0.80064876 0.80038842]
+#  평균 r2: 0.8127
+# model.score: 0.8534372129491651
+# r2: 0.8534372129491651
+# 걸린시간: 7.85 초
