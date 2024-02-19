@@ -8,12 +8,12 @@ from sklearn.model_selection import HalvingGridSearchCV, HalvingRandomSearchCV, 
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.metrics import accuracy_score, r2_score, f1_score
+from sklearn.metrics import accuracy_score, r2_score, f1_score, roc_auc_score
 import time
 
 #1.데이터
 x,y = load_digits(return_X_y=True)
-# 이진분류
+# 다중분류
 # print(x.shape)  
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=3)
@@ -51,7 +51,6 @@ model = XGBClassifier()
 model.set_params(
     **parameters,
     early_stopping_rounds = 50                
-                 
                  )
 
 # 3. 훈련
@@ -61,7 +60,7 @@ model.fit(x_train, y_train,
           eval_set = [(x_train, y_train),(x_test, y_test)],
           verbose = 1,  # true 디폴트 1 / false 디폴트 0 / verbose = n (과정을 n의배수로 보여줌)
         #   eval_metric='rmse', # 회귀 기본값  //  error
-        #   eval_metric='mae',  #  //  error
+        #   eval_metric='mae',  # rmsle, mape, mphe..등등 //  error
         #   eval_metric='logloss', # 이진분류 기본값  //  error
         #   eval_metric='error',  # 이진분류  //  error
         #   eval_metric = 'mlogloss', # 다중분류 기본값  //  acc
@@ -69,15 +68,16 @@ model.fit(x_train, y_train,
         #   eval_metric='auc',  # 이진분류, 다중도됨  //  acc
         #   eval_metric='aucpr', # 아마 auc 친구  //  acc
           )
-
+# https://xgboost.readthedocs.io/en/stable/parameter.html  <-  xgboost parameter official
 # 4. 평가, 예측
 results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
 # print("파라미터 : ", model.get_params())
 print("최종점수 : ", results)
+# print(f"R2 : {r2_score(y_test, y_predict)}")
 print(f"acc : {accuracy_score(y_test,y_predict)}")
 print(f"f1 : {f1_score(y_test,y_predict, average='macro')}")
-
+print('auc:', roc_auc_score(y_test, y_predict))
 
 
 
