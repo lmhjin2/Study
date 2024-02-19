@@ -69,7 +69,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multioutput import MultiOutputClassifier
 import catboost as cbt
 
-parameters = [{'random_seed':np.arange(330,340,1)}]
+parameters = [{'random_seed':np.arange(400,450,1)}]
 
 model = GridSearchCV(cbt.CatBoostClassifier(
                         learning_rate = 0.08 ,
