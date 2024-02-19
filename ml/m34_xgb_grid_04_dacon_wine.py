@@ -29,8 +29,12 @@ test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
 x = train_csv.drop(['quality'], axis = 1)
 y = train_csv['quality']
 
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, OneHotEncoder, StandardScaler
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, OneHotEncoder, StandardScaler, LabelEncoder
 from sklearn.decomposition import PCA
+
+label_endcoer = LabelEncoder()
+y = label_endcoer.fit_transform(y)
+
 scaler = StandardScaler()
 x = scaler.fit_transform(x)
 # print(x.shape)    # (5497, 12)
@@ -39,7 +43,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0, stratify=y)
 
-n_splits = 5
+n_splits = 4
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=777)
 parameters = {
     'n_estimators' : [100,200,300,400,500],
@@ -75,4 +79,12 @@ print('걸린시간:', np.round(end_time - start_time, 2), '초')
 
 
 # model.score : 0.6454545454545455
-
+# 떨어짐
+# 최적의 파라미터 :  {'n_estimators': 500, 'max_depth': 5, 'learning_rate': 0.1, 'lambda': 0, 'gamma': 0, 'alpha': 0.1}
+# best_score : 0.6236088592935727
+# 최적 튠 ACC: 0.6418181818181818
+# acc: [0.50181818 0.53454545 0.48       0.53818182]
+#  평균 acc: 0.5136
+# model.score: 0.6418181818181818
+# acc: 0.6418181818181818
+# 걸린시간: 5.06 초
