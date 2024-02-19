@@ -34,7 +34,7 @@ y = train_csv['count']
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0)
 
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=777)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=777)
 parameters = {
     'n_estimators' : [100,200,300,400,500],
     'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1],
@@ -85,10 +85,6 @@ print('걸린시간:', np.round(end_time - start_time, 2), '초')
 
 # submission_csv['count']=y_submit
 # submission_csv.to_csv(path+"submission_0215.csv",index=False)
-
-# XGBRegressor model.score 0.9745306954208436
-# XGBRegressor : [0.4306558  0.00819749 0.00840762 0.0926762  0.02298331 0.00735824
-#  0.02057021 0.00201134 0.40713984]
 
 # 선택된 특성 수: 9
 # 컬럼 줄인 XGBRegressor 의 정확도: 0.9744499817510559

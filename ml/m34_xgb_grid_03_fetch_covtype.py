@@ -17,7 +17,7 @@ from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier, XGBRegressor
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
-from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, LabelEncoder
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import OneHotEncoder
@@ -35,7 +35,8 @@ x = scaler.fit_transform(x)
 # y_ohe = ohe.fit_transform(y)
 # print(x.shape)
 
-y = y-1  ## 야매로 굴러가게한거임.
+label_endcoer = LabelEncoder()
+y = label_endcoer.fit_transform(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0, stratify=y)
 n_splits = 3

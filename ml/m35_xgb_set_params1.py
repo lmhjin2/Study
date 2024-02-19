@@ -44,14 +44,14 @@ parameters = {
     'n_estimators' : [100,200,300,400,500],
     'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1],
     'max_depth' : [None, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    'gamma' : [0, 1, 2],
-    'lambda' : [0, 0.1, 0.01],
-    'alpha' : [0, 0.1, 0.01]
+    # 'gamma' : [0, 1, 2],
+    # 'lambda' : [0, 0.1, 0.01],
+    # 'alpha' : [0, 0.1, 0.01]
 }
 
 #2 model
-xgb = XGBRegressor(random_state=0)
-model = RandomizedSearchCV(xgb, parameters, refit=True, n_jobs= 22 )
+model = XGBRegressor(random_state=777)
+# model = RandomizedSearchCV(xgb, parameters, refit=True, n_jobs= 22 )
 
 #3 compile train
 import time as tm
@@ -61,18 +61,38 @@ end_time = tm.time()
 #4 predict, test
 results = model.score(x_test,y_test)
 y_predict = model.predict(x_test)
-y_pred_best = model.best_estimator_.predict(x_test)
+# y_pred_best = model.best_estimator_.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 scores = cross_val_score(model, x_test, y_test, cv=kfold)
 
-print("최적의 매개변수 : ", model.best_estimator_)
-print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
-print('best_score :', model.best_score_)
-print('최적 튠 R2:', r2_score(y_test,y_pred_best))
+# print("최적의 매개변수 : ", model.best_estimator_)
+# print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
+# print('best_score :', model.best_score_)
+# print('최적 튠 R2:', r2_score(y_test,y_pred_best))
 print('r2:', scores, "\n 평균 r2:", round(np.mean(scores), 4))
 print('model.score:', results)
 print('r2:', results)
 print('걸린시간:', np.round(end_time - start_time, 2), '초')
+
+model.set_params(gamma=0.3)
+model.fit(x_train,y_train)
+results = model.score(x_test,y_test)
+print('사용 파라미터',model.get_params())
+print("최종점수 2: ", results)
+
+model.set_params(learning_rate=0.005, n_estimators=400)
+model.fit(x_train,y_train)
+results = model.score(x_test,y_test)
+print('사용 파라미터',model.get_params())
+print("최종점수 3: ", results)
+
+model.set_params(reg_alpha = 0,
+                 reg_lambda = 1,
+                 min_child_weight=10 )
+model.fit(x_train,y_train)
+results = model.score(x_test,y_test)
+print('사용 파라미터',model.get_params())
+print("최종점수 4: ", results)
 
 # 선택된 특성 수: 8
 # 컬럼 줄인 RandomForestRegressor 의 정확도: 0.3477970462470079
