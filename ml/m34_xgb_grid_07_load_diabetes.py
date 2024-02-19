@@ -38,8 +38,8 @@ x_test = scaler.transform(x_test)
 # pca = PCA(n_components=8)
 # x_train = pca.fit_transform(x_train)
 # x_test = pca.transform(x_test)
-n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=777)
+# n_splits = 2
+# kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=777)
 parameters = {
     'n_estimators' : [100,200,300,400,500],
     'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1],
@@ -51,7 +51,7 @@ parameters = {
 
 #2 model
 xgb = XGBRegressor(random_state=0)
-model = RandomizedSearchCV(xgb, parameters, cv = kfold, refit=True, n_jobs= 22 )
+model = RandomizedSearchCV(xgb, parameters, refit=True, n_jobs= 22 )
 
 #3 compile train
 import time as tm
@@ -63,13 +63,13 @@ results = model.score(x_test,y_test)
 y_predict = model.predict(x_test)
 y_pred_best = model.best_estimator_.predict(x_test)
 r2 = r2_score(y_test, y_predict)
-scores = cross_val_score(model, x_test, y_test, cv=kfold)
+# scores = cross_val_score(model, x_test, y_test, cv=kfold)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
 print('best_score :', model.best_score_)
 print('최적 튠 R2:', r2_score(y_test,y_pred_best))
-print('r2:', scores, "\n 평균 r2:", round(np.mean(scores), 4))
+# print('r2:', scores, "\n 평균 r2:", round(np.mean(scores), 4))
 print('model.score:', results)
 print('r2:', results)
 print('걸린시간:', np.round(end_time - start_time, 2), '초')
@@ -81,3 +81,21 @@ print('걸린시간:', np.round(end_time - start_time, 2), '초')
 
 # 선택된 특성 수: 8
 # 컬럼 줄인 RandomForestRegressor 의 정확도: 0.3477970462470079
+
+# kfold = 2
+# 최적의 파라미터 :  {'n_estimators': 400, 'max_depth': 5, 'learning_rate': 0.2, 'lambda': 0.1, 'gamma': 0, 'alpha': 0.01}
+# best_score : 0.303825831577562
+# 최적 튠 R2: 0.09665122500574186
+# r2: [0.25786051 0.09556317]
+#  평균 r2: 0.1767
+# model.score: 0.09665122500574186
+# r2: 0.09665122500574186
+# 걸린시간: 2.2 초
+
+# kfold 삭제
+# 최적의 파라미터 :  {'n_estimators': 100, 'max_depth': 3, 'learning_rate': 0.3, 'lambda': 0.01, 'gamma': 1, 'alpha': 0.1}
+# best_score : 0.36270326802827824
+# 최적 튠 R2: 0.19488003118421893
+# model.score: 0.19488003118421893
+# r2: 0.19488003118421893
+# 걸린시간: 2.51 초
