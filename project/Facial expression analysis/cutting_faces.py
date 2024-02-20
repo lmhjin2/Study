@@ -12,10 +12,10 @@ print(len(file_list))
 # 확장자명 제거 후 배열 생성
 file_name_list = []
 for i in range(len(file_list)):
-    file_name_list.appen(file_list[i].replace(".jpg",""))
+    file_name_list.append(file_list[i].replace(".jpg",""))
 print(file_list[0])
 
-image = cv2.imread('.jpg')
+image = cv2.imread('예시.jpg')
 face_cascade = cv2.CascadeClassifier('models/haarcascade_frontalface_defualt.xml') # 어쩌구 xml은 학습된 얼굴 인식 모델 파일
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 faces = face_cascade.detectMultiScale(gray, 1.3, 5)
@@ -44,16 +44,16 @@ for (x,y,w,h) in faces:
 
 ###### 이 위는 테스트. 아래가 최종
 
-def Cutting_face_save(image, name):
-    face_cascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.3 , 5)
-    for (w,y,w,h) in faces:
-        cropped = image[y:y+h, x:x+w]
-        resize = cv2.resize(cropped, (180,180))
-        cv2.imwrite(f"images/cutting_faces/{name}.jpg", resize)
+# def Cutting_face_save(image, name):
+#     face_cascade = cv2.CascadeClassifier('models/haarcascade_frontalface_default.xml')
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     faces = face_cascade.detectMultiScale(gray, 1.3 , 5)
+#     for (w,y,w,h) in faces:
+#         cropped = image[y:y+h, x:x+w]
+#         resize = cv2.resize(cropped, (180,180))
+#         cv2.imwrite(f"images/cutting_faces/{name}.jpg", resize)
 
-for name in file_name_list:
-    img = cv2.imread("images/faces/"+name+".jpg")
-    Cutting_face_save(img, name)
+# for name in file_name_list:
+#     img = cv2.imread("images/faces/"+name+".jpg")
+#     Cutting_face_save(img, name)
 
