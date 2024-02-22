@@ -1,1 +1,10 @@
 catboost_info/
+datasets/
+images/
+.jpg
+.md
+.cache
+.yaml
+*.tfevents.*
+runs/
+yolov8n.pt
