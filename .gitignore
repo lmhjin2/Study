@@ -11,3 +11,5 @@ yolov8n.pt
 yolov8x.pt
 df.json
 vocab_coco.file
+tmp.jpg
+save/
