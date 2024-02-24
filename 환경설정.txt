@@ -1,0 +1,44 @@
+##### "" 안의 내용은 뭐든 바꿀수 있는 내용임.
+#### cmd 에서 쌍따옴표를 쓸 일은 절대 없음 그냥 나만의 표시임
+
+cuda_11.8.0_522.06_windows.exe
+    # visual studio 체크 해제 안해도됨
+cudnn-windows-x86_64-8.6.0.163_cuda11-archive
+    # 압축 풀기 후 c:/programfiles/NVIDIA GPU Computing Toolkit/CUDA/v11.8/ 
+    # 위 경로 안에서 파일들 여러개 보이면 cudnn 전체 복사 후 붙여넣기
+
+cmd 열고 conda env = 가상환경 이름들 보기. base하나 있을거임
+        conda list = 현재 설치된애들 버전좀 보기
+
+# 환경 새로 만들기
+conda create -n "환경이름" python="3.9.18" anaconda
+    # 여기서 환경 이름은 쿠다 버전을 추천함
+
+# 버전 바꾸기
+conda install "python"=="3.x.x"
+안되면 == 대신 =
+걍 지웠다가 깔아도 되긴함
+
+# 설치 가능 버전 확인하기
+conda search "python"
+설치가능 파이썬 버전보는거고 다른 애들도다됨
+
+# 가상환경 들어가기/나가기
+activate "환경이름"
+deactivate
+
+# 깔자마자 다운 받을거
+tensorflow
+    xgboost, lightgbm, catboost (얘네는 조금 늦어도됨)
+
+# 가상환경 복사
+conda env list로 환경 이름 다 보이게 만들기
+conda create --name "새환경이름 "--clone "기존환경이름"
+
+## 텐서만 깔아둔 상태에서 환경을 복사하는게 편함.
+    애초에 지금 CUDA와 cudnn버전이 공식 인증 잘돌아가는 버전이기때문에 
+    문제가 생기면 둘의 문제가 아닐 확률이 높음. 그래서 언제든 복사하게 이상태로 놔두는거 추천
+    그래서 내가 처음 만들때 Cuda11_8로 환경이름을 잡았던거임.
+
+파이썬 3.9.18
+텐서 2.9.0
