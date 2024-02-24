@@ -9,6 +9,7 @@ cudnn-windows-x86_64-8.6.0.163_cuda11-archive
 
 cmd 열고 conda env = 가상환경 이름들 보기. base하나 있을거임
         conda list = 현재 설치된애들 버전좀 보기
+        pip list == conda list
 
 # 환경 새로 만들기
 conda create -n "환경이름" python="3.9.18" anaconda
@@ -25,7 +26,8 @@ conda search "python"
 
 # 가상환경 들어가기/나가기
 activate "환경이름"
-deactivate
+deactivate    이거 쓰면 뭐 사라졌다고 경고나옴
+conda deactivate
 
 # 깔자마자 다운 받을거
 tensorflow
