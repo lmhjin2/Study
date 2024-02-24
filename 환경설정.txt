@@ -1,5 +1,13 @@
 ##### "" 안의 내용은 뭐든 바꿀수 있는 내용임.
 #### cmd 에서 쌍따옴표를 쓸 일은 절대 없음 그냥 나만의 표시임
+## https://www.tensorflow.org/install/gpu?hl=ko 
+    위 링크에서  테스트된 빌드 구성 클릭하면 나오는 곳에서 
+    검증된 조합 받으면됨
+
+현재 사용중인 조합
+Cuda = 11.8.0 / Cundd = 8.6.0 / Tensorflow = 2.9.0 / python = 3.9.18
+
+
 
 cuda_11.8.0_522.06_windows.exe
     # visual studio 체크 해제 안해도됨
