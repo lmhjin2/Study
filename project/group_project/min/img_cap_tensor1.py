@@ -372,7 +372,7 @@ cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(
     from_logits=False, reduction="none"
 )
 
-early_stopping = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True)
+early_stopping = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True, monitor = 'val_acc')
 
 caption_model.compile(
     optimizer=tf.keras.optimizers.Adam(),
