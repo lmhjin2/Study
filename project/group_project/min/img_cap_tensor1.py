@@ -62,7 +62,7 @@ BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 EMBEDDING_DIM = 512
 UNITS = 512
-EPOCHS = 50
+EPOCHS = 30
 
 tokenizer = tf.keras.layers.TextVectorization(
     max_tokens=VOCABULARY_SIZE,
