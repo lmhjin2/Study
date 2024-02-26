@@ -28,7 +28,7 @@ with open(f'{BASE_PATH}/annotations/captions_train2017.json', 'r') as f:
 img_cap_pairs = []  # 리스트 생성
 
 for sample in data:
-    img_name = '%012d.jpg' % sample['image_id'] # image_id를 12자리 숫자로 변환
+    img_name = '%012d.jpg' % sample['image_id']
     img_cap_pairs.append([img_name, sample['caption']])
 
 captions = pd.DataFrame(img_cap_pairs, columns = ['image', 'caption'])
@@ -51,7 +51,7 @@ captions['caption'] = captions['caption'].apply(preprocess)
 # print(captions.head())
 
 random_row = captions.sample(1).iloc[0]
-# print(random_row.caption)  # 이게 왜 됨?
+# print(random_row.caption) 
 # print()
 # im = Image.open(random_row.image)
 # im.show()
@@ -70,7 +70,6 @@ tokenizer = tf.keras.layers.TextVectorization(
     output_sequence_length=MAX_LENGTH
 )
 tokenizer.adapt(captions['caption'])
-# print(tokenizer.vocabulary_size())  # 단어 대충 12000개 좀 안됨. 누를때마다 바뀜 아마 random_row 때문인거같음
 
 pickle.dump(tokenizer.get_vocabulary(), open('vocab_coco.file', 'wb'))
 
@@ -107,7 +106,7 @@ for imgv in img_name_val_keys:
     capv_len = len(img_to_cap_vector[imgv])
     val_imgs.extend([imgv] * capv_len)
     val_captions.extend(img_to_cap_vector[imgv])
-len(train_imgs), len(train_captions), len(val_imgs), len(val_captions)
+print(len(train_imgs), len(train_captions), len(val_imgs), len(val_captions))
 
 def load_data(img_path, caption):
     img = tf.io.read_file(img_path)
@@ -450,7 +449,7 @@ im.show()
 
 # 가중치 저장
 caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.h5')
-# pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.dat', 'wb'))    # error
+# pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.dat', 'wb'))
 # pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.pkl', 'wb'))
 
-dump(caption_model, 'c:/Study/project/group_project/min/save/caption_model.joblib')
+# dump(caption_model, 'c:/Study/project/group_project/min/save/caption_model.joblib')
