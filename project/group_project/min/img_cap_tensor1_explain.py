@@ -203,83 +203,83 @@ class TransformerDecoderLayer(tf.keras.layers.Layer):
 
     def __init__(self, embed_dim, units, num_heads):
         super().__init__()      # tf.keras.layers.Layer클래스 생성자 정의. 여러 구성층 초기화.
-        self.embedding = Embeddings(        # 
-            tokenizer.vocabulary_size(), embed_dim, MAX_LENGTH)
+        self.embedding = Embeddings(        # 클래스의 객체를 생성해 디코더 레이어의 임베딩 층을 초기화
+            tokenizer.vocabulary_size(), embed_dim, MAX_LENGTH) # 각각 토크나이저에 담긴 단어의 사이즈, 임베딩 차원, 최대 시퀀스의 길이를 나타냄
 
-        self.attention_1 = tf.keras.layers.MultiHeadAttention(
+        self.attention_1 = tf.keras.layers.MultiHeadAttention(  # 첫번째 멀티헤드 어텐션 층을 초기화함. 
+            num_heads=num_heads, key_dim=embed_dim, dropout=0.1 # 각각 어텐션 헤드의 수, 어텐션 키의 차원, 드롭아웃설정을 의미함
+        )
+        self.attention_2 = tf.keras.layers.MultiHeadAttention(  # attention_1과 같음
             num_heads=num_heads, key_dim=embed_dim, dropout=0.1
         )
-        self.attention_2 = tf.keras.layers.MultiHeadAttention(
-            num_heads=num_heads, key_dim=embed_dim, dropout=0.1
-        )
 
-        self.layernorm_1 = tf.keras.layers.LayerNormalization()
-        self.layernorm_2 = tf.keras.layers.LayerNormalization()
-        self.layernorm_3 = tf.keras.layers.LayerNormalization()
+        self.layernorm_1 = tf.keras.layers.LayerNormalization() # 첫번째 레이어 정규화층을 초기화함.
+        self.layernorm_2 = tf.keras.layers.LayerNormalization() # 레이어 정규화는 네트워크의 출력을 표준 정규 분포로 정규화해서 학습을 안정화 시키는 기법
+        self.layernorm_3 = tf.keras.layers.LayerNormalization() # Gradient vanishing 방지, 과적합 방지
 
-        self.ffn_layer_1 = tf.keras.layers.Dense(units, activation="relu")
-        self.ffn_layer_2 = tf.keras.layers.Dense(embed_dim)
+        self.ffn_layer_1 = tf.keras.layers.Dense(units, activation="relu")  # Feedforward Neural Network 레이어 정의. units 개수의 노드로 뻗어감
+        self.ffn_layer_2 = tf.keras.layers.Dense(embed_dim) # embed_dim 개수의 노드를 가진 완전연결 레이어
+        # ffn 레이어는 트랜스포머 디코더의 각 서브층에서 사용됨
+        self.out = tf.keras.layers.Dense(tokenizer.vocabulary_size(), activation="softmax") # 출력 레이어. 토크나이저 어휘의 크기만큼의 뉴런(노드)를 가짐.
+        # softmax를 이용해 다음 단어를 예측하는데 사용됨
+        self.dropout_1 = tf.keras.layers.Dropout(0.3)   # 드롭아웃 0.3
+        self.dropout_2 = tf.keras.layers.Dropout(0.5)   # 드롭아웃 0.5
+        # 디코더 계층의 출력 레이어 및 드롭아웃 레이어 정의
 
-        self.out = tf.keras.layers.Dense(tokenizer.vocabulary_size(), activation="softmax")
+    def call(self, input_ids, encoder_output, training, mask=None): # inpud_ids: 입력 토큰 시퀀스, encoder_output: 인코더의 출력, training: 학습 여부를 묻는 boolian
+        embeddings = self.embedding(input_ids)                      # mask: 어텐션 매커니즘의 마스크(특정 위치 무시)를 쓸건지. / 연관이 떨어지는 단어에 마스크를 씌워서 무시할건지
 
-        self.dropout_1 = tf.keras.layers.Dropout(0.3)
-        self.dropout_2 = tf.keras.layers.Dropout(0.5)
-    
+        combined_mask = None    # 디코더의 셀프 어텐션을 위한 마스크
+        padding_mask = None     # 패딩 토큰을 처리하기위한 마스크
+                                # 이 두 마스크를 결합해 디코더 계층에서 어텐션을 수행할 때 사용됨
+        if mask is not None:    # 마스크가 None 이 아니라면 실행될 코드
+            causal_mask = self.get_causal_attention_mask(embeddings)    # 현재 위치에서 고정. 이후의 정보가 현재 위치에 영향을 주지 않도록 하는 코드
+            padding_mask = tf.cast(mask[:, :, tf.newaxis], dtype=tf.int32)  # 시퀀스의 패딩된 부분을 나타내며, 패딩 토큰이 있는 위치를 확인해 모델이 패딩 토큰을 무시하도록함.
+            combined_mask = tf.cast(mask[:, tf.newaxis, :], dtype=tf.int32) # 미래의 위치와 패딩된 위치 모두에 대한 마스크를 포함하고 이 위치정보를 무시하도록함
+            combined_mask = tf.minimum(combined_mask, causal_mask)  # 위의 두 마스크를 결합. // 새로운 축을 생성해 위치를 단일 차원에 유지시켜서 이동하지 않도록하는것.
 
-    def call(self, input_ids, encoder_output, training, mask=None):
-        embeddings = self.embedding(input_ids)
-
-        combined_mask = None
-        padding_mask = None
-        
-        if mask is not None:
-            causal_mask = self.get_causal_attention_mask(embeddings)
-            padding_mask = tf.cast(mask[:, :, tf.newaxis], dtype=tf.int32)
-            combined_mask = tf.cast(mask[:, tf.newaxis, :], dtype=tf.int32)
-            combined_mask = tf.minimum(combined_mask, causal_mask)
-
-        attn_output_1 = self.attention_1(
-            query=embeddings,
-            value=embeddings,
+        attn_output_1 = self.attention_1(   
+            query=embeddings,   # query, value, key값을 지정하고 임베딩된 데이터인 embeddings를 사용
+            value=embeddings,   # query란 어텐션 메커니즘에서 주목해야할 대상을 나타냄. 어텐션을 계산할 때 기준이 되는 값
             key=embeddings,
-            attention_mask=combined_mask,
-            training=training
+            attention_mask=combined_mask,   # 어텐션 마스크는 어텐션 연산시 특정 위치의 단어를 가림. 위에서 정의한combined_mask 사용
+            training=training   # train인지 test인지 여부를 나타냄
         )
 
-        out_1 = self.layernorm_1(embeddings + attn_output_1)
+        out_1 = self.layernorm_1(embeddings + attn_output_1)    # 첫번째 어텐션레이어의 아웃풋과 입력 임베딩을 더하고 정규화를 적용. (코드 216번줄에서 정의된 레이어 사용)
 
-        attn_output_2 = self.attention_2(
-            query=out_1,
-            value=encoder_output,
+        attn_output_2 = self.attention_2(   # 이전 출력 out_1으로 query를 계산, 인코더의 출력으로 어텐션을 계산함
+            query=out_1,            # 이번엔 어텐션의 기준을 out_1으로 다시 계산함.
+            value=encoder_output,   # 코드 156번줄 인코더 레이어의 아웃풋을 key, value로 사용해 어텐션 계산
             key=encoder_output,
-            attention_mask=padding_mask,
-            training=training
+            attention_mask=padding_mask,    # 패딩 토큰의 위치 마스크를 사용
+            training=training       # 훈련 여부 boolian
         )
 
-        out_2 = self.layernorm_2(out_1 + attn_output_2)
+        out_2 = self.layernorm_2(out_1 + attn_output_2) # 첫번째 어텐션과 두번째 어텐션을 덧셈 연산 후 정규화 진행 / 코드 217번줄
+                                            # 밀집층이란 : 입력 뉴런과 출력 뉴런이 모두 연결된 완전 연결층을 의미. 여러개의 뉴런으로 구성된 레이어를 밀집층이라고 부름
+        ffn_out = self.ffn_layer_1(out_2)   # out_2가 코드 220번줄 밀집레이어 통과. relu적용
+        ffn_out = self.dropout_1(ffn_out, training=training)    # 그대로 dropout 적용
+        ffn_out = self.ffn_layer_2(ffn_out) # dropout 적용 후 코드 221번줄의 밀집레이어 통과
 
-        ffn_out = self.ffn_layer_1(out_2)
-        ffn_out = self.dropout_1(ffn_out, training=training)
-        ffn_out = self.ffn_layer_2(ffn_out)
-
-        ffn_out = self.layernorm_3(ffn_out + out_2)
-        ffn_out = self.dropout_2(ffn_out, training=training)
-        preds = self.out(ffn_out)
+        ffn_out = self.layernorm_3(ffn_out + out_2) # 지금 까지 통과시킨 데이터를 out_2와 덧셈 연산 후 레이어 정규화 진행
+        ffn_out = self.dropout_2(ffn_out, training=training) # 0.5 짜리 dropout
+        preds = self.out(ffn_out)   # softmax를 가진 output_layer통과 / 코드 223번줄
         return preds
 
 
-    def get_causal_attention_mask(self, inputs):
-        input_shape = tf.shape(inputs)
-        batch_size, sequence_length = input_shape[0], input_shape[1]
-        i = tf.range(sequence_length)[:, tf.newaxis]
-        j = tf.range(sequence_length)
-        mask = tf.cast(i >= j, dtype="int32")
-        mask = tf.reshape(mask, (1, input_shape[1], input_shape[1]))
-        mult = tf.concat(
+    def get_causal_attention_mask(self, inputs):    # 원긴과 결과가 명확한 어텐션 마스크 생성.
+        input_shape = tf.shape(inputs)      # 인풋의 shape
+        batch_size, sequence_length = input_shape[0], input_shape[1]    # 배치 크기와 시퀀스 길이 추출
+        i = tf.range(sequence_length)[:, tf.newaxis]    # 0부터 시퀀스 길이 까지의 인덱스를 생성. 새로운 축을 추가해 위치 저장
+        j = tf.range(sequence_length)       # 0부터 시퀀스 길이 까지의 인덱스를 생성
+        mask = tf.cast(i >= j, dtype="int32")   # 인덱스를 사용해 인과적인 어텐션 마스크 생성. 이 마스크는 이전 토큰에만 주의를 기울이도록 마스킹
+        mask = tf.reshape(mask, (1, input_shape[1], input_shape[1]))    # 마스크를 원하는 모양으로 재구성함
+        mult = tf.concat(   # 배치 크기를 고려해 마스크를 복제할 차원을 생성함
             [tf.expand_dims(batch_size, -1), tf.constant([1, 1], dtype=tf.int32)],
             axis=0
-        )
-        return tf.tile(mask, mult)
+        )                           # mult는 마스크를 다중으로 확장하는데 사용됨 / 마스크를 배치크기와 시퀀스 길이에 따라 확장하는데 사용
+        return tf.tile(mask, mult)  # 마스크를 복제해서 최종 인과적인 어텐션 마스크를 생성하고 mask에 반환함. 
 
 class ImageCaptioningModel(tf.keras.Model):
 
