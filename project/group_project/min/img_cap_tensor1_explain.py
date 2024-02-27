@@ -180,7 +180,7 @@ class TransformerEncoderLayer(tf.keras.layers.Layer):   # 트랜스포머의 인
         return x            # residual connection이라고도 하며 입력과 출력간의 차이를 줄여줌. 입력과 어텐션 출력을결합한 후 정보를 안정화시키고 학습을 도와줌
 
 class Embeddings(tf.keras.layers.Layer):        # 트랜스포머 모델의 입력으로 사용될 토큰 및 위치 임베딩을 생성
-# 임베딩이란 : 이미지의 저차원적 특성 벡터를 추출해 유사도가 높은 단어끼리는 임베딩 공간상에서 서로 가까운 곳에 위치하게 됨. 즉 유사성을 띈 단어들 간의 분류를 위함.
+            # 임베딩이란 : 이미지의 저차원적 특성 벡터를 추출해 유사도가 높은 단어끼리는 임베딩 공간상에서 서로 가까운 곳에 위치하게 됨. 즉 유사성을 띈 단어들 간의 분류를 위함.
     def __init__(self, vocab_size, embed_dim, max_len): 
         super().__init__()      # tf.keras.layers.Layer 를 상속받은 Embeddings 클래스이기 때문에 tf.keras.layers.Layer의 생성자를 호출. 부모 클래스의 모든 속성과 메서드를 상속받게됨
         self.token_embeddings = tf.keras.layers.Embedding(  # 단어 집합의 크기(vocab_size)와 임베딩 차원(embed_dim)을 인자로 받아 각 단어를 고정된 길이의 밀집 벡터로 임베딩
@@ -284,40 +284,40 @@ class TransformerDecoderLayer(tf.keras.layers.Layer):
 class ImageCaptioningModel(tf.keras.Model):
 
     def __init__(self, cnn_model, encoder, decoder, image_aug=None):
-        super().__init__()
-        self.cnn_model = cnn_model
-        self.encoder = encoder
-        self.decoder = decoder
-        self.image_aug = image_aug
-        self.loss_tracker = tf.keras.metrics.Mean(name="loss")
-        self.acc_tracker = tf.keras.metrics.Mean(name="accuracy")
+        super().__init__()  # 부모 클래스의 초기화 메서드 호출
+        self.cnn_model = cnn_model  # 이미지 특성 추출을 위한 CNN모델(코드 143 번줄)
+        self.encoder = encoder  # 이미지 및 텍스트 특성을 인코딩하는 인코더 (코드156 번줄)
+        self.decoder = decoder  # 인코딩된 특성을 이용해 캡션 생성 (코드 202 번줄)
+        self.image_aug = image_aug  # 데이터 증강 (코드 137 번줄)
+        self.loss_tracker = tf.keras.metrics.Mean(name="loss")  # 로스 평균을 추적하는 메트릭스
+        self.acc_tracker = tf.keras.metrics.Mean(name="accuracy")   # 정확도 평균을 추적하는 메트릭스
 
 
     def calculate_loss(self, y_true, y_pred, mask):
-        loss = self.loss(y_true, y_pred)
-        mask = tf.cast(mask, dtype=loss.dtype)
-        loss *= mask
-        return tf.reduce_sum(loss) / tf.reduce_sum(mask)
+        loss = self.loss(y_true, y_pred)    # model.evaluate 비슷한거임. loss 구하기
+        mask = tf.cast(mask, dtype=loss.dtype)  # 마스크를 loss와 동일한 데이터 타입으로 변환
+        loss *= mask                        # loss에 mask를 곱해서 마스크된 위치의 로스만 유지
+        return tf.reduce_sum(loss) / tf.reduce_sum(mask)    # 마스크된 위치의 loss평균 계산
 
 
     def calculate_accuracy(self, y_true, y_pred, mask):
-        accuracy = tf.equal(y_true, tf.argmax(y_pred, axis=2))
-        accuracy = tf.math.logical_and(mask, accuracy)
-        accuracy = tf.cast(accuracy, dtype=tf.float32)
-        mask = tf.cast(mask, dtype=tf.float32)
-        return tf.reduce_sum(accuracy) / tf.reduce_sum(mask)
+        accuracy = tf.equal(y_true, tf.argmax(y_pred, axis=2))  # 예측값과 실제값을 비교해서 정확도 계산. accuracy_score 같은거
+        accuracy = tf.math.logical_and(mask, accuracy)  # 마스크와 정확도를 논리적(logical)으로 조합해 유효한 위치의 정확도만 유지
+        accuracy = tf.cast(accuracy, dtype=tf.float32)  # 정확도를 부동소수점 형태로 변환
+        mask = tf.cast(mask, dtype=tf.float32)          # 마스크를 부동소수점 형태로 변환
+        return tf.reduce_sum(accuracy) / tf.reduce_sum(mask)    # 유효한 위치의 정확도의 평균계산
     
 
     def compute_loss_and_acc(self, img_embed, captions, training=True):
-        encoder_output = self.encoder(img_embed, training=True)
-        y_input = captions[:, :-1]
-        y_true = captions[:, 1:]
-        mask = (y_true != 0)
-        y_pred = self.decoder(
+        encoder_output = self.encoder(img_embed, training=True) # 트랜스포머 인코더에 증폭된 데이터셋 넣기
+        y_input = captions[:, :-1]      # 입력 캡션에서 마지막 토큰을 제외한 부분만 y_input으로 사용 / 디코더 모델이 예측에 사용할 데이터라서 마지막은 안줌
+        y_true = captions[:, 1:] # 입력 캡션에서 첫번째 토큰을 제외한 부분만 y_true로 사용 / 디코더 모델이 예측해야할 다음 토큰과 비교를 위해 첫번째 토큰을 제외
+        mask = (y_true != 0)            # 패딩된 부분을 제외한 실제 토큰을 나타내는 마스크 생성
+        y_pred = self.decoder(          # 트랜스포머 디코더에 입력 캡션과 인코더의 output을 입력으로 사용, y_pred에 저장
             y_input, encoder_output, training=True, mask=mask
         )
-        loss = self.calculate_loss(y_true, y_pred, mask)
-        acc = self.calculate_accuracy(y_true, y_pred, mask)
+        loss = self.calculate_loss(y_true, y_pred, mask)        # 로스 계산
+        acc = self.calculate_accuracy(y_true, y_pred, mask)     # 정확도 계산
         return loss, acc
 
     
