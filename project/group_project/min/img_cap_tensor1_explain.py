@@ -322,64 +322,64 @@ class ImageCaptioningModel(tf.keras.Model):
 
     
     def train_step(self, batch):
-        imgs, captions = batch
+        imgs, captions = batch  # 배치사이즈만큼 이미자와 캡션을 전달
 
-        if self.image_aug:
-            imgs = self.image_aug(imgs)
+        if self.image_aug:      # self.image_aug가 설정되어있는지 확인
+            imgs = self.image_aug(imgs) # 적용 되어있다면 .imgs에 증강데이터 적용
         
-        img_embed = self.cnn_model(imgs)
+        img_embed = self.cnn_model(imgs) # 이미지를 cnn에 통과시켜 이미지 임베딩을 얻음 == 특성값 추출
 
-        with tf.GradientTape() as tape:
-            loss, acc = self.compute_loss_and_acc(
+        with tf.GradientTape() as tape: # 텐서의 자동 미분기능을 위한 코드. 손실함수와 그래디언트 계산 가능
+            loss, acc = self.compute_loss_and_acc(  # 이미지 임베딩과 캡션데이터 전달해서 로스와 정확도 계산
                 img_embed, captions
             )
     
-        train_vars = (
-            self.encoder.trainable_variables + self.decoder.trainable_variables
+        train_vars = (      # 학습가능한 변수를 수집. 인코더와 디코더의 학습가능 변수를 모아 리스트로 만듦.
+            self.encoder.trainable_variables + self.decoder.trainable_variables 
         )
-        grads = tape.gradient(loss, train_vars)
-        self.optimizer.apply_gradients(zip(grads, train_vars))
-        self.loss_tracker.update_state(loss)
-        self.acc_tracker.update_state(acc)
+        grads = tape.gradient(loss, train_vars)     # 로스의 그래디언트 계산. 후속 모델의 가중치 업데이트에 사용됨
+        self.optimizer.apply_gradients(zip(grads, train_vars))  # 계산된 그래디언트로 가중치 갱신. 옵티마이저로 그래디언트 디센트를 수행.
+        self.loss_tracker.update_state(loss)    # 로스 갱신
+        self.acc_tracker.update_state(acc)   # 정확도 갱신
 
-        return {"loss": self.loss_tracker.result(), "acc": self.acc_tracker.result()}
+        return {"loss": self.loss_tracker.result(), "acc": self.acc_tracker.result()} # 로스와 정확도를 담은 딕셔너리를 반환함
     
 
-    def test_step(self, batch):
-        imgs, captions = batch
+    def test_step(self, batch): 
+        imgs, captions = batch  # 배치사이즈 만큼 이미지와 캡션을 불러옴
 
-        img_embed = self.cnn_model(imgs)
+        img_embed = self.cnn_model(imgs)    # 이미지를 CNN모델에 통과시켜 이미지의 임베딩값을 얻음. == 특성 추출
 
-        loss, acc = self.compute_loss_and_acc(
+        loss, acc = self.compute_loss_and_acc(      # 로스와 정확도 계산. 이미지의 특성값과 캡션데이터가 전달되고 train모드를 꺼서 dropout같은 학습용 레이어 적용 x
             img_embed, captions, training=False
         )
 
-        self.loss_tracker.update_state(loss)
-        self.acc_tracker.update_state(acc)
+        self.loss_tracker.update_state(loss)    # 로스 갱신
+        self.acc_tracker.update_state(acc)      # 정확도 갱신
 
-        return {"loss": self.loss_tracker.result(), "acc": self.acc_tracker.result()}
+        return {"loss": self.loss_tracker.result(), "acc": self.acc_tracker.result()}   # 딕셔너리로 로스와 정확도 반환
 
-    @property
-    def metrics(self):
-        return [self.loss_tracker, self.acc_tracker]
-
-encoder = TransformerEncoderLayer(EMBEDDING_DIM, 1)
-decoder = TransformerDecoderLayer(EMBEDDING_DIM, UNITS, 8)
-
-cnn_model = CNN_Encoder()
-caption_model = ImageCaptioningModel(
+    @property       # metrics를 속성(property)으로 만들어줌. 호출할땐 메서드처럼 호출하지만 실제로는 속성값에 접근하는것처럼 동작하게됨
+    def metrics(self):  # 모델의 메트릭스를 반환함. 로스와 정확도가 포함된 리스트를 반환
+        return [self.loss_tracker, self.acc_tracker] # 리스트 안에 학습 및 테스트중 로스와 정확도를 추척하는 메트릭스
+            # 이 속성(property)는 모델 객체를 통해 쉽게 로스와 정확도를 확인할수 있게함. model.metrics를 호출하면 현재 로스와 정확도를 담은 리스트를 뱉어줌
+encoder = TransformerEncoderLayer(EMBEDDING_DIM, 1) # EMBEDDING_DIM의 숫자만큼의 차원을 가진 벡터로 변환됨. ex) 512차원의 임베딩 벡터
+decoder = TransformerDecoderLayer(EMBEDDING_DIM, UNITS, 8)  # EMBEDDING_DIM의 숫자만큼 차원을 가진 벡터로, UNITS의 숫자만큼 순환 유닛(뉴런)을 가진 8개의 벡터로 생성
+                                                            # ex) 512차원의 512개 뉴런을 가진 8개의 벡터
+cnn_model = CNN_Encoder()   # 코드 143번줄 CNN인코더
+caption_model = ImageCaptioningModel(   # 캡션모델 정의. / CNN인코더, 트랜스포머인코더, 트랜스포머 디코더, 증강된 이미지 사용 하겠다는뜻
     cnn_model=cnn_model, encoder=encoder, decoder=decoder, image_aug=image_augmentation,
 )
 
-cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(
-    from_logits=False, reduction="none"
+cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(  # SparseCategoricalCrossentropy 사용
+    from_logits=False, reduction="none"         # 입력이확률값인지 로짓값인지 정함. 이번엔 확률이라 False / reduction은 로스의 축소 방법을 지정하는것. "none"이면 각 샘플마다 계산하고 반환함
 )
 
 early_stopping = tf.keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True, monitor = 'val_acc')
 
-caption_model.compile(
+caption_model.compile(  # model.compile
     optimizer=tf.keras.optimizers.Adam(),
-    loss=cross_entropy
+    loss=cross_entropy  # 코드 374번줄
 )
 
 history = caption_model.fit(
@@ -393,7 +393,7 @@ plt.plot(history.history['loss'], label='train_loss')
 plt.plot(history.history['val_loss'], label='validation loss')
 plt.legend()
 plt.show()
-
+# 이 아래는 predict를 위한 함수 설정
 def load_image_from_path(img_path):
     img = tf.io.read_file(img_path)
     img = tf.io.decode_jpeg(img, channels=3)
