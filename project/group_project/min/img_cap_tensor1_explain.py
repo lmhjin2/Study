@@ -72,7 +72,7 @@ tokenizer = tf.keras.layers.TextVectorization(  # text를 input으로 넣기 위
 tokenizer.adapt(captions['caption'])    # caption열에 있는 텍스트 데이터를 textvectorization에 적용. 단어장 생성
 # print(tokenizer.vocabulary_size())  # 단어 대충 12000개 좀 안됨. 누를때마다 바뀜 아마 random_row 때문인거같음
 
-pickle.dump(tokenizer.get_vocabulary(), open( BASE_PATH + 'vocab_coco.file', 'wb'))  # vocab_coco.file 을 열어서 현재 단어장 새로 저장
+pickle.dump(tokenizer.get_vocabulary(), open( BASE_PATH + '/vocab_coco.file', 'wb'))  # vocab_coco.file 을 열어서 현재 단어장 새로 저장
 
 word2idx = tf.keras.layers.StringLookup(    # 주어진 단어를 해당 단어장의 정수 인덱스로 변환시킴. <- 입력으로 사용하기 위함
     mask_token="",                          # 빈 마스크 토큰 생성
