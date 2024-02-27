@@ -62,8 +62,8 @@ with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f_val:
 val_img_cap_pairs = []
 
 for val_sample in val_data:
-    img_name = '%012d.jpg' % val_sample['image_id']
-    val_img_cap_pairs.append([img_name, val_sample['caption']])
+    val_img_name = '%012d.jpg' % val_sample['image_id']
+    val_img_cap_pairs.append([val_img_name, val_sample['caption']])
 
 val_captions = pd.DataFrame(val_img_cap_pairs, columns = ['image', 'caption'])
 val_captions['image'] = val_captions['image'].apply(
