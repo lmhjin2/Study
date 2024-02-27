@@ -21,37 +21,28 @@ import pickle
 # 기본 파일 위치
 BASE_PATH = 'd:/_data/coco/archive/coco2017'
 
-with open(f'{BASE_PATH}/annotations/captions_train2017.json', 'r') as f:
-    data = json.load(f)
-    data = data['annotations']
+with open(f'{BASE_PATH}/annotations/captions_train2017.json', 'r') as f:    
+    data = json.load(f)                                                     
+    data = data['annotations']                                              
 
-with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f:
-    data2 = json.load(f)
-    data2 = data2['annotations']
-    
-img_cap_pairs = []  # 리스트 생성
-img_cap_pairs2 = []  # 리스트 생성
+with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f:      
+    data2 = json.load(f)                                                    
+    data2 = data2['annotations']  
 
-for sample in data:
-    img_name = '%012d.jpg' % sample['image_id']
-    img_cap_pairs.append([img_name, sample['caption']])
+img_cap_pairs = []                                                          
+for sample in data:                                                         
+    img_name = '%012d.jpg' % sample['image_id']                             
+    img_cap_pairs.append([img_name, sample['caption']])                     
 
-for sample in data2:
-    img_name = '%012d.jpg' % sample['image_id']
-    img_cap_pairs2.append([img_name, sample['caption']])
+for sample in data2:                                                       
+    img_name = '%012d.jpg' % sample['image_id']                            
+    img_cap_pairs.append([img_name, sample['caption']])  
 
-captions = pd.DataFrame(img_cap_pairs, columns = ['image', 'caption'])
-captions['image'] = captions['image'].apply(
-    lambda x: f'{BASE_PATH}/train2017/{x}'
+captions = pd.DataFrame(img_cap_pairs, columns = ['image', 'caption'])      
+captions['image'] = captions['image'].apply(                                
+    lambda x: f'{BASE_PATH}/train2017/{x}'                                  
+    # lambda x: f'{x}'                                  
 )
-captions2 = pd.DataFrame(img_cap_pairs2, columns = ['image', 'caption'])
-captions2['image'] = captions2['image'].apply(
-    lambda x: f'{BASE_PATH}/val2017/{x}'
-)
-captions = captions.sample(118287)
-captions = captions.reset_index(drop=True)
-captions2 = captions2.sample(5000)
-captions2 = captions2.reset_index(drop=True)
 
 def preprocess(text):
     text = text.lower()
@@ -61,22 +52,17 @@ def preprocess(text):
     text = '[start] ' + text + ' [end]'
     return text
 
-def preprocess(text2):
-    text2 = text2.lower()
-    text2 = re.sub(r'[^\w\s]', '', text2)
-    text2 = re.sub('\s+', ' ', text2)
-    text2 = text2.strip()
-    text2 = '[start] ' + text2 + ' [end]'
-    return text2
-
 captions['caption'] = captions['caption'].apply(preprocess)
-captions2['caption'] = captions2['caption'].apply(preprocess)
+# print(captions.head())
 
 random_row = captions.sample(1).iloc[0]
-random_row = captions2.sample(1).iloc[0]
+# print(random_row.caption) 
+# print()
+# im = Image.open(random_row.image)
+# im.show()
 
 MAX_LENGTH = 40
-VOCABULARY_SIZE = 15000
+VOCABULARY_SIZE = 20000
 BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 EMBEDDING_DIM = 512
@@ -105,19 +91,12 @@ img_to_cap_vector = collections.defaultdict(list)
 for img, cap in zip(captions['image'], captions['caption']):
     img_to_cap_vector[img].append(cap)
 
-img_to_cap_vector2 = collections.defaultdict(list)
-for img, cap in zip(captions2['image'], captions2['caption']):
-    img_to_cap_vector2[img].append(cap)
-    
-img_name_train_keys = list(img_to_cap_vector.keys())
-random.shuffle(img_name_train_keys)
+img_keys = list(img_to_cap_vector.keys())
+random.shuffle(img_keys)
 
-img_name_val_keys = list(img_to_cap_vector2.keys())
-random.shuffle(img_name_val_keys)
-
-# slice_index = int(len(img_keys)*0.8)
-# img_name_train_keys, img_name_val_keys = (img_keys[:slice_index], 
-                                        #   img_keys[slice_index:])
+slice_index = int(len(img_keys)*0.8)
+img_name_train_keys, img_name_val_keys = (img_keys[:slice_index], 
+                                          img_keys[slice_index:])
 
 train_imgs = []
 train_captions = []
