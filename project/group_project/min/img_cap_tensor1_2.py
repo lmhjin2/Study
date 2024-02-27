@@ -55,8 +55,8 @@ captions['caption'] = captions['caption'].apply(preprocess)
 # im = Image.open(random_row.image)
 # im.show()
         ########### validation
-with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f:
-    val_data = json.load(f)
+with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f_val:
+    val_data = json.load(f_val)
     val_data = val_data['annotations']
 
 val_img_cap_pairs = []
@@ -109,11 +109,13 @@ img_name_train_keys = list(img_to_cap_vector.keys())
 random.shuffle(img_name_train_keys)
 
 val_img_to_cap_vector = collections.defaultdict(list)
+
 for img, cap in zip(val_captions['image'], val_captions['caption']):
     val_img_to_cap_vector[img].append(cap)
 
 img_name_val_keys = list(val_img_to_cap_vector.keys())
 random.shuffle(img_name_val_keys)
+# print(img_name_val_keys)
 
 # slice_index = int(len(img_keys)*0.8)
 # img_name_train_keys, img_name_val_keys = (img_keys[:slice_index], 
@@ -142,6 +144,14 @@ def load_data(img_path, caption):
     caption = tokenizer(caption)
     return img, caption
 
+def load_val_data(val_img_path, caption):
+    img = tf.io.read_file(val_img_path)
+    img = tf.io.decode_jpeg(img, channels=3)
+    img = tf.keras.layers.Resizing(299, 299)(img)
+    img = tf.keras.applications.inception_v3.preprocess_input(img)
+    caption = tokenizer(caption)
+    return img, caption
+
 train_dataset = tf.data.Dataset.from_tensor_slices(
     (train_imgs, train_captions))
 
@@ -153,7 +163,7 @@ val_dataset = tf.data.Dataset.from_tensor_slices(
     (val_imgs, val_captions))
 
 val_dataset = val_dataset.map(
-    load_data, num_parallel_calls=tf.data.AUTOTUNE
+    load_val_data, num_parallel_calls=tf.data.AUTOTUNE
     ).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 
 image_augmentation = tf.keras.Sequential(
@@ -456,6 +466,7 @@ def generate_caption(img_path, add_noise=False):
 
 idx = random.randrange(0, len(captions))
 img_path = captions.iloc[idx].image
+val_img_path = val_captions[idx].image
 
 pred_caption = generate_caption(img_path)
 print('Predicted Caption:', pred_caption)
