@@ -94,7 +94,7 @@ for img, cap in zip(captions['image'], captions['caption']):
 img_keys = list(img_to_cap_vector.keys())
 random.shuffle(img_keys)
 
-slice_index = int(len(img_keys)*0.8)
+slice_index = int(len(img_keys)*0.9)
 img_name_train_keys, img_name_val_keys = (img_keys[:slice_index], 
                                           img_keys[slice_index:])
 
