@@ -62,13 +62,13 @@ x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
 n_splits =10
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 1013 )
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 5 )
 
 from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multioutput import MultiOutputClassifier
 import catboost as cbt
 
-parameters = [{'random_seed':np.arange(1013,1014,1)}]
+parameters = [{'random_seed':np.arange(315,316,1)}]
 
 model = GridSearchCV(cbt.CatBoostClassifier(
                         learning_rate = 0.08 ,
@@ -79,7 +79,7 @@ model = GridSearchCV(cbt.CatBoostClassifier(
                         # eval_metric= 'LogLoss',
                         # subsample= 1 ,
                         # task_type= 'GPU',     # gpu로 하면 점수 떨어짐. 이유 모름
-                        # random_seed= 0 , # 기본값 None
+                        random_seed= 0 , # 기본값 None
                         # cat_features= # 기본값 None // 자동인식
                         # bootstrap_type= 'Bayesian',
                         # verbose = 1, 
