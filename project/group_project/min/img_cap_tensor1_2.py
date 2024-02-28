@@ -442,7 +442,8 @@ print('Predicted Caption:', pred_caption)
 print()
 Image.open(img_path)
 
-img_url = "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w"
+# img_url = "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w"
+img_url = "d:/_data/coco/archive/coco2017/test2017/000000326379.jpg"
 
 im = Image.open(requests.get(img_url, stream=True).raw)
 im = im.convert('RGB')
