@@ -43,6 +43,8 @@ captions['image'] = captions['image'].apply(
     lambda x: f'{BASE_PATH}/train2017/{x}'                                  
     # lambda x: f'{x}'                                  
 )
+captions = captions.sample(123287)
+captions = captions.reset_index(drop=True)
 
 def preprocess(text):
     text = text.lower()
@@ -67,7 +69,7 @@ BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 EMBEDDING_DIM = 512
 UNITS = 512
-EPOCHS = 30
+EPOCHS = 1
 
 tokenizer = tf.keras.layers.TextVectorization(
     max_tokens=VOCABULARY_SIZE,
@@ -344,7 +346,6 @@ class ImageCaptioningModel(tf.keras.Model):
         self.acc_tracker.update_state(acc)
 
         return {"loss": self.loss_tracker.result(), "acc": self.acc_tracker.result()}
-    
 
     def test_step(self, batch):
         imgs, captions = batch
@@ -453,10 +454,5 @@ print()
 im.show()
 
 # 가중치 저장
-# caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.h5')
-caption_model.save('c:/Study/project/group_project/min/save/caption_model.h5')
-
-# pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.dat', 'wb'))
-# pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.pkl', 'wb'))
-
-# dump(caption_model, 'c:/Study/project/group_project/min/save/caption_model.joblib')
+caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.h5')
+caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.hdf5')
