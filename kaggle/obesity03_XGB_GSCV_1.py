@@ -62,13 +62,13 @@ x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
 n_splits =10
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 5 )
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state = 2 )
 
 from sklearn.metrics import accuracy_score, r2_score
 from xgboost import XGBClassifier
 from sklearn.multioutput import MultiOutputClassifier
 
-parameters = [{'seed':range(850,900,1)}]
+parameters = [{'seed':range(1013,1014,1)}]
 
 model = GridSearchCV(XGBClassifier(n_estimators = 1000 , 
                       learning_rate = 0.1 , 
@@ -110,10 +110,10 @@ y_submit_best = lae_NObeyesdad.inverse_transform(y_submit_best)
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0212_3.csv", index=False)
+submission_csv.to_csv(path + "submission_0228_3.csv", index=False)
 
 submission_csv['NObeyesdad'] = y_submit_best
-submission_csv.to_csv(path + "submission_b_0212_1.csv", index=False)
+submission_csv.to_csv(path + "submission_b_0228_1.csv", index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
