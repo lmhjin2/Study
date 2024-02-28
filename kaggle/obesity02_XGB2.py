@@ -54,7 +54,7 @@ from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, Stan
 y = np.array(y.values.reshape(-1,1))
 y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify=y, test_size=0.2, random_state= 5 )
+x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, stratify=y, test_size=0.2, random_state= 2 )
 
 scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
@@ -94,7 +94,7 @@ y_submit = lae_NObeyesdad.inverse_transform(y_submit)   # 주석하면 0점.
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv(path + "submission_0213_3.csv", index=False)
+submission_csv.to_csv(path + "submission_0228_3.csv", index=False)
 
 print('acc:', scores, "\n 평균 acc:", round(np.mean(scores), 4))
 print('results:', results)
