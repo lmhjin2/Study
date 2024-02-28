@@ -17,7 +17,7 @@ from math import sqrt
 from PIL import Image
 from tqdm.auto import tqdm
 import pickle
-from tf.keras.models import load_model
+from tensorflow.keras.models import load_model
 
 # 기본 파일 위치
 BASE_PATH = 'd:/_data/coco/archive/coco2017'
@@ -372,7 +372,11 @@ cnn_model = CNN_Encoder()
 caption_model = ImageCaptioningModel(
     cnn_model=cnn_model, encoder=encoder, decoder=decoder, image_aug=image_augmentation,
 )
-caption_model.tf.keras.load_weights('c:/Study/project/group_project/min/save/caption_model_2.h5)
+# load_model
+# caption_model = caption_model.load_weights('c:/Study/project/group_project/min/save/caption_model_2.h5') # 예측만 할때는 compile = False
+caption_model = caption_model.load_weights('c:/Study/project/group_project/min/save/caption_model_2.h5') # 예측만 할때는 compile = False
+caption_model(tf.zeros((1, 299, 299, 3)))
+
 cross_entropy = tf.keras.losses.SparseCategoricalCrossentropy(
     from_logits=False, reduction="none"
 )
@@ -455,6 +459,8 @@ im.show()
 
 # 가중치 저장
 caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.h5')
+caption_model.save('c:/Study/project/group_project/min/save/caption_model.h5')
+
 # pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.dat', 'wb'))
 # pickle.dump(caption_model, open('c:/Study/project/group_project/min/caption_model.pkl', 'wb'))
 
