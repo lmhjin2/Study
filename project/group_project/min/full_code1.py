@@ -454,7 +454,7 @@ print('Predicted Caption:', pred_caption)
 print()
 im.show()
 
-img_path = "d:/_data/coco/archive/coco2017/test2017/000000136481.jpg"
+img_path = "d:/_data/coco/archive/coco2017/test2017/000000136488.jpg"
 pred_caption = generate_caption(img_path, add_noise=False)
 print('Predicted Caption:', pred_caption)
 print()
