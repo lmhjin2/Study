@@ -55,8 +55,8 @@ from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, Stan
 # y = np.array(y.values.reshape(-1,1))
 # y_ohe = OneHotEncoder(sparse=False).fit_transform(y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=0.2, random_state= 5 )
-
+x_train, x_test, y_train, y_test = train_test_split(x, y, stratify=y, test_size=0.2, random_state= 19990119 )
+                                                                 # must be an int in the range [0, 4294967295]
 scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
@@ -69,7 +69,7 @@ from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multioutput import MultiOutputClassifier
 import catboost as cbt
 
-parameters = [{'random_seed':np.arange(400,450,1)}]
+parameters = [{'random_seed':np.arange(119,120,1)}]
 
 model = GridSearchCV(cbt.CatBoostClassifier(
                         learning_rate = 0.08 ,
@@ -107,10 +107,10 @@ y_submit_best = lae_NObeyesdad.inverse_transform(y_submit_best)
 scores = cross_val_score(model, x_test, y_test, cv = kfold)
 
 submission_csv['NObeyesdad'] = y_submit
-submission_csv.to_csv( path +  "submission_0218_C_1.csv", index=False)
+submission_csv.to_csv( path +  "submission_0229_C_1.csv", index=False)
 
 submission_csv['NObeyesdad'] = y_submit_best
-submission_csv.to_csv(path + "submission_b_0218_C_1.csv", index=False)
+submission_csv.to_csv(path + "submission_b_0229_C_1.csv", index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_)     # 내가 선택한 놈만 나옴
