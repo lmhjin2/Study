@@ -454,6 +454,3 @@ print('Predicted Caption:', pred_caption)
 print()
 im.show()
 
-# 가중치 저장
-caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.h5')
-caption_model.save_weights('c:/Study/project/group_project/min/save/caption_model.hdf5')
