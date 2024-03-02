@@ -21,13 +21,13 @@ import pickle
 # 기본 파일 위치
 BASE_PATH = 'd:/_data/coco/archive/coco2017'
 
-with open(f'{BASE_PATH}/annotations/captions_train2017.json', 'r') as f:    
+with open(f'{BASE_PATH}/annotations/captions_train2017.json', 'r') as f:
     data = json.load(f)                                                     
     data = data['annotations']                                              
 
-with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f:      
+with open(f'{BASE_PATH}/annotations/captions_val2017.json', 'r') as f:
     data2 = json.load(f)                                                    
-    data2 = data2['annotations']  
+    data2 = data2['annotations']
 
 img_cap_pairs = []                                                          
 for sample in data:                                                         
