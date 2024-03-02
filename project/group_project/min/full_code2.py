@@ -461,4 +461,9 @@ print()
 im = Image.open(img_path)
 im.show()
 
+from gtts import gTTS
 
+text = pred_caption
+tts = gTTS(text=text, lang='en')
+
+tts.save("C:/Users/AIA/Desktop/temp/tts.mp3")
