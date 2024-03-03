@@ -268,7 +268,7 @@ class TransformerDecoderLayer(tf.keras.layers.Layer):
         return preds
 
 
-    def get_causal_attention_mask(self, inputs):    # 원긴과 결과가 명확한 어텐션 마스크 생성.
+    def get_causal_attention_mask(self, inputs):    # 원인과 결과가 명확한 어텐션 마스크 생성.
         input_shape = tf.shape(inputs)      # 인풋의 shape
         batch_size, sequence_length = input_shape[0], input_shape[1]    # 배치 크기와 시퀀스 길이 추출
         i = tf.range(sequence_length)[:, tf.newaxis]    # 0부터 시퀀스 길이 까지의 인덱스를 생성. 새로운 축을 추가해 위치 저장
