@@ -437,22 +437,28 @@ def generate_caption(img_path, add_noise=False):
 idx = random.randrange(0, len(captions))
 img_path = captions.iloc[idx].image
 
+print()
+print()
+print()
+print()
+print()
+
 pred_caption = generate_caption(img_path)
 print('Predicted Caption:', pred_caption)
 print()
 im = Image.open(img_path)
 im.show()
 
-img_url = "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w"
+# img_url = "https://images.squarespace-cdn.com/content/v1/5e0e65adcd39ed279a0402fd/1627422658456-7QKPXTNQ34W2OMBTESCJ/1.jpg?format=2500w"
 
-im = Image.open(requests.get(img_url, stream=True).raw)
-im = im.convert('RGB')
-im.save('tmp.jpg')
+# im = Image.open(requests.get(img_url, stream=True).raw)
+# im = im.convert('RGB')
+# im.save('tmp.jpg')
 
-pred_caption = generate_caption('tmp.jpg', add_noise=False)
-print('Predicted Caption:', pred_caption)
-print()
-im.show()
+# pred_caption = generate_caption('tmp.jpg', add_noise=False)
+# print('Predicted Caption:', pred_caption)
+# print()
+# im.show()
 
 img_path = "d:/_data/coco/archive/coco2017/test2017/000000136352.jpg"
 pred_caption = generate_caption(img_path, add_noise=False)
