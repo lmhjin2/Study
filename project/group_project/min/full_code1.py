@@ -43,8 +43,8 @@ captions['image'] = captions['image'].apply(
     lambda x: f'{BASE_PATH}/train2017/{x}'                                  
     # lambda x: f'{x}'                                  
 )
-# captions = captions.sample(123287) # 123287
-# captions = captions.reset_index(drop=True)
+captions = captions.sample(200000) # 123287
+captions = captions.reset_index(drop=True)
 
 def preprocess(text):
     text = text.lower()
@@ -69,7 +69,7 @@ BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 EMBEDDING_DIM = 512
 UNITS = 512
-EPOCHS = 5
+EPOCHS = 1
 
 tokenizer = tf.keras.layers.TextVectorization(
     max_tokens=VOCABULARY_SIZE,
@@ -461,7 +461,7 @@ tts.save("C:/Users/AIA/Desktop/temp/random.mp3")
 pygame.init()
 
 # mp3 파일 로드
-pygame.mixer.music.load("C:/Users/AIA/Desktop/temp/000000136488.mp3")
+pygame.mixer.music.load("C:/Users/AIA/Desktop/temp/random.mp3")
 
 # mp3 파일 재생
 pygame.mixer.music.play()
@@ -492,8 +492,8 @@ pygame.mixer.music.load("C:/Users/AIA/Desktop/temp/000000136488.mp3")
 # mp3 파일 재생
 pygame.mixer.music.play()
 
-# 2초 대기
-time.sleep(2)
+# 3초 대기
+time.sleep(3)
 
 # pygame 종료
 pygame.quit()
