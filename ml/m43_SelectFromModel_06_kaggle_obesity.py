@@ -113,45 +113,12 @@ submission_csv.to_csv(path + "submission_0219_3.csv", index=False)
 # y_submit = np.argmax(y_submit, axis=1)          # argmax주석하면 에러
 # y_submit_best = np.argmax(y_submit_best, axis = 1)
 
-# 최적의 파라미터 :  {'seed': 47}
-# model.score : 0.9200385356454721
-# 최적 튠 ACC: 0.9200385356454721
-
-# 최적의 파라미터 :  {'seed': 34}
-# model.score : 0.9200385356454721
-# 최적 튠 ACC: 0.9200385356454721
-
 # 점수 : 0.91221
 # 최적의 파라미터 :  {'seed': 315}
 # model.score : 0.9210019267822736
 # 최적 튠 ACC: 0.9210019267822736
 
-feature_importances_list = list(model.feature_importances_)
-# print(feature_importances_list)
-feature_importances_list_sorted = sorted(feature_importances_list)
-# print(feature_importances_list_sorted)  # 0번이제일 낮고 29번이 제일높음 (총 컬럼 30개)
-drop_feature_idx_list = [feature_importances_list.index(feature) for feature in feature_importances_list_sorted]
-print(drop_feature_idx_list)
-
-result_dict = {}
-for i in range(len(drop_feature_idx_list)): # 1바퀴에 1개, 마지막 바퀴에 29개 지우기, len -1은 30개 다지우면 안돼서
-    drop_idx = drop_feature_idx_list[:i] # +1을 해준건 첫바퀴에 한개를 지워야 해서. 30개 시작 하고싶으면 i 만쓰고 위에 -1 지워주면됨
-    new_x_train = np.delete(x_train, drop_idx, axis = 1)
-    new_x_test = np.delete(x_test, drop_idx, axis=1)
-    print(new_x_train.shape, new_x_test.shape)
-    
-    model2 = XGBClassifier()
-    model2.set_params(early_stopping_rounds = 10, **parameters)
-    model2.fit(new_x_train,y_train,
-          eval_set=[(new_x_train,y_train), (new_x_test,y_test)],
-          verbose=0
-          )
-    new_result = model2.score(new_x_test,y_test)
-    print(f"{i}개 컬럼이 삭제되었을 때 Score: ",new_result)
-    result_dict[i] = new_result - results    # 그대로 보면 숫자가 비슷해서 구분하기 힘들기에 얼마나 변했는지 체크
-    
-    
-print(result_dict)
+####################################################################################
 
 # 0개 컬럼이 삭제되었을 때 Score:  0.9087186897880539
 # 전부 - 
@@ -160,3 +127,31 @@ print(result_dict)
 # 7: -0.033718689788053924, 8: -0.037090558766859294, 9: -0.042389210019267765, 
 # 10: -0.04744701348747593, 11: -0.0664739884393063, 12: -0.08116570327552985, 
 # 13: -0.09200385356454721, 14: -0.11416184971098264, 15: -0.16257225433526012}
+
+####################################################################################
+
+print("="*50)
+thresholds = np.sort(model.feature_importances_)
+# print(thresholds)
+from sklearn.feature_selection import SelectFromModel
+
+for i in thresholds:
+    selection = SelectFromModel(model, threshold=i, prefit=False)
+    
+    select_x_train = selection.transform(x_train)
+    select_x_test = selection.transform(x_test)
+    # print(i, "\t변형된 x_train :", select_x_train.shape, "변형된 x_test :", select_x_test.shape)
+    # i 에는 thresholds 밑에 숫자가 하나씩 나오는데 그거 이상의 숫자를 가진 컬럼은 다 살아남고 / 그거 미만인 컬럼은 사라지는 구조
+    select_model = XGBClassifier()
+    select_model.set_params(
+        early_stopping_rounds=10, **parameters,
+    )
+    
+    select_model.fit(select_x_train, y_train,
+                     eval_set=[(select_x_train, y_train), (select_x_test, y_test)],
+                     verbose=0,)
+    select_y_predict = select_model.predict(select_x_test)
+    score = accuracy_score(y_test, select_y_predict)
+    print("Trech=%.3f, n=%d, ACC %.2f%%" % (i,select_x_train.shape[1], score*100))
+
+
