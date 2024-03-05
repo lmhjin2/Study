@@ -121,3 +121,7 @@ for i in thresholds:
     print("Trech=%.3f, n=%d, r2 %.2f%%" % (i,select_x_train.shape[1], score*100))
 
 
+# model.score: 0.7839574065512667
+# r2: 0.7839574065512667
+# Trech=0.014, n=8, r2 78.40%
+

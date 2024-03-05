@@ -119,3 +119,7 @@ for i in thresholds:
     score = r2_score(y_test, select_y_predict)
     print("Trech=%.3f, n=%d, r2 %.2f%%" % (i,select_x_train.shape[1], score*100))
 
+# model.score: 0.38900125504969674
+# r2: 0.38900125504969674
+# Trech=0.087, n=6, r2 39.63%
+

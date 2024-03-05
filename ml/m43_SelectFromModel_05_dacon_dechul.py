@@ -141,4 +141,6 @@ for i in thresholds:
     print("Trech=%.3f, n=%d, ACC %.2f%%" % (i,select_x_train.shape[1], score*100))
 
 
-
+# 최종점수 :  0.6575318756129925
+# acc:  0.6575318756129925
+# Trech=0.006, n=13, ACC 65.75%
