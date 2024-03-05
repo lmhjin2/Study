@@ -16,6 +16,9 @@ from sklearn.utils import all_estimators
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
+import warnings
+
+warnings.filterwarnings('ignore')
 
 path = "c:/_data/dacon/wine/"
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
@@ -112,3 +115,9 @@ for i in range(len(drop_feature_idx_list)): # 1바퀴에 1개, 마지막 바퀴�
     
 print(result_dict)
 
+# 0개 컬럼이 삭제되었을 때 Score:  0.5881818181818181
+# 전부 - 
+# {0: 0.0, 1: -0.0018181818181818299, 2: -0.013636363636363558, 3: -0.010000000000000009, 
+#  4: -0.013636363636363558, 5: -0.011818181818181728, 6: -0.028181818181818086, 
+#  7: -0.036363636363636376, 8: -0.04999999999999993, 9: -0.06090909090909091, 
+#  10: -0.07999999999999996, 11: -0.08454545454545448}

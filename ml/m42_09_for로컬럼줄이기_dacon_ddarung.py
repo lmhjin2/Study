@@ -17,6 +17,11 @@ from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 from sklearn.decomposition import PCA
 
+import warnings
+
+warnings.filterwarnings('ignore')
+
+
 plt.rcParams['font.family']='Malgun Gothic'
 plt.rcParams['axes.unicode_minus']=False
 

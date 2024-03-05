@@ -21,6 +21,11 @@ import time as tm
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.decomposition import PCA
 
+import warnings
+
+warnings.filterwarnings('ignore')
+
+
 plt.rcParams['font.family']='Malgun Gothic'
 plt.rcParams['axes.unicode_minus']=False
 
