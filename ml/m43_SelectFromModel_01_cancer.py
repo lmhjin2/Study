@@ -104,7 +104,8 @@ for i in thresholds:
     print("Trech=%.3f, n=%d, ACC %.2f%%" % (i,select_x_train.shape[1], score*100))
 
 
-
+# Trech=0.021, n=11, ACC 95.61%
+# Trech=0.025, n=10, ACC 95.61%
 
 
 

@@ -1,54 +1,38 @@
-# https://dacon.io/competitions/open/235576/mysubmission
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.layers import Dense
 from sklearn.experimental import enable_halving_search_cv
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold,\
-    cross_val_predict, GridSearchCV, RandomizedSearchCV, HalvingGridSearchCV
-from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error, mean_absolute_error
-from sklearn.svm import LinearSVR
-from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor, GradientBoostingRegressor
-import time as tm
-from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val_score, RandomizedSearchCV, \
+    GridSearchCV, HalvingGridSearchCV, HalvingRandomSearchCV, KFold
+from sklearn.metrics import r2_score
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from xgboost import XGBRegressor
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 import warnings
 
 warnings.filterwarnings('ignore')
 
 
-plt.rcParams['font.family']='Malgun Gothic'
-plt.rcParams['axes.unicode_minus']=False
-
-#1 
-path = "c:/_data/dacon/ddarung/"
-train_csv = pd.read_csv(path+"train.csv",index_col=0)
-test_csv = pd.read_csv(path+"test.csv", index_col=0)
-submission_csv = pd.read_csv(path+"submission.csv")
-
-train_csv = train_csv.dropna()  # 결측치 드랍.
-test_csv = test_csv.fillna(test_csv.mean()) # 결측치에 평균치넣기
-x = train_csv.drop(['count'], axis=1)
+# 데이터 불러오기
+path = "c:/_data/kaggle/bike/"
+train_csv = pd.read_csv(path + "train.csv", index_col=0)
+x = train_csv.drop(['casual', 'registered', 'count'], axis=1)
 y = train_csv['count']
-# print(x.shape, y.shape)       # (1328, 10)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 0)
+# print(x.shape)        # (10886, 11)
 
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
-from sklearn.preprocessing import StandardScaler, RobustScaler
+# 훈련 및 테스트 데이터 분할
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state=0)
 
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
-# test_csv = scaler.transform(test_csv)
 # pca = PCA(n_components=9)
 # x_train = pca.fit_transform(x_train)
 # x_test = pca.transform(x_test)
-# test_csv = pca.transform(test_csv)
 
 # parameters = {
 #     'n_estimators' : [100,200,300,400,500],
@@ -73,7 +57,7 @@ parameters = {'n_estimators':1000,
               'verbose' :0
               }
 
-#2 model
+# 모델 정의
 model = XGBRegressor(random_state=0)
 model.set_params(early_stopping_rounds = 10, **parameters)
 
@@ -89,24 +73,23 @@ r2 = r2_score(y_test, y_predict)
 print('model.score:', results)
 print('r2:', results)
 
-# #4
-# y_submit = model.predict(test_csv)
 
-# submission_csv['count']=y_submit
-# submission_csv.to_csv(path+"submission_0215.csv",index=False)
+# XGBRegressor model.score 0.9943523513944535
+# XGBRegressor : [0.65094614 0.02111737 0.16971405 0.12898925 0.01377312 0.00570355
+#  0.00485386 0.00304845 0.00185426]
 
 # 선택된 특성 수: 9
-# 컬럼 줄인 XGBRegressor 의 정확도: 0.9744499817510559
+# 컬럼 줄인 XGBRegressor 의 정확도: 0.9943452254892629
 
-# 떨어짐
-# 최적의 파라미터 :  {'n_estimators': 100, 'max_depth': 2, 'learning_rate': 0.2, 'lambda': 0, 'gamma': 0, 'alpha': 0.1}
-# best_score : 0.7257779084756383
-# 최적 튠 R2: 0.7748756550354514
-# r2: [0.69522723 0.58364515 0.65019735]
-#  평균 r2: 0.643
-# model.score: 0.7748756550354514
-# r2: 0.7748756550354514
-# 걸린시간: 2.34 초
+# 떨어짐 아마 이 전이 과적합이었는듯
+# 최적의 파라미터 :  {'n_estimators': 100, 'max_depth': 7, 'learning_rate': 0.1, 'lambda': 0.1, 'gamma': 1, 'alpha': 0.01}
+# best_score : 0.3410296277912012
+# 최적 튠 R2: 0.3366390065502427
+# r2: [0.28902049 0.32371887 0.30995076 0.13661532 0.16601557]
+#  평균 r2: 0.2451
+# model.score: 0.3366390065502427
+# r2: 0.3366390065502427
+# 걸린시간: 3.39 초
 
 ####################################################################################
 feature_importances_list = list(model.feature_importances_)
@@ -135,7 +118,3 @@ for i in range(len(drop_feature_idx_list)): # 1바퀴에 1개, 마지막 바퀴�
     
     
 print(result_dict)
-
-# model.score: 0.7656069962411634
-# r2: 0.7656069962411634
-# 1: 0.008625720812430182

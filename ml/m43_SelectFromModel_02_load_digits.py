@@ -1,56 +1,35 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, LSTM, GRU, Conv1D, Flatten
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from sklearn.datasets import load_iris, load_digits
+from sklearn.svm import SVC
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import train_test_split, KFold, cross_val_score,\
-    StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV, HalvingGridSearchCV
-from sklearn.metrics import r2_score, mean_absolute_error,mean_squared_error,mean_squared_log_error
-from sklearn.datasets import load_diabetes
-from sklearn.svm import LinearSVC, LinearSVR, SVC
-from sklearn.linear_model import Perceptron, LogisticRegression, LinearRegression, ElasticNetCV
-from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier, GradientBoostingRegressor
+    cross_val_predict, StratifiedKFold, GridSearchCV, RandomizedSearchCV, HalvingGridSearchCV, HalvingRandomSearchCV
+from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, RobustScaler, StandardScaler
-from sklearn.utils import all_estimators
-from xgboost import XGBRegressor
 import time as tm
-from sklearn.pipeline import make_pipeline, Pipeline
+from sklearn.pipeline import make_pipeline
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 from sklearn.decomposition import PCA
-
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import warnings
 
 warnings.filterwarnings('ignore')
 
-
-plt.rcParams['font.family']='Malgun Gothic'
-plt.rcParams['axes.unicode_minus']=False
-
-#1
-datasets = load_diabetes()
-x = datasets.data
-y = datasets.target
-# print(x.shape)        # (442, 10)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, random_state= 1)
-
-scaler = StandardScaler()
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
+#1 데이터
+x, y = load_digits(return_X_y=True)
+# print(x.shape, y.shape)     # 64 columns
+# print(x.shape)
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.2, shuffle=True, random_state= 0, 
+    stratify=y,
+)
+scaler = MinMaxScaler()
+# scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
-# pca = PCA(n_components=8)
-# x_train = pca.fit_transform(x_train)
-# x_test = pca.transform(x_test)
-# parameters = {
-#     'n_estimators' : [100,200,300,400,500],
-#     'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1],
-#     'max_depth' : [None, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-#     'gamma' : [0, 1, 2],
-#     'lambda' : [0, 0.1, 0.01],
-#     'alpha' : [0, 0.1, 0.01]
-# }
+
 parameters = {'n_estimators':1000,
               'learning_rate': 0.01,
               'max_depth':3,
@@ -66,32 +45,32 @@ parameters = {'n_estimators':1000,
               'verbose' :0
               }
 #2 model
-model = XGBRegressor(random_state=0)
+model = XGBClassifier(random_state=0)
 model.set_params(early_stopping_rounds = 10, **parameters)
 
 #3 compile train
 model.fit(x_train, y_train,
           eval_set = [(x_train, y_train), (x_test, y_test)],
           verbose= 0 )
+
 #4 predict, test
-results = model.score(x_test,y_test)
+results = model.score(x_test, y_test)
+print("최종점수 : ", results)
+
 y_predict = model.predict(x_test)
-r2 = r2_score(y_test, y_predict)
+acc = accuracy_score(y_test, y_predict)
+print("acc: ", acc)
 
-print('model.score:', results)
-print('r2:', results)
-
-# 선택된 특성 수: 8
-# 컬럼 줄인 RandomForestRegressor 의 정확도: 0.3477970462470079
-
-# 오름
-# 최적의 파라미터 :  {'n_estimators': 100, 'max_depth': 2, 'learning_rate': 0.1, 'lambda': 0, 'gamma': 1, 'alpha': 0.1}
-# best_score : 0.4511509586605877
-# 최적 튠 R2: 0.3921619027649874
-# model.score: 0.3921619027649874
-# r2: 0.3921619027649874
-# 걸린시간: 2.53 초
-
+# model.score : 0.9583333333333334
+# 오름 
+# 최적의 파라미터 :  {'n_estimators': 300, 'max_depth': 3, 'learning_rate': 0.2, 'lambda': 0.1, 'gamma': 0, 'alpha': 0}
+# best_score : 0.9652076074332172
+# 최적 튠 ACC: 0.9611111111111111
+# acc: [0.875      0.90277778 0.90277778 0.875      0.97222222]
+#  평균 acc: 0.9056
+# model.score: 0.9611111111111111
+# acc: 0.9611111111111111
+# 걸린시간: 4.27 초
 
 ####################################################################################
 feature_importances_list = list(model.feature_importances_)
@@ -108,7 +87,7 @@ for i in range(len(drop_feature_idx_list)): # 1바퀴에 1개, 마지막 바퀴�
     new_x_test = np.delete(x_test, drop_idx, axis=1)
     print(new_x_train.shape, new_x_test.shape)
     
-    model2 = XGBRegressor()
+    model2 = XGBClassifier()
     model2.set_params(early_stopping_rounds = 10, **parameters)
     model2.fit(new_x_train,y_train,
           eval_set=[(new_x_train,y_train), (new_x_test,y_test)],
@@ -120,7 +99,12 @@ for i in range(len(drop_feature_idx_list)): # 1바퀴에 1개, 마지막 바퀴�
     
     
 print(result_dict)
-# model.score: 0.38900125504969674
-# r2: 0.38900125504969674
 
-# 4: 0.007262748940967012
+
+
+
+# 12개 컬럼이 삭제되었을 때 Score:  0.9722222222222222
+# 13개 컬럼이 삭제되었을 때 Score:  0.9722222222222222
+# 16개 컬럼이 삭제되었을 때 Score:  0.9722222222222222
+# 23개 컬럼이 삭제되었을 때 Score:  0.9722222222222222
+# 24개 컬럼이 삭제되었을 때 Score:  0.9722222222222222
