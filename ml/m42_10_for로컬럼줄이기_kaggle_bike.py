@@ -11,6 +11,12 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from xgboost import XGBRegressor
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+
+import warnings
+
+warnings.filterwarnings('ignore')
+
+
 # 데이터 불러오기
 path = "c:/_data/kaggle/bike/"
 train_csv = pd.read_csv(path + "train.csv", index_col=0)

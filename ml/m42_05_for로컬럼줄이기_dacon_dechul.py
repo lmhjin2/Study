@@ -20,6 +20,10 @@ from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 from sklearn.decomposition import PCA
 
+import warnings
+
+warnings.filterwarnings('ignore')
+
 path = "c:/_data/dacon/dechul/"
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
 test_csv = pd.read_csv(path + 'test.csv', index_col=0)
@@ -136,3 +140,6 @@ for i in range(len(drop_feature_idx_list)): # 1바퀴에 1개, 마지막 바퀴�
     
     
 print(result_dict)
+
+# 0개 컬럼이 삭제되었을 때 Score:  0.6575318756129925
+# 9: 0.004327006288582513
