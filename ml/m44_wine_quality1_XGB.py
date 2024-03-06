@@ -31,8 +31,6 @@ y_ohe = enc.transform(y_ohe)
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, stratify=y, train_size=0.8, random_state= 3 )
 print(x_train.shape, x_test.shape)
-# acc:  0.600909090909091
-# 3
 
 scaler = MinMaxScaler().fit(x_train)
 x_train = scaler.transform(x_train)
