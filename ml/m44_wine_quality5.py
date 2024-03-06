@@ -29,6 +29,7 @@ y = train_csv['quality']
 # print(y)
 y = y.copy()
 # (5497,13)
+
 ##############################################################
 # [실습] y의 클래스를 7개에서 5~3개로 줄여서 성능 비교
 ##############################################################
@@ -36,18 +37,20 @@ y = y.copy()
 ## 힌트 : for문 돌리면 됨
 
 for i, v in enumerate(y):
-    if v<=4:
+    if v==3:
         y[i] = 0
-    elif v==5:
+    elif v==3:
         y[i] = 1
-    elif v==6:
+    elif v==5:
         y[i] = 2
-    elif v==7:
+    elif v==6:
         y[i] = 3
+    elif v==7:
+        y[i] = 4
     elif v==8:
-        y[i] = 4        
+        y[i] = 5        
     else:
-        y[i] = 5
+        y[i] = 6
 
 print(y.value_counts().sort_index())
 
