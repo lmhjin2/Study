@@ -29,28 +29,30 @@ enc = OneHotEncoder(sparse=False).fit(y_ohe)
 y_ohe = enc.transform(y_ohe)
 
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, stratify=y, train_size=0.8, random_state=0
-)
+    x, y, stratify=y, train_size=0.8, random_state= 3 )
 print(x_train.shape, x_test.shape)
+# acc:  0.600909090909091
+# 3
 
 scaler = MinMaxScaler().fit(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 parameters = {'n_estimators':1000,
-              'learning_rate': 0.01,
-              'max_depth':3,
+              'learning_rate': 0.015,
+              'max_depth':7,
               'gamma':0,
-              'min_child_weight':0,
+              'min_child_weight': 0 ,
               'subsample':0.4,  # dropout개념과 비슷
-              'colsample_bytree':0.8,
-              'colsample_bylevel':0.7,
-              'colsample_bynode':1,
-              'reg_alpha': 0,
-            #   'reg_lamda': 1,
-              'random_state': 3377,
-            #   'verbose' :0
-              }
+              'colsample_bytree': 0.8 ,
+              'colsample_bylevel': 0.7 ,
+              'colsample_bynode': 1 ,
+              'reg_alpha': 0 ,
+            #   'reg_lamda': 1 ,
+              'random_state': 3377 ,
+            #   'verbose' : 0
+              }    # acc:  0.6836363636363636363636    
+
 #2
 model = XGBClassifier()
 model.set_params(early_stopping_rounds = 10, **parameters)
@@ -58,7 +60,7 @@ model.set_params(early_stopping_rounds = 10, **parameters)
 #3 compile train
 model.fit(x_train, y_train,
           eval_set = [(x_train, y_train), (x_test, y_test)],
-          verbose= 1 )
+          verbose= 0 )
 
 #4 predict, test
 results = model.score(x_test, y_test)
