@@ -102,3 +102,7 @@ for i in thresholds:
     score = accuracy_score(y_test, select_y_predict)
     print("Trech=%.3f, n=%d, ACC %.2f%%" % (i,select_x_train.shape[1], score*100))
 
+# 최종점수 :  0.7484058070789911
+# acc:  0.7484058070789911
+# ==================================================
+# Trech=0.003, n=44, ACC 74.85%
