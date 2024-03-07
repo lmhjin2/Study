@@ -21,6 +21,7 @@ from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, L
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LogisticRegression
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -45,7 +46,6 @@ model = BaggingClassifier(xgb,
                           random_state=777,
                           bootstrap=True, # 기본값, 데이터 중복 허용. (샘플링)
                         #   bootstrap=False,    # 중복 허용 안함
-                          
                           )
 
 #3 compile train
@@ -61,7 +61,6 @@ print("acc: ", acc)
 
 
 
-# 최종점수 :  0.7484058070789911
 # acc:  0.7484058070789911
-
-#  5: 0.0002667745238935648
+# T acc:  0.8740652134626473
+# F acc:  0.8669827801347642
