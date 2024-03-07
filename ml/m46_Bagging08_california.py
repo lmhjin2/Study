@@ -72,7 +72,5 @@ print('model.score:', results)
 print('r2:', results)
 
 # model.score: 0.8534372129491651
-# r2: 0.8534372129491651
-
 # T r2: 0.858944147480187
 # F r2: 0.8442317659339414

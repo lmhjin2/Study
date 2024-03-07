@@ -44,17 +44,13 @@ model = BaggingRegressor(xgb,
                           random_state=777,
                           bootstrap=True, # 기본값, 데이터 중복 허용. (샘플링)
                         #   bootstrap=False,    # 중복 허용 안함
-                          
                           )
-
 #3 compile train
 model.fit(x_train, y_train)
-
 #4 predict, test
 results = model.score(x_test,y_test)
 y_predict = model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
-
 print('model.score:', results)
 print('r2:', results)
 
@@ -63,5 +59,5 @@ print('r2:', results)
 
 # best_score : 0.3410296277912012
 
-# T 
-# F 
+# T r2: 0.33566399389485146
+# F r2: 0.3264614470592798
