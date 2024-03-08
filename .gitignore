@@ -13,3 +13,11 @@ df.json
 vocab_coco.file
 tmp.jpg
 save/
+test_meta.csv
+train_meta.csv
+.tif
+train_img/
+train_mask/
+train_output/
+dataset.zip
+test_img/
