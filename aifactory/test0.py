@@ -326,7 +326,7 @@ save_name = 'base_line'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 5 # 훈련 epoch 지정
+EPOCHS = 10 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
@@ -443,7 +443,7 @@ model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
 model.summary()
 
-# model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정
@@ -457,7 +457,7 @@ for i in test_meta['test_img']:
     img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.25, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
