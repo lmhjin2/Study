@@ -463,4 +463,4 @@ for i in test_meta['test_img']:
 
 from datetime import datetime
 dt = datetime.now()
-joblib.dump(y_pred_dict, f'./y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
+joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
