@@ -326,7 +326,7 @@ save_name = 'base_line'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 3 # 훈련 epoch 지정
+EPOCHS = 5 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
