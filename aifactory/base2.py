@@ -317,8 +317,8 @@ def pixel_accuracy (y_true, y_pred):
 
 # 사용할 데이터의 meta정보 가져오기
 
-train_meta = pd.read_csv('train_meta.csv')
-test_meta = pd.read_csv('test_meta.csv')
+train_meta = pd.read_csv('d:/data/aispark/dataset/train_meta.csv')
+test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
 
 
 # 저장 이름
@@ -326,7 +326,7 @@ save_name = 'base_line'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 1 # 훈련 epoch 지정
+EPOCHS = 10 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
@@ -334,11 +334,11 @@ RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
-IMAGES_PATH = './train_img/'
-MASKS_PATH = './train_mask/'
+IMAGES_PATH = 'd:/data/aispark/dataset/train_img/'
+MASKS_PATH = 'd:/data/aispark/dataset/train_mask/'
 
 # 가중치 저장 위치
-OUTPUT_DIR = './train_output/'
+OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
 WORKERS = 4
 
 # 조기종료
@@ -443,7 +443,7 @@ model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
 model.summary()
 
-model.load_weights('./train_output/model_unet_base_line_final_weights.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정
@@ -454,13 +454,13 @@ model.load_weights('./train_output/model_unet_base_line_final_weights.h5')
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
-    img = get_img_762bands(f'./test_img/{i}')
+    img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.25, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
 from datetime import datetime
 dt = datetime.now()
-joblib.dump(y_pred_dict, f'./y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
+joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
