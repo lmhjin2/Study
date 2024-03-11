@@ -317,8 +317,8 @@ EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
-RANDOM_STATE = 47 # seed 고정
-INITIAL_EPOCH = 0 # 초기 epoch
+RANDOM_STATE = 42 # seed 고정  // 원래 47
+INITIAL_EPOCH = 5 # 초기 epoch
 
 # 데이터 위치
 IMAGES_PATH = 'd:/data/aispark/dataset/train_img/'
@@ -448,7 +448,7 @@ for i in test_meta['test_img']:
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
-    if i % 1000 == 0:  # 매 100번째 반복마다 진행 상황을 출력
+    if i % 10000 == 0:  # 매 100번째 반복마다 진행 상황을 출력
         print(f'Processed {i+1} images')
 
 from datetime import datetime
