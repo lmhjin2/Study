@@ -403,10 +403,13 @@ model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
 
+print(np.unique(x_tr.shape,return_counts=True))
+print(np.unique(x_val.shape,return_counts=True))
+
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 
 """&nbsp;
@@ -463,6 +466,9 @@ for i in test_meta['test_img']:
     y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
+
+    if i % 100 == 0:  # 매 100번째 반복마다 진행 상황을 출력
+        print(f'Processed {i+1} images')
 
 from datetime import datetime
 dt = datetime.now()
