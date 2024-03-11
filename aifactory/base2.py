@@ -33,9 +33,9 @@ import joblib
 
 ## 사용할 함수 정의
 """
-np.random.seed(33) 
-random.seed(42)           
-tf.random.set_seed(7)
+np.random.seed(99)       # 0
+random.seed(1)         # 42 
+tf.random.set_seed(19)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 
@@ -447,6 +447,9 @@ for i in test_meta['test_img']:
     y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
+
+    if i % 100 == 0:  # 매 100번째 반복마다 진행 상황을 출력
+        print(f'Processed {i+1} images')
 
 from datetime import datetime
 dt = datetime.now()
