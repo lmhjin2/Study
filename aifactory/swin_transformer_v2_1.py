@@ -497,7 +497,7 @@ def SwinTransformerV2(
     use_stack_norm=False,  # True for extra layer_norm on each stack end
     extra_norm_period=0,  # > 0 for extra layer_norm frequency in each stack. May combine with use_stack_norm=True
     input_shape=(256, 256, 3),
-    num_classes=1000,
+    num_classes=0,
     drop_connect_rate=0,
     classifier_activation="sigmoid",
     dropout=0,
@@ -560,7 +560,7 @@ def SwinTransformerV2Tiny_window8(input_shape=(256, 256, 3), num_classes=1000, c
 
 model = SwinTransformerV2Tiny_window8()
 ######################  STV2  #################################################################################
-
+model.summary()
 
 ###################### 전처리 #################################################################################
 
