@@ -9,9 +9,9 @@ import numpy as np
 # print(keras.__version__)    # 2.9.0
 # print(np.__version__)   # 1.26.3
 
+np.random.seed(321) 
 rn.seed(333)            # 이제 다 먹힘. tf랑 np 위에 둬야함.
 tf.random.set_seed(123) # 텐서 2.9.0에서 먹힘. 2.15.0 에서 안먹힘
-np.random.seed(321) 
 
 #1 데이터
 x = np.array([1,2,3])

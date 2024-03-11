@@ -49,6 +49,9 @@ import joblib
 
 ## 사용할 함수 정의
 """
+np.random.seed(0) 
+random.seed(42)           
+tf.random.set_seed(7)
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 
