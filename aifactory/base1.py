@@ -342,7 +342,7 @@ MASKS_PATH = 'd:/data/aispark/dataset/train_mask/'
 
 # 가중치 저장 위치
 OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
-WORKERS = 4
+WORKERS = 8    # 원래 4 // (코어 / 2 ~ 코어) 
 
 # 조기종료
 EARLY_STOP_PATIENCE = 5
