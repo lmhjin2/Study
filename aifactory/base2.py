@@ -318,7 +318,7 @@ BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
 RANDOM_STATE = 42 # seed 고정  // 원래 47
-INITIAL_EPOCH = 5 # 초기 epoch
+INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
 IMAGES_PATH = 'd:/data/aispark/dataset/train_img/'
