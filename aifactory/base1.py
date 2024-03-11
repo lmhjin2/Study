@@ -467,7 +467,7 @@ for i in test_meta['test_img']:
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
-    if i % 100 == 0:  # 매 100번째 반복마다 진행 상황을 출력
+    if i % 10000 == 0:  # 매 100번째 반복마다 진행 상황을 출력
         print(f'Processed {i+1} images')
 
 from datetime import datetime
