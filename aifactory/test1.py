@@ -84,6 +84,7 @@ print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
 from transformers import MaskFormerImageProcessor, MaskFormerForInstanceSegmentation
 from PIL import Image
 import requests
+import torch
 
 # load MaskFormer fine-tuned on COCO panoptic segmentation
 processor = MaskFormerImageProcessor.from_pretrained("facebook/maskformer-swin-large-coco")
