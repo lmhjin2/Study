@@ -44,11 +44,22 @@ import numpy as np
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
+from keras_cv_attention_models import backend
+from keras_cv_attention_models.backend import layers, models, functional, image_data_format
+from keras_cv_attention_models.models import register_model
+from keras_cv_attention_models.attention_layers import (
+    activation_by_name,
+    batchnorm_with_activation,
+    conv2d_no_bias,
+    depthwise_conv2d_no_bias,
+    drop_block,
+    layer_norm,
+    add_pre_post_process,
+)
+from keras_cv_attention_models.download_and_load import reload_model_weights
+from keras_cv_attention_models import efficientvit, test_images
 
-"""&nbsp;
-
-## 사용할 함수 정의
-"""
+model = efficientvit.EfficientViT_B1(input_shape=(256, 256, 3), pretrained="imagenet")
 np.random.seed(0) 
 random.seed(42)           
 tf.random.set_seed(7)
@@ -275,23 +286,15 @@ def get_unet_small2 (nClasses, input_height=128, input_width=128, n_filters = 16
     model = Model(inputs=[input_img], outputs=[outputs])
     return model
 
-from keras_cv_attention_models import swin_transformer_v2
-mm = swin_transformer_v2.SwinTransformerV2Tiny_window8(
-    input_shape=(256, 256, 3), 
-    pretrained="imagenet", 
-    classifier_activation="sigmoid",
-    num_classes=2,
-    )
-
 def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
-    if model_name == 'STV2Tiny_w8':
-        model = mm
+    if model_name == 'fcn':
+        model = FCN
     elif model_name == 'unet':
         model = get_unet
-    # elif model_name == 'unet_small':
-    #     model = get_unet_small1
-    # elif model_name == 'unet_smaller':
-    #     model = get_unet_small2
+    elif model_name == 'unet_small':
+        model = get_unet_small1
+    elif model_name == 'unet_smaller':
+        model = get_unet_small2
 
     return model(
             nClasses      = nClasses,
@@ -303,8 +306,6 @@ def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filte
             n_channels    = n_channels
         )
 
-
-# >>>> Load pretrained from: ~/.keras/models/swin_transformer_v2_tiny_ns_224_imagenet.h5
 # 두 샘플 간의 유사성 metric
 def dice_coef(y_true, y_pred, smooth=1):
     intersection = K.sum(y_true * y_pred, axis=[1,2,3])
@@ -335,14 +336,14 @@ test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
 
 
 # 저장 이름
-save_name = 'STV2Tiny_w8'
+save_name = 'base_line'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 10 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'STV2Tiny_w8' # 모델 이름
+MODEL_NAME = 'unet' # 모델 이름
 RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -409,21 +410,14 @@ def my_f1(y_true,y_pred):
     return score
 
 # model 불러오기
-mm = swin_transformer_v2.SwinTransformerV2Tiny_window8(
-    input_shape=(256, 256, 3), 
-    pretrained="imagenet", 
-    classifier_activation="sigmoid",
-    num_classes=2,
-    )
-# model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model = mm
+model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
 
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 
 """&nbsp;

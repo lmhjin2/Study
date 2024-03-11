@@ -36,7 +36,6 @@ np.random.seed(0)
 random.seed(42)           
 tf.random.set_seed(7)
 
-from keras.applications import InceptionV3
 
 # inceptionv3 = InceptionV3(include_top=False, weights='imagenet')
 
@@ -81,26 +80,42 @@ print(keras.applications.imagenet_utils.decode_predictions(pred)[0])
 
 ###############################################################################################################
 
-from transformers import MaskFormerImageProcessor, MaskFormerForInstanceSegmentation
+# from transformers import MaskFormerImageProcessor, MaskFormerForInstanceSegmentation
+# from PIL import Image
+# import requests
+# import torch
+
+# # load MaskFormer fine-tuned on COCO panoptic segmentation
+# processor = MaskFormerImageProcessor.from_pretrained("facebook/maskformer-swin-large-coco")
+# model = MaskFormerForInstanceSegmentation.from_pretrained("facebook/maskformer-swin-large-coco")
+
+# url = "http://images.cocodataset.org/val2017/000000039769.jpg"
+# image = Image.open(requests.get(url, stream=True).raw)
+# inputs = processor(images=image, return_tensors="pt")
+
+# outputs = model(**inputs)
+# # model predicts class_queries_logits of shape `(batch_size, num_queries)`
+# # and masks_queries_logits of shape `(batch_size, num_queries, height, width)`
+# class_queries_logits = outputs.class_queries_logits
+# masks_queries_logits = outputs.masks_queries_logits
+
+# # you can pass them to processor for postprocessing
+# result = processor.post_process_panoptic_segmentation(outputs, target_sizes=[image.size[::-1]])[0]
+# # we refer to the demo notebooks for visualization (see "Resources" section in the MaskFormer docs)
+# predicted_panoptic_map = result["segmentation"]
+###############################################################################################################
+
+from transformers import SegformerImageProcessor, TFSegformerForSemanticSegmentation
 from PIL import Image
 import requests
-import torch
 
-# load MaskFormer fine-tuned on COCO panoptic segmentation
-processor = MaskFormerImageProcessor.from_pretrained("facebook/maskformer-swin-large-coco")
-model = MaskFormerForInstanceSegmentation.from_pretrained("facebook/maskformer-swin-large-coco")
+processor = SegformerImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
+model = TFSegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
 
 url = "http://images.cocodataset.org/val2017/000000039769.jpg"
 image = Image.open(requests.get(url, stream=True).raw)
-inputs = processor(images=image, return_tensors="pt")
 
+inputs = processor(images=image, return_tensors="tf")
 outputs = model(**inputs)
-# model predicts class_queries_logits of shape `(batch_size, num_queries)`
-# and masks_queries_logits of shape `(batch_size, num_queries, height, width)`
-class_queries_logits = outputs.class_queries_logits
-masks_queries_logits = outputs.masks_queries_logits
+logits = outputs.logits  # shape (batch_size, num_labels, height/4, width/4)
 
-# you can pass them to processor for postprocessing
-result = processor.post_process_panoptic_segmentation(outputs, target_sizes=[image.size[::-1]])[0]
-# we refer to the demo notebooks for visualization (see "Resources" section in the MaskFormer docs)
-predicted_panoptic_map = result["segmentation"]
