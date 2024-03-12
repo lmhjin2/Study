@@ -49,9 +49,9 @@ import joblib
 
 ## 사용할 함수 정의
 """
-np.random.seed(0) 
-random.seed(42)           
-tf.random.set_seed(7)
+np.random.seed(9)       # 0
+random.seed(1)         # 42
+tf.random.set_seed(99)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 
@@ -329,7 +329,7 @@ save_name = 'base_line'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 10 # 훈련 epoch 지정
+EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
@@ -467,9 +467,7 @@ for i in test_meta['test_img']:
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
-    if i % 10000 == 0:  # 매 100번째 반복마다 진행 상황을 출력
-        print(f'Processed {i+1} images')
-
 from datetime import datetime
 dt = datetime.now()
 joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
+
