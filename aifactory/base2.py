@@ -29,10 +29,6 @@ from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
 
-"""&nbsp;
-
-## 사용할 함수 정의
-"""
 np.random.seed(99)       # 0
 random.seed(1)         # 42 
 tf.random.set_seed(19)   # 7
