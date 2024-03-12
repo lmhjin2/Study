@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import keras
 from keras.optimizers import *
-from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from tensorflow.python.keras import backend as K
 import sys
 import pandas as pd
@@ -313,7 +313,7 @@ save_name = 'base_line'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 50 # 훈련 epoch 지정
+EPOCHS = 100 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
@@ -326,10 +326,10 @@ MASKS_PATH = 'd:/data/aispark/dataset/train_mask/'
 
 # 가중치 저장 위치
 OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
-WORKERS = 8    # 원래 4 // (코어 / 2 ~ 코어) 
+WORKERS = 16    # 원래 4 // (코어 / 2 ~ 코어) 
 
 # 조기종료
-EARLY_STOP_PATIENCE = 5
+EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 5
@@ -387,11 +387,13 @@ model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
 
-
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
+# rlr
+rlr = ReduceLROnPlateau(monitor='val_loss', patience=10, verbose=1, mode='auto', factor=0.5)
+
 
 """&nbsp;
 
@@ -404,7 +406,7 @@ history = model.fit_generator(
     steps_per_epoch=len(images_train) // BATCH_SIZE,
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
-    callbacks=[checkpoint, es],
+    callbacks=[checkpoint, es, rlr],
     epochs=EPOCHS,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
@@ -451,3 +453,6 @@ for i in test_meta['test_img']:
 from datetime import datetime
 dt = datetime.now()
 joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
+
+# https://aifactory.space/task/2723/submit
+
