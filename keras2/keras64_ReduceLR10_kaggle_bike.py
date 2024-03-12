@@ -50,10 +50,12 @@ model.add(Dense(1, activation = 'relu'))
 
 #3
 from keras.optimizers import *
-learning_rate = 1.0
+learning_rate = 0.001
+from keras.callbacks import ReduceLROnPlateau
+rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=10, verbose=1, factor=0.5)
 model.compile(loss='mse', optimizer=Adam(learning_rate=learning_rate),
               metrics=['mae','mse','msle'])
-hist = model.fit(x_train, y_train, epochs = 200,
+hist = model.fit(x_train, y_train, epochs = 100, callbacks=[rlr],
                  batch_size = 760 , validation_split = 0.18,
                  verbose = 3)
 #4 
@@ -97,3 +99,5 @@ print("lr : {0}, 로스 : {1}, R2 : {2}".format(learning_rate, loss, r2))
 # lr : 0.01, 로스 : [22770.9140625, 105.1636962890625, 22770.9140625, 1.603546380996704], R2 : 0.30202576050983165
 # lr : 0.001, 로스 : [21805.966796875, 107.76563262939453, 21805.966796875, 1.7639071941375732], R2 : 0.33160330522555437
 # lr : 0.0001, 로스 : [23561.232421875, 113.29276275634766, 23561.232421875, 1.83171808719635], R2 : 0.2778008319382319
+
+# lr : 0.001, 로스 : [22727.98828125, 108.83075714111328, 22727.98828125, 1.7526437044143677], R2 : 0.30334134802964796
