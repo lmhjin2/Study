@@ -28,7 +28,6 @@ import numpy as np
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
-
 """&nbsp;
 
 ## 사용할 함수 정의
@@ -36,9 +35,7 @@ import joblib
 np.random.seed(99)       # 0
 random.seed(1)         # 42 
 tf.random.set_seed(19)   # 7
-
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
-
 class threadsafe_iter:
     """
     데이터 불러올떼, 호출 직렬화
@@ -53,33 +50,25 @@ class threadsafe_iter:
     def __next__(self):
         with self.lock:
             return self.it.__next__()
-
-
 def threadsafe_generator(f):
     def g(*a, **kw):
         return threadsafe_iter(f(*a, **kw))
 
     return g
-
 def get_img_arr(path):
     img = rasterio.open(path).read().transpose((1, 2, 0))
     img = np.float32(img)/MAX_PIXEL_VALUE
 
     return img
-
 def get_img_762bands(path):
     img = rasterio.open(path).read((7,6,2)).transpose((1, 2, 0))
     img = np.float32(img)/MAX_PIXEL_VALUE
 
     return img
-
 def get_mask_arr(path):
     img = rasterio.open(path).read().transpose((1, 2, 0))
     seg = np.float32(img)
     return seg
-
-
-
 @threadsafe_generator
 def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True, random_state=None, image_mode='10bands'):
 
@@ -115,7 +104,6 @@ def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True,
                 yield (np.array(images), np.array(masks))
                 images = []
                 masks = []
-
 # Unet 모델 정의
 def FCN(nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True):
 
@@ -138,8 +126,6 @@ def FCN(nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0
     model = Model(img_input, o)
 
     return model
-
-
 def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
     # first layer
     x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
@@ -155,7 +141,6 @@ def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
         x = BatchNormalization()(x)
     x = Activation("relu")(x)
     return x
-
 def get_unet(nClasses, input_height=256, input_width=256, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
     input_img = Input(shape=(input_height,input_width, n_channels))
 
@@ -202,9 +187,6 @@ def get_unet(nClasses, input_height=256, input_width=256, n_filters = 16, dropou
     outputs = Conv2D(1, (1, 1), activation='sigmoid') (c9)
     model = Model(inputs=[input_img], outputs=[outputs])
     return model
-
-
-
 def get_unet_small1 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
 
     input_img = Input(shape=(input_height,input_width, n_channels))
@@ -234,10 +216,6 @@ def get_unet_small1 (nClasses, input_height=128, input_width=128, n_filters = 16
     outputs = Conv2D(1, (1, 1), activation='relu')(c9)
     model = Model(inputs=[input_img], outputs=[outputs])
     return model
-
-
-
-
 def get_unet_small2 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
 
     input_img = Input(shape=(input_height,input_width, n_channels))
@@ -258,7 +236,6 @@ def get_unet_small2 (nClasses, input_height=128, input_width=128, n_filters = 16
     outputs = Conv2D(1, (1, 1), activation='relu')(c3)
     model = Model(inputs=[input_img], outputs=[outputs])
     return model
-
 def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
     if model_name == 'fcn':
         model = FCN
@@ -278,14 +255,12 @@ def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filte
             batchnorm     = batchnorm,
             n_channels    = n_channels
         )
-
 # 두 샘플 간의 유사성 metric
 def dice_coef(y_true, y_pred, smooth=1):
     intersection = K.sum(y_true * y_pred, axis=[1,2,3])
     union = K.sum(y_true, axis=[1,2,3]) + K.sum(y_pred, axis=[1,2,3])
     dice = K.mean((2. * intersection + smooth)/(union + smooth), axis=0)
     return dice
-
 # 픽셀 정확도를 계산 metric
 def pixel_accuracy (y_true, y_pred):
     sum_n = np.sum(np.logical_and(y_pred, y_true))
@@ -296,17 +271,12 @@ def pixel_accuracy (y_true, y_pred):
     else:
         pixel_accuracy = sum_n / sum_t
     return pixel_accuracy
-
 """## parameter 설정"""
-
 # 사용할 데이터의 meta정보 가져오기
-
 train_meta = pd.read_csv('d:/data/aispark/dataset/train_meta.csv')
 test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
-
 # 저장 이름
 save_name = 'base_line'
-
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 100 # 훈련 epoch 지정
@@ -337,12 +307,9 @@ FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_final_weights.h5'.format(MODEL_NAME, save_na
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
 
-
 # 저장 폴더 없으면 생성
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
-
-
 # GPU 설정
 os.environ["CUDA_VISIBLE_DEVICES"] = str(CUDA_DEVICE)
 try:
@@ -352,12 +319,10 @@ try:
     K.set_session(sess)
 except:
     pass
-
 try:
     np.random.bit_generator = np.random._bit_generator
 except:
     pass
-
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
 print(len(x_tr), len(x_val))
@@ -389,40 +354,11 @@ save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
 rlr = ReduceLROnPlateau(monitor='val_loss', patience=10, verbose=1, mode='auto', factor=0.5)
 
-'''## model 훈련'''
-
-# print('---model 훈련 시작---')
-# history = model.fit_generator(
-#     train_generator,
-#     steps_per_epoch=len(images_train) // BATCH_SIZE,
-#     validation_data=validation_generator,
-#     validation_steps=len(images_validation) // BATCH_SIZE,
-#     callbacks=[checkpoint, es, rlr],
-#     epochs=EPOCHS,
-#     workers=WORKERS,
-#     initial_epoch=INITIAL_EPOCH
-# )
-# print('---model 훈련 종료---')
-
-'''## model save'''
-# print('가중치 저장')
-# model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
-# model.save_weights(model_weights_output)
-# print("저장된 가중치 명: {}".format(model_weights_output))
-
-"""## inference
-- 학습한 모델 불러오기"""
-
-# model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-# model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-# model.summary()
 model.load_weights('c:/Study/aifactory/train_output/checkpoint-unet-base_line-epoch_25.hdf5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정
-- 반드시 pkl로 저장
-
-"""
+- 반드시 pkl로 저장"""
 
 y_pred_dict = {}
 
