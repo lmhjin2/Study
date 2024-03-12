@@ -63,35 +63,13 @@ model.add(Dense(11))
 model.add(Dense(1))
 
 #3
-import datetime
-
-date = datetime.datetime.now()
-date = date.strftime("%m%d_%H%M")   # 월일_시분
-
-path1 = "c:/_data/_save/MCP/k28/04/"
-filename = "{epoch:04d}-{val_loss:.4f}.hdf5"
-filepath = "".join([path1, 'k28_', date, '_', filename])
-
-model.compile(loss = 'mse', optimizer='adam',
+from keras.optimizers import *
+learning_rate = 0.0001
+model.compile(loss = 'mse', optimizer=Adam(learning_rate=learning_rate),
               metrics=['mse','msle','mae'])
-# es = EarlyStopping(monitor = 'val_loss',
-#                    mode = 'auto', patience = 200,
-#                    restore_best_weights = True )
-# mcp = ModelCheckpoint(monitor='val_loss', mode='auto',
-#                       verbose=1, save_best_only=True,
-#     filepath=filepath)
-
-
-import time as tm
-start_time = tm.time()
-
-hist = model.fit(x_train, y_train, epochs = 100,
+hist = model.fit(x_train, y_train, epochs = 200,
                  batch_size = 25, validation_split = 0.13,
-                 verbose=1)
-
-end_time = tm.time()
-run_time = round(end_time - start_time, 2)
-
+                 verbose=2)
 #4
 loss = model.evaluate(x_test, y_test)
 y_submit = model.predict(test_csv)
@@ -105,51 +83,27 @@ def RMSE(y_test, y_predict):
     return np.sqrt(mean_squared_error(y_test, y_predict))
 def RMSLE(y_test, y_predict):
     return np.sqrt(mean_squared_log_error(y_test, y_predict))
-
 rmse = RMSE(y_test, y_predict)
-# rmsle =RMSLE(y_test, y_predict)
-
-print('loss:', loss)
-print('RMSE:', rmse)
-# print('RMSLE:', rmsle)
-print('r2:', r2)
-print('따릉')
-
-print("run time:", run_time)
-
-# loss: [2494.04052734375, 2494.04052734375, 0.6432426571846008, 39.16857147216797]
-# RMSE: 49.94036818182851
-# r2: 0.6079631835073899
-
-
-# scaler = MinMaxScaler()
-# loss: [2403.452392578125, 2403.452392578125, 0.5717068910598755, 37.98446273803711]
-# RMSE: 49.02501764490937
-# r2: 0.6222026637380059
+# print('loss:', loss)
+# print('r2:', r2)
+# print('따릉')
+print("lr : {0}, 로스 : {1}, R2 : {2}".format(learning_rate, loss, r2))
 
 # scaler = StandardScaler()
 # loss: [2379.362548828125, 2379.362548828125, 0.5877285003662109, 36.955265045166016]
 # RMSE: 48.77871023779605
 # r2: 0.6259893232430387
 
-# scaler = MaxAbsScaler()
-# loss: [2399.464111328125, 2399.464111328125, 0.5455405712127686, 37.7288703918457]
-# RMSE: 48.984325076426565
-# r2: 0.6228295748300605
+# Epochs 100
+# lr : 1.0 ~ 0.1 = Error
+# lr : 0.01, 로스 : [2653.94775390625, 2653.94775390625, 0.8977837562561035, 38.942909240722656], R2 : 0.5828274524003929
+# lr : 0.001, 로스 : [3354.957275390625, 3354.957275390625, 0.5133597254753113, 41.338687896728516], R2 : 0.4726361681010013
+# lr : 0.0001, 로스 : [2530.230712890625, 2530.230712890625, 0.5764321684837341, 36.690345764160156], R2 : 0.6022744389971686
 
-# scaler = RobustScaler()
-# loss: [2424.36328125, 2424.36328125, 0.6572142839431763, 38.33124923706055]
-# RMSE: 49.23782410543493
-# r2: 0.6189156804017729
-
-
-
-# StandardScaler
-
-
-# CPU
-# 66.63 초
-
-# GPU
-# 103.67 초
+# Epochs 200
+# lr : 1.0 = Error
+# lr : 0.1, 로스 : [101759.8515625, 101759.8515625, 10.313501358032227, 245.77809143066406], R2 : -14.995573798426753
+# lr : 0.01, 로스 : [4993.62841796875, 4993.62841796875, 1.028692364692688, 51.70661926269531], R2 : 0.2150543227486006
+# lr : 0.001, 로스 : [2492.7841796875, 2492.7841796875, 0.6866259574890137, 38.43632888793945], R2 : 0.6081606320589965
+# lr : 0.0001, 로스 : [2494.31103515625, 2494.31103515625, 0.5729218125343323, 36.673885345458984], R2 : 0.6079206343616421
 
