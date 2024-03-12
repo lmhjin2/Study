@@ -32,7 +32,7 @@ import joblib
 
 ## 사용할 함수 정의
 """
-np.random.seed(9)       # 0
+np.random.seed(19)       # 0
 random.seed(1)         # 42
 tf.random.set_seed(99)   # 7
 
