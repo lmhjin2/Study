@@ -134,12 +134,15 @@ PRETRAINED_DICT = {
 from keras_cv_attention_models import swin_transformer_v2
 base_model = swin_transformer_v2.SwinTransformerV2Tiny_window8(input_shape=(256, 256, 3), 
                                                        pretrained="imagenet", 
-                                                       num_classes=0, 
-                                                       classifier_activation="sigmoid")
+                                                    #    num_classes=0, 
+                                                    #    num_classes=BATCH_SIZE,  # batch, // batch, 1
+                                                       classifier_activation="sigmoid",
+                                                       )
 
 x = base_model.output
-x = Dense(BATCH_SIZE, activation='sigmoid')(x)
+x = Dense(1, activation='sigmoid')(x)
 model = Model(inputs=base_model.input, outputs=x)
+# model = base_model
 model.summary()
 ######################  STV2  #################################################################################
 

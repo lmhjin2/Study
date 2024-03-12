@@ -554,7 +554,7 @@ def switch_to_deploy(model):
     return new_model
 
 @register_model
-def SwinTransformerV2Tiny_window8(input_shape=(256, 256, 3), num_classes=1000, classifier_activation="sigmoid", pretrained="imagenet", **kwargs):
+def SwinTransformerV2Tiny_window8(input_shape=(1,256, 256, 3), num_classes=0, classifier_activation="sigmoid", pretrained="imagenet", **kwargs):
     window_size = kwargs.pop("window_size", 8)
     return SwinTransformerV2(**locals(), model_name="swin_transformer_v2_tiny_window8", **kwargs)
 
