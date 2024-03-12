@@ -111,3 +111,8 @@ print(n_iter, "번 도는데 걸린시간 : ", np.round(end_t - start_t, 2), '�
 # 'reg_alpha': 2.6744591200430534, 'reg_lambda': 4.968920178840072, 'subsample': 0.601309572256216}}
 # 100 번 도는데 걸린시간 :  913.21 초
 
+# Best accuracy: 0.9391581973
+# {'colsample_bytree': 0.9909832971400491, 'learning_rate': 0.001212195102726965, 
+# 'max_bin': 414.0, 'max_depth': 3.0, 'min_child_samples': 197.0, 'min_child_weight': 3.0, 
+# 'num_leaves': 39.0, 'reg_alpha': 28.039826655767083, 'reg_lambda': 2.6255335440552856, 'subsample': 0.7147104150650287}
+# 100 번 도는데 걸린시간 :  410.93 초
