@@ -23,7 +23,7 @@ import numpy as np
 import sys
 from sklearn.utils import shuffle as shuffle_lists
 from keras.models import Model
-from keras.layers import Input, Conv2D, BatchNormalization, Activation, UpSampling2D, Concatenate, DepthwiseConv2D
+from keras.layers import Input, Conv2D, BatchNormalization, Activation, UpSampling2D, Concatenate, DepthwiseConv2D, LayerNormalization
 from keras.applications import MobileNetV2
 from keras.models import *
 from keras.layers import *
@@ -33,9 +33,9 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 
-np.random.seed(99)       # 0
-random.seed(1)         # 42 
-tf.random.set_seed(19)   # 7
+np.random.seed(23)       # 0
+random.seed(3)         # 42 
+tf.random.set_seed(98)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -221,7 +221,7 @@ save_name = 'attention_unet2'
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 20  # batch size 지정
+BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
 RANDOM_STATE = 3144 # seed 고정
