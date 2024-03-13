@@ -21,3 +21,6 @@ train_mask/
 train_output/
 dataset.zip
 test_img/
+.csv
+dacon/income/output/
+dacon/tuning/output/
