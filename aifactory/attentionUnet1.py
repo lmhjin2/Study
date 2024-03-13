@@ -224,7 +224,7 @@ EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 16  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 3 # seed 고정
+RANDOM_STATE = 981013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -321,7 +321,7 @@ y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.25, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
