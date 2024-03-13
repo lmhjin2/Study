@@ -354,7 +354,7 @@ save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
 rlr = ReduceLROnPlateau(monitor='val_loss', patience=10, verbose=1, mode='auto', factor=0.5)
 
-model.load_weights('c:/Study/aifactory/train_output/checkpoint-unet-base_line-epoch_25.hdf5')
+model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정
