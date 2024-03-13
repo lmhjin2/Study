@@ -5,7 +5,6 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
-from sklearn.metrics import mean_squared_error
 
 #1
 def seed_everything(seed):
@@ -61,44 +60,17 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'seed': [42] }]
+parameters = [{'seed': 42,}]
 
 #2
-model = GridSearchCV(XGBRegressor(n_estimators = 1000 , 
-                    #   learning_rate = 0.1 , 
-                    #   max_depth = 3 ,
-                    #   min_child_weight= 7 ,
-                    #   gamma = 1 ,  
-                    #   subsample=0.8 ,
-                    #   colsample_bytree= 0.8 ,
-                    #   objective= 'binary:logistic' ,
-                    #   nthread= 1 ,
-                      # scale_pos_weight= 1 , # 양수데이터가 적을때 양수 데이터 중요도 올리기. 10 = 10배
-                      ), parameters, cv=kfold, refit=True, n_jobs=-1 )
-#3
+model = XGBRegressor() 
 model.fit(x_train, y_train) 
-
-#4
-results = model.score(x_test, y_test)
-y_predict = model.predict(x_test)
-best_y_predict = model.best_estimator_.predict(x_test)
-# mse
-mse = mean_squared_error(y_test, y_predict)
-best_mse = mean_squared_error(y_test, best_y_predict)
-# rmse
-rmse = np.sqrt(mse)
-best_rmse = np.sqrt(best_mse)
-# submission
+model.score(x_test, y_test)
 preds = model.predict(test_x)
-best_pred = model.best_estimator_.predict(test_x)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
 submission.to_csv('c:/Study/dacon/income/output/0313_1.csv', index=False)
-
-print("최적의 매개변수 : ", model.best_estimator_)
-print("최적의 파라미터 : ", model.best_params_) 
-print('best_rmse : ', best_rmse)
 

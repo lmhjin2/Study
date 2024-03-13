@@ -39,3 +39,6 @@ for param, value in best_params.items():
         submit[param] = value
 
 submit.to_csv('c:/Study/dacon/tuning/output/0313_1.csv', index=False)
+
+
+# {'max_depth': None, 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 50} 0.7474650215816369
