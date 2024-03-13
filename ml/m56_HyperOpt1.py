@@ -8,12 +8,13 @@ search_space = {'x1' : hp.quniform('x1', -10, 10, 1),
                    # quniform = 균등분포 생성. low부터 high까지 q단위로
 
 # hp.quniform(label, low, high, q) : label로 지정된 입력 값 변수 검색공간을
-#                             최소값 low에서 최대값 high까지 q의 간격을 가지고 설정
+#                      최소값 low에서 최대값 high까지 q의 간격을 가지고 설정
 # hp.uniform(label, low, high) : 최소값 low에서 최대값 high까지 정규분포 형태의
 #                                  검색 공간 설정
-# hp.randint(label, upper) : 0부터 최대값 upper까지 random한 정수값으로 검색 공간 설정.
+# hp.randint(label, upper) : 0부터 최대값 upper까지 
+#                           random한 정수값으로 검색 공간 설정.
 # hp.loguniform(label, low, high) : exp(uniform(low, high)) 값을 반환하며,
-#                        반환값의 log 변환 된 값은 정규분포 형태를 가지는 검색 공간 설정
+#               반환값의 log 변환 된 값은 정규분포 형태를 가지는 검색 공간 설정
 
 def objective_func(search_space):
     x1 = search_space['x1']
