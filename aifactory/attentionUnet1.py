@@ -221,10 +221,10 @@ save_name = 'attention_unet2'
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 16  # batch size 지정
+BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 981013 # seed 고정
+RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -330,4 +330,4 @@ for i in test_meta['test_img']:
 from datetime import datetime
 dt = datetime.now()
 joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
-
+print(f'끝. : train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl ')
