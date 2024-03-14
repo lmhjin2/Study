@@ -39,7 +39,7 @@ bay = BayesianOptimization(
     random_state=777
 )
 
-n_iter = 100
+n_iter = 500
 bay.maximize(init_points=5, n_iter=n_iter)
 
 print(bay.max)
