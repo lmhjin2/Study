@@ -315,7 +315,7 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_attention2.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
 
 y_pred_dict = {}
 

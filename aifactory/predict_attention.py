@@ -315,13 +315,13 @@ rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=10, verbose=1, m
 # model.save_weights(model_weights_output)
 # print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/0.873374_attention2.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
 
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
