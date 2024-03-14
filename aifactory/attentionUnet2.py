@@ -33,9 +33,9 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 
-np.random.seed(23)       # 0
-random.seed(3)         # 42 
-tf.random.set_seed(98)   # 7
+np.random.seed(19)       # 0
+random.seed(1)         # 42 
+tf.random.set_seed(99)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -224,7 +224,7 @@ EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 981013 # seed 고정
+RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -233,7 +233,7 @@ MASKS_PATH = 'd:/data/aispark/dataset/train_mask/'
 
 # 가중치 저장 위치
 OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
-WORKERS = 8    # 원래 4 // (코어 / 2 ~ 코어) 
+WORKERS = 16    # 원래 4 // (코어 / 2 ~ 코어) 
 
 # 조기종료
 EARLY_STOP_PATIENCE = 20
@@ -315,7 +315,7 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-# model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_attention2.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_attention2.h5')
 
 y_pred_dict = {}
 
