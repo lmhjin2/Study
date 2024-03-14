@@ -24,3 +24,4 @@ test_img/
 .csv
 dacon/income/output/
 dacon/tuning/output/
+.pyc
