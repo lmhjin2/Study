@@ -6,6 +6,10 @@ from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
+from bayes_opt import BayesianOptimization
+
+import warnings
+warnings.filterwarnings('ignore')
 
 #1
 def seed_everything(seed):
@@ -52,26 +56,24 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 10
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
+from bayes_opt import BayesianOptimization
+#2. model
 bayesian_params = {
-    'learning_rate' : (0.001, 1),
+    'learning_rate' : (0.0001, 1.0),
     'max_depth' : (3, 10),
-    'num_leaves' : (24, 40),
-    'min_child_samples' : (10, 200),
     'min_child_weight' : (1, 50),
     'subsample' : (0.5, 1),
     'colsample_bytree' : (0.5, 1),
     'max_bin' : (9, 500),
     'reg_lambda' : ( -0.001, 10),
-    'reg_alpha' : (0.01, 50)
+    'reg_alpha' : (0.0, 50)
 }
-def xgb_hamsu(learning_rate, max_depth, num_leaves, min_child_samples, min_child_weight,
+def xgb_hamsu(learning_rate, max_depth, min_child_weight,
               subsample, colsample_bytree, max_bin, reg_lambda, reg_alpha):
     params = {
-        'n_estimators' : 100,
+        'n_estimators' : 300,
         'learning_rate' : learning_rate,
         'max_depth' : int(round(max_depth)),      # 무조건 정수형
-        'num_leaves' : int(round(num_leaves)),
-        'min_child_samples' : int(round(min_child_samples)),
         'min_child_weight' : int(round(min_child_weight)),
         'subsample' : max(min(subsample, 1), 0),    # min은 최소값을 반환, max는 최대값을 반환. 0과 1사이로 숫자를 뽑음
         'colsample_bytree' : colsample_bytree,
@@ -79,19 +81,19 @@ def xgb_hamsu(learning_rate, max_depth, num_leaves, min_child_samples, min_child
         'reg_lambda' : max(reg_lambda, 0),          # 무조건 양수만
         'reg_alpha' : reg_alpha,       
     }
-    model = xgb_hamsu(**params, n_jobs=-1)
+    model = XGBRegressor(**params, n_jobs=-1)
     
     model.fit(x_train, y_train,
               eval_set=[(x_train, y_train),(x_test, y_test)],
             #   eval_metric='logloss',
               verbose=0,
-              early_stopping_rounds=50
+              early_stopping_rounds=50,
               )
     y_predict = model.predict(x_test)
     results = np.sqrt(mean_squared_error(y_test, y_predict))
-    return results.min()
+    return -results
 
-bay = xgb_hamsu(
+bay = BayesianOptimization(
     f=xgb_hamsu,
     pbounds=bayesian_params,
     random_state=777
@@ -99,7 +101,6 @@ bay = xgb_hamsu(
 
 n_iter = 500
 bay.maximize(init_points=5, n_iter=n_iter)
-
 print(bay.max)
 
 
