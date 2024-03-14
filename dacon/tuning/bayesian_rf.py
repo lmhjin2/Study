@@ -28,7 +28,7 @@ def bayesian(n_estimators, max_depth, min_samples_split, min_samples_leaf, min_w
         'min_weight_fraction_leaf' : float(min_weight_fraction_leaf)
     }
     model = RandomForestClassifier(**params, random_state=42, n_jobs=-1)
-    kfold = KFold(n_splits=5, shuffle=True, random_state=42)
+    kfold = KFold(n_splits=3, shuffle=True, random_state=42)
     auc_scores = cross_val_score(model, X, y, cv=kfold, scoring='roc_auc')
     return auc_scores.max()
 
@@ -39,7 +39,7 @@ bay = BayesianOptimization(
     random_state=777
 )
 
-n_iter = 500
+n_iter = 100
 bay.maximize(init_points=5, n_iter=n_iter)
 
 print(bay.max)
@@ -50,3 +50,7 @@ print(bay.max)
 # {'target': 0.8389592123769338, 'params': {'max_depth': 48.77397294833414, 
 # 'min_samples_leaf': 7.408850876049278, 
 # 'min_samples_split': 2.8858683899294393, 'n_estimators': 139.64049329754442}}
+
+# {'target': 0.8966244725738397, 'params': {'max_depth': 37.491019813755145, 
+# 'min_samples_leaf': 3.4490353775628773, 'min_samples_split': 3.8077851635396627, 
+# 'min_weight_fraction_leaf': 0.0683359513260407, 'n_estimators': 134.46610224011096}}

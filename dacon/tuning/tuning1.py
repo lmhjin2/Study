@@ -12,12 +12,12 @@ y = data['login']
 
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
-    'n_estimators': [300, 600, 1000],
+    'n_estimators': [548,549],
     # 'criterion' : ['gini'],
-    'max_depth': [None, 15, 49, 50],
-    'min_samples_split': [2,3],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
-    'min_samples_leaf': [2,5,7],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
-    'min_weight_fraction_leaf' : [0.0, 0.1, 0.3],     # 0.0 ~ 0.5 실수
+    'max_depth': [None,77,78],
+    'min_samples_split': [4,5],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
+    'min_samples_leaf': [6,7],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
+    'min_weight_fraction_leaf' : [0.0, 0.12689089332817577, 0.1],     # 0.0 ~ 0.5 실수
     # 'max_features' : ['auto']               # https://dacon.io/competitions/official/236229/data
     # 'max_leaf_nodes' : [None],              # None 또는 양의 정수
     # 'min_impurity_decrease' : [0.0],          # 0.0 이상의 실수
