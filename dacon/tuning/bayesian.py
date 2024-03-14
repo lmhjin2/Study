@@ -15,14 +15,17 @@ param_search_space = {
     'n_estimators': (100, 1000),
     'max_depth': (10, 100),
     'min_samples_split': (2, 10),
-    'min_samples_leaf': (1, 8)
+    'min_samples_leaf': (1, 8),
+    'min_weight_fraction_leaf' : (0.0, 0.5),
+    
 }
-def bayesian(n_estimators, max_depth, min_samples_split, min_samples_leaf):
+def bayesian(n_estimators, max_depth, min_samples_split, min_samples_leaf, min_weight_fraction_leaf):
     params={
         'n_estimators' : int(n_estimators),
         'max_depth' : int(max_depth),
         'min_samples_split' : int(min_samples_split),
-        'min_samples_leaf' : int(min_samples_leaf)
+        'min_samples_leaf' : int(min_samples_leaf),
+        'min_weight_fraction_leaf' : float(min_weight_fraction_leaf)
     }
     model = RandomForestClassifier(**params, random_state=42, n_jobs=-1)
     kfold = KFold(n_splits=5, shuffle=True, random_state=42)
