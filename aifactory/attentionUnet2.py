@@ -33,9 +33,9 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 
-np.random.seed(19)       # 0
-random.seed(1)         # 42 
-tf.random.set_seed(99)   # 7
+np.random.seed(2117411808)       # 0
+random.seed(2955921045)         # 42 
+tf.random.set_seed(4255800423)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
