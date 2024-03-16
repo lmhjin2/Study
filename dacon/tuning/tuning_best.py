@@ -50,11 +50,5 @@ for param, value in best_params.items():
 
 submit.to_csv('c:/Study/dacon/tuning/output/0315_1.csv', index=False)
 
-
-# {'max_depth': None, 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 50} 0.7474650215816369
-
-# {'max_depth': 10, 'min_samples_leaf': 8, 'min_samples_split': 2, 'n_estimators': 10} 
-#  0.8065285569580801
-
-# {'criterion': 'gini', 'max_depth': 15, 'min_samples_leaf': 7, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 300} 
-#  0.8024334238558376
+# {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
+#  0.8049404576607657

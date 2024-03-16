@@ -61,17 +61,27 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'seed': [42] }]
-# best_rmse :  588.6137271824695
+parameters = [{'learning_rate' : [0.00495],
+               'max_depth' : [None],
+               'gamma' : [1],
+               'subsample' : [1],
+               'max_bin' : [100],
+               'colsample_bytree' : [0.5],
+               'seed' : [263]
+               
+               }]
+# best_rmse :  588.2150131649713 seed: 32
+# best_rmse :  588.1466260698878 seed: 46
+# best_rmse :  588.0724968235368 seed: 263 // [260,261,262,263,264,265,266,267,268,269],
 #2
 model = GridSearchCV(XGBRegressor(n_estimators = 1000 , 
-                      learning_rate = 0.00495 , 
-                      max_depth = None ,
-                    #   min_child_weight= 35.723980094661194 ,
-                      gamma = 1 ,  
-                      subsample = 1 ,
-                      max_bin = 100 ,
-                      colsample_bytree= 0.5 ,
+                    #   learning_rate = 0.00495 , 
+                    #   max_depth = None ,
+                    # #   min_child_weight= 35.723980094661194 ,
+                    #   gamma = 1 ,  
+                    #   subsample = 1 ,
+                    #   max_bin = 100 ,
+                    #   colsample_bytree= 0.5 ,
                     #   objective= 'binary:logistic' ,
                     #   nthread= 1 ,
                       # scale_pos_weight= 1 , # 양수데이터가 적을때 양수 데이터 중요도 올리기. 10 = 10배
@@ -97,7 +107,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0315_1.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0316_1.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
