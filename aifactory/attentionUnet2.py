@@ -33,9 +33,9 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 
-np.random.seed(1626109109)       # 0
-random.seed(2540178749)         # 42 
-tf.random.set_seed(2903546709)   # 7
+np.random.seed(1415988256)       # 0
+random.seed(1703967865)         # 42 
+tf.random.set_seed(2026793897)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -224,7 +224,7 @@ EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 1013 # seed 고정
+RANDOM_STATE = 569861969 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
