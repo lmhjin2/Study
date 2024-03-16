@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
-
+from catboost import CatBoostRegressor
 #1
 def seed_everything(seed):
     random.seed(seed)
@@ -61,30 +61,17 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.00495],
-               'max_depth' : [None],
-               'gamma' : [1],
+parameters = [{'learning_rate' : [0.01],
+               'iterations' : [1000],
+               'depth' : [6,1],
                'subsample' : [1],
-               'max_bin' : [100],
-               'colsample_bytree' : [0.5],
-               'seed' : [9],  # 1 아니면 9
+               'random_seed' : [1],
                
                }]
-# best_rmse :  588.2896713143929
-
+# best_rmse :  588.6137271824695
 #2
-model = GridSearchCV(XGBRegressor(n_estimators = 1000 , 
-                    #   learning_rate = 0.00495 , 
-                    #   max_depth = None ,
-                    # #   min_child_weight= 35.723980094661194 ,
-                    #   gamma = 1 ,  
-                    #   subsample = 1 ,
-                    #   max_bin = 100 ,
-                    #   colsample_bytree= 0.5 ,
-                    #   objective= 'binary:logistic' ,
-                    #   nthread= 1 ,
-                      # scale_pos_weight= 1 , # 양수데이터가 적을때 양수 데이터 중요도 올리기. 10 = 10배
-                      ), parameters, cv=kfold, refit=True, n_jobs=-1 )
+model = GridSearchCV(CatBoostRegressor(),
+                     parameters, cv=kfold, refit=True, n_jobs=-1 )
 #3
 model.fit(x_train, y_train) 
 

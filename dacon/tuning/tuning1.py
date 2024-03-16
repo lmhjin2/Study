@@ -12,17 +12,20 @@ y = data['login']
 
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
-    'n_estimators': [110, 1000],
+    'n_estimators': [110, 300, 1000],
     # 'criterion' : ['gini'],
     'max_depth': [None],
-    'min_samples_split': [2,17],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
-    'min_samples_leaf': [3,8],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
-    'min_weight_fraction_leaf' : [0.0, 0.127773373, 0.1],     # 0.0 ~ 0.5 실수
+    'min_samples_split': [2,5,17],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
+    'min_samples_leaf': [2,8,10,12],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
+    'min_weight_fraction_leaf' : [0.0, 0.1, 0.2, 0.3, 0.4],     # 0.0 ~ 0.5 실수
     # 'max_features' : ['auto']               # https://dacon.io/competitions/official/236229/data
     # 'max_leaf_nodes' : [None],              # None 또는 양의 정수
     # 'min_impurity_decrease' : [0.0],          # 0.0 이상의 실수
     # 'bootstrap' : [True, False]             # 부스스트랩 샘플 사용.
     }
+
+# {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
+#  0.8049404576607657
 
 #2 RandomForestClassifier 객체 생성
 rf = RandomForestClassifier(random_state=42)
@@ -48,13 +51,5 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0315_1.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0316_1.csv', index=False)
 
-
-# {'max_depth': None, 'min_samples_leaf': 4, 'min_samples_split': 2, 'n_estimators': 50} 0.7474650215816369
-
-# {'max_depth': 10, 'min_samples_leaf': 8, 'min_samples_split': 2, 'n_estimators': 10} 
-#  0.8065285569580801
-
-# {'criterion': 'gini', 'max_depth': 15, 'min_samples_leaf': 7, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 300} 
-#  0.8024334238558376
