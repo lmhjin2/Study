@@ -62,13 +62,13 @@ n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
 parameters = [{'seed': [42] }]
-
+# best_rmse :  588.6137271824695
 #2
 model = GridSearchCV(XGBRegressor(n_estimators = 1000 , 
-                      learning_rate = 0.05 , 
+                      learning_rate = 0.00495 , 
                       max_depth = None ,
                     #   min_child_weight= 35.723980094661194 ,
-                    #   gamma = 1 ,  
+                      gamma = 1 ,  
                       subsample = 1 ,
                       max_bin = 100 ,
                       colsample_bytree= 0.5 ,
@@ -97,7 +97,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0314_1.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0315_1.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
