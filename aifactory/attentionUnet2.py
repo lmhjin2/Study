@@ -286,16 +286,16 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 model = get_attention_unet()
 
-learning_rate = 0.001
-model.compile(optimizer=Adam(learning_rate=learning_rate), loss='binary_crossentropy', metrics=['accuracy', miou])
+learning_rate = 0.01
+model.compile(optimizer=Adamax(learning_rate=learning_rate), loss='binary_crossentropy', metrics=['accuracy', miou])
 model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=30, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=10, verbose=1, mode='auto')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=10, verbose=1, mode='auto')
 
 print('---model 훈련 시작---')
 history = model.fit_generator(
@@ -304,7 +304,7 @@ history = model.fit_generator(
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es, rlr],
-    epochs=EPOCHS,
+    epochs=100,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
