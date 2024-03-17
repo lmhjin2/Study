@@ -67,7 +67,7 @@ parameters = [{'learning_rate' : [0.00495],
                'subsample' : [1],
                'max_bin' : [100],
                'colsample_bytree' : [0.5],
-               'seed' : [263]
+               'seed' : [1]
                
                }]
 # best_rmse :  588.2150131649713 seed: 32
@@ -107,7 +107,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0316_1.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0317_1.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
