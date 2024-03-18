@@ -380,7 +380,7 @@ masks_validation = [os.path.join(MASKS_PATH, mask) for mask in x_val['train_mask
 train_generator = generator_from_lists(images_train, masks_train, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
-model = get_attention_unet()
+# model = get_attention_unet()
 
 learning_rate = 0.01
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
@@ -388,11 +388,11 @@ model.compile(optimizer=Adamax(learning_rate=learning_rate), loss='binary_crosse
 model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=30, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=14, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
-save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
+    save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=10, verbose=1, mode='auto')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=7, verbose=1, mode='auto')
 
 print('---model 훈련 시작---')
 history = model.fit_generator(
