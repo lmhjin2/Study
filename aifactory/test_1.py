@@ -6,9 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-from tensorflow.keras import layers, models
 import keras
-from keras import layers, models
 from keras.optimizers import *
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from tensorflow.python.keras import backend as K
@@ -117,64 +115,168 @@ def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True,
                 images = []
                 masks = []
 
-# 모델 정의
+# Unet 모델 정의
+def FCN(nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True):
 
-class PatchEmbedding(layers.Layer):
-    def __init__(self, num_patches, embed_dim):
-        super(PatchEmbedding, self).__init__()
-        self.num_patches = num_patches
-        self.proj = layers.Dense(embed_dim)
-        self.position_embedding = layers.Embedding(input_dim=num_patches, output_dim=embed_dim)
 
-    def call(self, patch):
-        positions = tf.range(start=0, limit=self.num_patches, delta=1)
-        encoded = self.proj(patch) + self.position_embedding(positions)
-        return encoded
+    img_input = Input(shape=(input_height,input_width, 3))
 
-class SwinTransformerBlock(layers.Layer):
-    def __init__(self, embed_dim, num_heads):
-        super(SwinTransformerBlock, self).__init__()
-        self.attention = layers.MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
-        self.norm1 = layers.LayerNormalization(epsilon=1e-6)
-        self.norm2 = layers.LayerNormalization(epsilon=1e-6)
-        self.mlp = models.Sequential([
-            layers.Dense(embed_dim * 2, activation=tf.nn.gelu),
-            layers.Dense(embed_dim),
-        ])
+    ## Block 1
+    x = Conv2D(n_filters, (3, 3), activation='relu', padding='same', name='block1_conv1')(img_input)
+    x = Conv2D(n_filters, (3, 3), activation='relu', padding='same', name='block1_conv2')(x)
+    f1 = x
 
-    def call(self, inputs, training=False):
-        x1 = self.norm1(inputs)
-        attention_output = self.attention(x1, x1)
-        x2 = self.norm2(attention_output + inputs)
-        return self.mlp(x2)
+    # Block 2
+    x = Conv2D(n_filters, (3, 3), activation='relu', padding='same', name='block2_conv1')(x)
+    x = Conv2D(n_filters, (3, 3), activation='relu', padding='same', name='block2_conv2')(x)
+    f2 = x
 
-def create_swin_transformer(input_shape=(256, 256, 3), embed_dim=128, num_heads=4, transformer_layers=2):
-    inputs = layers.Input(shape=input_shape)
-    # Conv2D를 통한 패치 생성과 임베딩
-    patches = layers.Conv2D(embed_dim, kernel_size=(4, 4), strides=(4, 4))(inputs)
-    num_patches = (input_shape[0] // 4) * (input_shape[1] // 4)  # 여기서는 64x64 = 4096
-    patches = layers.Reshape((num_patches, embed_dim))(patches)
-    
-    # 패치 임베딩
-    encoded_patches = PatchEmbedding(num_patches, embed_dim)(patches)
-    
-    # Swin Transformer 블록
-    x = encoded_patches
-    for _ in range(transformer_layers):
-        x = SwinTransformerBlock(embed_dim, num_heads)(x)
-    
-     # 이미지 분할을 위한 Conv2D 출력 레이어
-    x = layers.Conv2D(1, (1, 1), activation="sigmoid")(x)  # 마지막 출력 크기 조정
+    # Out
+    o = (Conv2D(nClasses, (3,3), activation='relu' , padding='same', name="Out"))(x)
 
-    model = models.Model(inputs=inputs, outputs=x)
-    
+    model = Model(img_input, o)
+
     return model
 
 
-# Create model
-model = create_swin_transformer()
-model.summary()
+def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
+    # first layer
+    x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
+               padding="same")(input_tensor)
+    if batchnorm:
+        x = BatchNormalization()(x)
+    x = Activation("relu")(x)
 
+    # second layer
+    x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
+               padding="same")(x)
+    if batchnorm:
+        x = BatchNormalization()(x)
+    x = Activation("relu")(x)
+    return x
+
+def get_unet(nClasses, input_height=256, input_width=256, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
+    input_img = Input(shape=(input_height,input_width, n_channels))
+
+    # contracting path
+    c1 = conv2d_block(input_img, n_filters=n_filters*1, kernel_size=3, batchnorm=batchnorm)
+    p1 = MaxPooling2D((2, 2)) (c1)
+    p1 = Dropout(dropout)(p1)
+
+    c2 = conv2d_block(p1, n_filters=n_filters*2, kernel_size=3, batchnorm=batchnorm)
+    p2 = MaxPooling2D((2, 2)) (c2)
+    p2 = Dropout(dropout)(p2)
+
+    c3 = conv2d_block(p2, n_filters=n_filters*4, kernel_size=3, batchnorm=batchnorm)
+    p3 = MaxPooling2D((2, 2)) (c3)
+    p3 = Dropout(dropout)(p3)
+
+    c4 = conv2d_block(p3, n_filters=n_filters*8, kernel_size=3, batchnorm=batchnorm)
+    p4 = MaxPooling2D(pool_size=(2, 2)) (c4)
+    p4 = Dropout(dropout)(p4)
+
+    c5 = conv2d_block(p4, n_filters=n_filters*16, kernel_size=3, batchnorm=batchnorm)
+
+    # expansive path
+    u6 = Conv2DTranspose(n_filters*8, (3, 3), strides=(2, 2), padding='same') (c5)
+    u6 = concatenate([u6, c4])
+    u6 = Dropout(dropout)(u6)
+    c6 = conv2d_block(u6, n_filters=n_filters*8, kernel_size=3, batchnorm=batchnorm)
+
+    u7 = Conv2DTranspose(n_filters*4, (3, 3), strides=(2, 2), padding='same') (c6)
+    u7 = concatenate([u7, c3])
+    u7 = Dropout(dropout)(u7)
+    c7 = conv2d_block(u7, n_filters=n_filters*4, kernel_size=3, batchnorm=batchnorm)
+
+    u8 = Conv2DTranspose(n_filters*2, (3, 3), strides=(2, 2), padding='same') (c7)
+    u8 = concatenate([u8, c2])
+    u8 = Dropout(dropout)(u8)
+    c8 = conv2d_block(u8, n_filters=n_filters*2, kernel_size=3, batchnorm=batchnorm)
+
+    u9 = Conv2DTranspose(n_filters*1, (3, 3), strides=(2, 2), padding='same') (c8)
+    u9 = concatenate([u9, c1], axis=3)
+    u9 = Dropout(dropout)(u9)
+    c9 = conv2d_block(u9, n_filters=n_filters*1, kernel_size=3, batchnorm=batchnorm)
+
+    outputs = Conv2D(1, (1, 1), activation='sigmoid') (c9)
+    model = Model(inputs=[input_img], outputs=[outputs])
+    return model
+
+
+
+def get_unet_small1 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
+
+    input_img = Input(shape=(input_height,input_width, n_channels))
+
+    # Contracting Path
+    c1 = conv2d_block(input_img, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    p1 = MaxPooling2D((2, 2))(c1)
+    p1 = Dropout(dropout)(p1)
+
+    c2 = conv2d_block(p1, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    p2 = MaxPooling2D((2, 2))(c2)
+    p2 = Dropout(dropout)(p2)
+
+    c3 = conv2d_block(p2, n_filters = n_filters * 2, kernel_size = 3, batchnorm = batchnorm)
+
+    # Expansive Path
+    u8 = Conv2DTranspose(n_filters * 2, (3, 3), strides = (2, 2), padding = 'same')(c3)
+    u8 = concatenate([u8, c2])
+    u8 = Dropout(dropout)(u8)
+    c8 = conv2d_block(u8, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+
+    u9 = Conv2DTranspose(n_filters * 1, (3, 3), strides = (2, 2), padding = 'same')(c8)
+    u9 = concatenate([u9, c1])
+    u9 = Dropout(dropout)(u9)
+    c9 = conv2d_block(u9, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+
+    outputs = Conv2D(1, (1, 1), activation='relu')(c9)
+    model = Model(inputs=[input_img], outputs=[outputs])
+    return model
+
+
+
+
+def get_unet_small2 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
+
+    input_img = Input(shape=(input_height,input_width, n_channels))
+
+    # Contracting Path
+    c1 = conv2d_block(input_img, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    p1 = MaxPooling2D((2, 2))(c1)
+    p1 = Dropout(dropout)(p1)
+
+    c2 = conv2d_block(p1, n_filters = n_filters * 4, kernel_size = 3, batchnorm = batchnorm)
+
+    # Expansive Path
+    u3 = Conv2DTranspose(n_filters * 1, (3, 3), strides = (2, 2), padding = 'same')(c2)
+    u3 = concatenate([u3, c1])
+    u3 = Dropout(dropout)(u3)
+    c3 = conv2d_block(u3, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+
+    outputs = Conv2D(1, (1, 1), activation='relu')(c3)
+    model = Model(inputs=[input_img], outputs=[outputs])
+    return model
+
+def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
+    if model_name == 'fcn':
+        model = FCN
+    elif model_name == 'unet':
+        model = get_unet
+    elif model_name == 'unet_small':
+        model = get_unet_small1
+    elif model_name == 'unet_smaller':
+        model = get_unet_small2
+
+    return model(
+            nClasses      = nClasses,
+            input_height  = input_height,
+            input_width   = input_width,
+            n_filters     = n_filters,
+            dropout       = dropout,
+            batchnorm     = batchnorm,
+            n_channels    = n_channels
+        )
 
 # 두 샘플 간의 유사성 metric
 def dice_coef(y_true, y_pred, smooth=1):
@@ -262,7 +364,7 @@ except:
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
-# print(len(x_tr), len(x_val))
+print(len(x_tr), len(x_val))
 
 # train : val 지정 및 generator
 images_train = [os.path.join(IMAGES_PATH, image) for image in x_tr['train_img'] ]
@@ -280,6 +382,7 @@ def my_f1(y_true,y_pred):
     return score
 
 # model 불러오기
+model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
 
@@ -326,10 +429,11 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 - 학습한 모델 불러오기
 """
 
+model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
 model.summary()
 
-# model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정

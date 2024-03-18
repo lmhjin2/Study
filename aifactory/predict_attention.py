@@ -315,7 +315,7 @@ rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=10, verbose=1, m
 # model.save_weights(model_weights_output)
 # print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
+model.load_weights('c:/Study/aifactory/train_output/0.873374_attention2.h5')
 
 y_pred_dict = {}
 
