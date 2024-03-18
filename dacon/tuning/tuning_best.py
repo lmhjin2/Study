@@ -25,7 +25,7 @@ param_search_space = {
     }
 
 #2 RandomForestClassifier 객체 생성
-rf = RandomForestClassifier(random_state=42)
+rf = RandomForestClassifier(random_state = 42)
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 # GridSearchCV 객체 생성

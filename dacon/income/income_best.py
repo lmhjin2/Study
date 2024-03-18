@@ -61,17 +61,17 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.00495],
+parameters = [{'learning_rate' : [0.00494992],  # 0.00495  / 0.00494992
                'max_depth' : [None],
                'gamma' : [1],
                'subsample' : [1],
                'max_bin' : [100],
                'colsample_bytree' : [0.5],
-               'seed' : [9],  # 1 아니면 9 // 9면 베스트가 맞음
+               'seed' : [9]
                
                }]
-# best_rmse :  588.2896713143929
-
+# best_rmse :  588.2896713143929 seed: 9 lr : 0.00495
+# best_rmse :  588.2896767495979 seed: 9 lr : 0.00494992
 #2
 model = GridSearchCV(XGBRegressor(n_estimators = 1000 , 
                     #   learning_rate = 0.00495 , 
@@ -106,7 +106,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/best.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0318_1.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
