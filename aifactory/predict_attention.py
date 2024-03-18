@@ -323,7 +323,7 @@ for i in test_meta['test_img']:
     img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.3, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 

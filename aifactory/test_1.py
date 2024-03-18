@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-import keras
+from tensorflow import keras
 from keras.optimizers import *
 from keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from tensorflow.python.keras import backend as K
@@ -27,6 +27,8 @@ import numpy as np
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
+from keras_unet_collection import models
+
 
 """&nbsp;
 
