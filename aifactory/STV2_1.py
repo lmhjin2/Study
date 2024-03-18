@@ -120,7 +120,7 @@ from keras_cv_attention_models.backend import layers, functional, models, initia
 from keras_cv_attention_models.models import register_model
 from timm import create_model
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input, Conv2D, UpSampling2d, concatenate
+from tensorflow.keras.layers import Input, Conv2D, UpSampling2D, concatenate
 from keras_cv_attention_models.attention_layers import (
     BiasLayer,
     drop_block,
@@ -140,20 +140,42 @@ PRETRAINED_DICT = {
 #                                                        classifier_activation="sigmoid",
 #                                                        )
 
-base_model = create_model(
-    "swinv2_tiny_patch4_window8_256",
-    img_size=(256, 256),
-    patch_size=4,
-    embed_dim=96,
-    depths=(2, 2, 6, 2),
-    num_heads=(3, 6, 12, 24),
-    drop_path_rate=0.1,
-)
-x = base_model.output
-x = Dense(1, activation='sigmoid')(x)
-model = Model(inputs=base_model.input, outputs=x)
+def create_swin_transformer_unet(input_size=(256, 256, 3), num_classes=1):
+    # Swin Transformer 모델 로드
+    swin_transformer = create_model(
+        "swinv2_base_window8_256",
+        pretrained=True,
+        num_classes=0,  # Fully-connected 층을 제거
+        img_size=input_size[0]
+    )
+
+    # Swin Transformer의 출력을 사용하여 U-Net 구조를 생성
+    base_model = tf.keras.Model(inputs=swin_transformer.input, outputs=swin_transformer.layers[-2].output)
+
+    # U-Net의 Decoder 부분
+    start_neurons = 64
+
+    conv4 = base_model.output
+    conv4 = UpSampling2D()(conv4)
+    c4 = Conv2D(start_neurons * 8, (3, 3), activation="relu", padding="same")(conv4)
+    
+    c4 = UpSampling2D()(c4)
+    c4 = Conv2D(start_neurons * 4, (3, 3), activation="relu", padding="same")(c4)
+
+    c4 = UpSampling2D()(c4)
+    c4 = Conv2D(start_neurons * 2, (3, 3), activation="relu", padding="same")(c4)
+
+    c4 = UpSampling2D()(c4)
+    c4 = Conv2D(start_neurons, (3, 3), activation="relu", padding="same")(c4)
+
+    # 최종 세그멘테이션 맵
+    output = Conv2D(num_classes, (1, 1), activation='sigmoid')(c4)
+
+    model = Model(inputs=base_model.input, outputs=output)
+
+    return model
+
 # model = base_model
-model.summary()
 ######################  STV2  #################################################################################
 
 ###################### 전처리 #################################################################################
@@ -181,14 +203,14 @@ train_meta = pd.read_csv('d:/data/aispark/dataset/train_meta.csv')
 test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
 
 # 저장 이름
-save_name = 'STV2'
+save_name = 'ST'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 10 # 훈련 epoch 지정
 BATCH_SIZE = BATCH_SIZE # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'STV2' # 모델 이름
+MODEL_NAME = 'ST' # 모델 이름
 RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -208,7 +230,7 @@ CHECKPOINT_PERIOD = 5
 CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}.hdf5'.format(MODEL_NAME, save_name)
 
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_final_weights.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_ST.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -237,7 +259,7 @@ except:
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
-print(len(x_tr), len(x_val))
+# print(len(x_tr), len(x_val))
 
 # train : val 지정 및 generator
 images_train = [os.path.join(IMAGES_PATH, image) for image in x_tr['train_img'] ]
@@ -260,8 +282,7 @@ def my_f1(y_true,y_pred):
 ######################  훈련  #################################################################################
 
 # model 불러오기
-# model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-# model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
+model = create_swin_transformer_unet()
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
 
@@ -297,7 +318,7 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
 model.summary()
 
-model.load_weights('c:/Study/aifactory/train_output/STV2_final_weights.h5')
+# model.load_weights('c:/Study/aifactory/train_output/STV2_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정

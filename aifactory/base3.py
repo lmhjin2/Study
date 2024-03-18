@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import warnings
 warnings.filterwarnings("ignore")
@@ -29,9 +28,13 @@ from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
 
-np.random.seed(99)       # 0
-random.seed(1)         # 42 
-tf.random.set_seed(19)   # 7
+"""&nbsp;
+
+## 사용할 함수 정의
+"""
+np.random.seed(19)       # 0
+random.seed(1)         # 42
+tf.random.set_seed(99)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 
@@ -200,70 +203,11 @@ def get_unet(nClasses, input_height=256, input_width=256, n_filters = 16, dropou
     return model
 
 
-
-def get_unet_small1 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
-
-    input_img = Input(shape=(input_height,input_width, n_channels))
-
-    # Contracting Path
-    c1 = conv2d_block(input_img, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-    p1 = MaxPooling2D((2, 2))(c1)
-    p1 = Dropout(dropout)(p1)
-
-    c2 = conv2d_block(p1, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-    p2 = MaxPooling2D((2, 2))(c2)
-    p2 = Dropout(dropout)(p2)
-
-    c3 = conv2d_block(p2, n_filters = n_filters * 2, kernel_size = 3, batchnorm = batchnorm)
-
-    # Expansive Path
-    u8 = Conv2DTranspose(n_filters * 2, (3, 3), strides = (2, 2), padding = 'same')(c3)
-    u8 = concatenate([u8, c2])
-    u8 = Dropout(dropout)(u8)
-    c8 = conv2d_block(u8, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-
-    u9 = Conv2DTranspose(n_filters * 1, (3, 3), strides = (2, 2), padding = 'same')(c8)
-    u9 = concatenate([u9, c1])
-    u9 = Dropout(dropout)(u9)
-    c9 = conv2d_block(u9, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-
-    outputs = Conv2D(1, (1, 1), activation='relu')(c9)
-    model = Model(inputs=[input_img], outputs=[outputs])
-    return model
-
-
-
-
-def get_unet_small2 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
-
-    input_img = Input(shape=(input_height,input_width, n_channels))
-
-    # Contracting Path
-    c1 = conv2d_block(input_img, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-    p1 = MaxPooling2D((2, 2))(c1)
-    p1 = Dropout(dropout)(p1)
-
-    c2 = conv2d_block(p1, n_filters = n_filters * 4, kernel_size = 3, batchnorm = batchnorm)
-
-    # Expansive Path
-    u3 = Conv2DTranspose(n_filters * 1, (3, 3), strides = (2, 2), padding = 'same')(c2)
-    u3 = concatenate([u3, c1])
-    u3 = Dropout(dropout)(u3)
-    c3 = conv2d_block(u3, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-
-    outputs = Conv2D(1, (1, 1), activation='relu')(c3)
-    model = Model(inputs=[input_img], outputs=[outputs])
-    return model
-
 def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
     if model_name == 'fcn':
         model = FCN
     elif model_name == 'unet':
         model = get_unet
-    elif model_name == 'unet_small':
-        model = get_unet_small1
-    elif model_name == 'unet_smaller':
-        model = get_unet_small2
 
     return model(
             nClasses      = nClasses,
@@ -303,7 +247,6 @@ def pixel_accuracy (y_true, y_pred):
 train_meta = pd.read_csv('d:/data/aispark/dataset/train_meta.csv')
 test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
 
-
 # 저장 이름
 save_name = 'base_line'
 
@@ -313,7 +256,7 @@ EPOCHS = 100 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unet' # 모델 이름
-RANDOM_STATE = 42 # seed 고정  // 원래 47
+RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -332,7 +275,7 @@ CHECKPOINT_PERIOD = 5
 CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}.hdf5'.format(MODEL_NAME, save_name)
 
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_hinge.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_final_weights.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -361,7 +304,7 @@ except:
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
-print(len(x_tr), len(x_val))
+# print(len(x_tr), len(x_val))
 
 # train : val 지정 및 generator
 images_train = [os.path.join(IMAGES_PATH, image) for image in x_tr['train_img'] ]
@@ -380,17 +323,19 @@ def my_f1(y_true,y_pred):
 
 # model 불러오기
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer = Adam(), loss = 'hinge', metrics = ['acc'])
+model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
+
+# print(np.unique(x_tr.shape,return_counts=True))
+# print(np.unique(x_val.shape,return_counts=True))
+
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
-rlr = ReduceLROnPlateau(monitor='val_loss', patience=10, verbose=1, mode='auto', factor=0.5)
-
-
+rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=10, verbose=1, factor=0.5)
 """&nbsp;
 
 ## model 훈련
@@ -402,7 +347,7 @@ history = model.fit_generator(
     steps_per_epoch=len(images_train) // BATCH_SIZE,
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
-    callbacks=[checkpoint, es, rlr],
+    callbacks=[checkpoint, es],
     epochs=EPOCHS,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
@@ -428,7 +373,7 @@ model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
 model.summary()
 
-model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_hinge.h5')
+model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정
@@ -450,5 +395,4 @@ from datetime import datetime
 dt = datetime.now()
 joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
 
-# https://aifactory.space/task/2723/submit
 
