@@ -318,7 +318,7 @@ save_name = 'attention_unet2'
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 8  # batch size 지정
+BATCH_SIZE = 4  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
 RANDOM_STATE = 569861969 # seed 고정
@@ -381,31 +381,29 @@ masks_validation = [os.path.join(MASKS_PATH, mask) for mask in x_val['train_mask
 train_generator = generator_from_lists(images_train, masks_train, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
-model = get_attention_unet()
-
 learning_rate = 0.01
-# model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model = models.swin_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), filter_num_begin=N_FILTERS, n_labels=1, depth=4, stack_num_down=2, stack_num_up=2, 
+model = models.swin_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), filter_num_begin=N_FILTERS, n_labels=1, 
+                            depth=4, stack_num_down=2, stack_num_up=2, 
                             patch_size=(2, 2), num_heads=[4, 8, 8, 8], window_size=[4, 2, 2, 2], num_mlp=512, 
                             output_activation='Sigmoid', shift_window=True, name='swin_unet')
 model.compile(optimizer=Adamax(learning_rate=learning_rate), loss=sm.losses.bce_jaccard_loss, metrics=['accuracy', sm.metrics.iou_score])
 model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=30, restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=7, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=10, verbose=1, mode='auto')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=3, verbose=1, mode='auto')
 
 print('---model 훈련 시작---')
-history = model.fit_generator(
+history = model.fit(
     train_generator,
     steps_per_epoch=len(images_train) // BATCH_SIZE,
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es, rlr],
-    epochs=100,
+    epochs= 50 ,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
@@ -416,7 +414,7 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
+# model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
 
 y_pred_dict = {}
 
