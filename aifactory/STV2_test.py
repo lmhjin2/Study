@@ -201,8 +201,8 @@ def pixel_accuracy (y_true, y_pred):
 
 # 사용할 데이터의 meta정보 가져오기
 
-train_meta = pd.read_csv('d:/data/aispark/dataset/train_meta.csv')
-test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
+train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
+test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 
 # 저장 이름
@@ -218,8 +218,8 @@ RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
-IMAGES_PATH = 'd:/data/aispark/dataset/train_img/'
-MASKS_PATH = 'd:/data/aispark/dataset/train_mask/'
+IMAGES_PATH = 'c:/Study/aifactory/dataset/train_img/'
+MASKS_PATH = 'c:/Study/aifactory/dataset/train_mask/'
 
 # 가중치 저장 위치
 OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
@@ -340,7 +340,7 @@ model.summary()
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
-    img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
+    img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
