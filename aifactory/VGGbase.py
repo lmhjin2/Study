@@ -31,7 +31,7 @@ import numpy as np
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
-
+import segmentation_models as sm
 
 np.random.seed(1415988256)       # 0
 random.seed(1703967865)         # 42 
@@ -312,7 +312,7 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'attention_unet2'
+save_name = 'VGG'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
@@ -336,10 +336,10 @@ EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 5
-CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_attention2.hdf5'.format(MODEL_NAME, save_name)
+CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_VGG.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_attention2.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_VGG.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -384,15 +384,19 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 learning_rate = 0.01
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer=Adamax(learning_rate=learning_rate), loss='binary_crossentropy', metrics=['accuracy', miou])
+model.compile(optimizer = Adam(), 
+            #   loss = sm.losses.bce_jaccard_loss , 
+            #   loss = 'binary_crossentropy',
+              loss = sm.losses.binary_focal_dice_loss  , 
+              metrics = ['acc', sm.metrics.iou_score])
 model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=14, restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
-    save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
-# Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=7, verbose=1, mode='auto')
+es = EarlyStopping(monitor='val_iou_score', mode='min', verbose=1, patience=10, restore_best_weights=True)
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
+save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
+# rlr
+rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='auto', patience=5, verbose=1, factor=0.5)
 
 print('---model 훈련 시작---')
 history = model.fit_generator(
