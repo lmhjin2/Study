@@ -34,9 +34,9 @@ import joblib
 from keras_unet_collection import models
 import segmentation_models as sm
 
-np.random.seed(1415988256)       # 0
-random.seed(1703967865)         # 42 
-tf.random.set_seed(2026793897)   # 7
+np.random.seed(12922085)       # 0
+random.seed(22906815)         # 42 
+tf.random.set_seed(3727687611)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -131,160 +131,6 @@ def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True,
 
 
 ###################################################################
-def conv_block(input_tensor, num_filters):
-    encoder = Conv2D(num_filters, (3, 3), padding='same')(input_tensor)
-    encoder = BatchNormalization()(encoder)
-    encoder = Activation('relu')(encoder)
-    encoder = Conv2D(num_filters, (3, 3), padding='same')(encoder)
-    encoder = BatchNormalization()(encoder)
-    encoder = Activation('relu')(encoder)
-    return encoder
-
-def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
-    # first layer
-    x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
-               padding="same")(input_tensor)
-    if batchnorm:
-        x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-
-    # second layer
-    x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
-               padding="same")(x)
-    if batchnorm:
-        x = BatchNormalization()(x)
-    x = Activation("relu")(x)
-    return x
-
-#Attention Gate
-def attention_gate(F_g, F_l, inter_channel):
-    """
-    An attention gate.
-
-    Arguments:
-    - F_g: Gating signal typically from a coarser scale.
-    - F_l: The feature map from the skip connection.
-    - inter_channel: The number of channels/filters in the intermediate layer.
-    """
-    # Intermediate transformation on the gating signal
-    W_g = Conv2D(inter_channel, kernel_size=1, strides=1, padding='same', kernel_initializer='he_normal')(F_g)
-    W_g = BatchNormalization()(W_g)
-
-    # Intermediate transformation on the skip connection feature map
-    W_x = Conv2D(inter_channel, kernel_size=1, strides=1, padding='same', kernel_initializer='he_normal')(F_l)
-    W_x = BatchNormalization()(W_x)
-
-    # Combine the transformations
-    psi = Activation('relu')(add([W_g, W_x]))
-    psi = Conv2D(1, kernel_size=1, strides=1, padding='same', kernel_initializer='he_normal')(psi)
-    psi = BatchNormalization()(psi)
-    psi = Activation('sigmoid')(psi)
-
-    # Apply the attention coefficients to the feature map from the skip connection
-    return multiply([F_l, psi])
-
-
-def attention_block(input_tensor, num_filters):
-    att = Conv2D(num_filters, (1, 1), padding='same')(input_tensor)
-    att = BatchNormalization()(att)
-    att = Activation('relu')(att)
-    return att
-
-def up_block(input_tensor, concat_tensor, num_filters):
-    up = UpSampling2D((2, 2))(input_tensor)
-    up = Concatenate()([up, concat_tensor])
-    up = conv_block(up, num_filters)
-    return up
-
-
-from keras.applications import VGG16
-
-def get_pretrained_attention_unet(input_height=256, input_width=256, nClasses=1, n_filters=16, dropout=0.5, batchnorm=True, n_channels=3):
-    base_model = VGG16(weights='imagenet', include_top=False, input_shape=(input_height, input_width, n_channels))
-    
-    # Define the inputs
-    inputs = base_model.input
-    
-    # Use specific layers from the VGG16 model for skip connections
-    s1 = base_model.get_layer("block1_conv2").output
-    s2 = base_model.get_layer("block2_conv2").output
-    s3 = base_model.get_layer("block3_conv3").output
-    s4 = base_model.get_layer("block4_conv3").output
-    bridge = base_model.get_layer("block5_conv3").output
-    
-    # Decoder with attention gates
-    d1 = UpSampling2D((2, 2))(bridge)
-    d1 = concatenate([d1, attention_gate(d1, s4, n_filters*8)])
-    d1 = conv2d_block(d1, n_filters*8, kernel_size=3, batchnorm=batchnorm)
-    
-    d2 = UpSampling2D((2, 2))(d1)
-    d2 = concatenate([d2, attention_gate(d2, s3, n_filters*4)])
-    d2 = conv2d_block(d2, n_filters*4, kernel_size=3, batchnorm=batchnorm)
-    
-    d3 = UpSampling2D((2, 2))(d2)
-    d3 = concatenate([d3, attention_gate(d3, s2, n_filters*2)])
-    d3 = conv2d_block(d3, n_filters*2, kernel_size=3, batchnorm=batchnorm)
-    
-    d4 = UpSampling2D((2, 2))(d3)
-    d4 = concatenate([d4, attention_gate(d4, s1, n_filters)])
-    d4 = conv2d_block(d4, n_filters, kernel_size=3, batchnorm=batchnorm)
-    
-    outputs = Conv2D(nClasses, (1, 1), activation='sigmoid')(d4)
-    model = Model(inputs=[inputs], outputs=[outputs])
-    return model
-
-def get_attention_unet(input_height=256, input_width=256, n_channels=3, n_classes=1, num_filters=16):
-    inputs = Input((input_height, input_width, n_channels))
-
-    # Encoder
-    enc1 = conv_block(inputs, num_filters)
-    pool1 = MaxPooling2D(pool_size=(2, 2))(enc1)
-
-    enc2 = conv_block(pool1, num_filters*2)
-    pool2 = MaxPooling2D(pool_size=(2, 2))(enc2)
-
-    enc3 = conv_block(pool2, num_filters*4)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(enc3)
-
-    enc4 = conv_block(pool3, num_filters*8)
-    pool4 = MaxPooling2D(pool_size=(2, 2))(enc4)
-
-    # Center
-    center = conv_block(pool4, num_filters*16)
-
-    # Decoder
-    att4 = attention_block(center, num_filters*8)
-    dec4 = up_block(att4, enc4, num_filters*8)
-
-    att3 = attention_block(dec4, num_filters*4)
-    dec3 = up_block(att3, enc3, num_filters*4)
-
-    att2 = attention_block(dec3, num_filters*2)
-    dec2 = up_block(att2, enc2, num_filters*2)
-
-    att1 = attention_block(dec2, num_filters)
-    dec1 = up_block(att1, enc1, num_filters)
-
-    outputs = Conv2D(n_classes, (1, 1), activation='sigmoid')(dec1)
-
-    model = Model(inputs=[inputs], outputs=[outputs])
-    return model
-
-def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
-    
-    if model_name == 'attention':
-        model = get_pretrained_attention_unet
-        
-        
-    return model(
-            nClasses      = nClasses,
-            input_height  = input_height,
-            input_width   = input_width,
-            n_filters     = n_filters,
-            dropout       = dropout,
-            batchnorm     = batchnorm,
-            n_channels    = n_channels
-        )
 
 ###################################################################
 
@@ -320,8 +166,8 @@ N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 4  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 569861969 # seed 고정
+MODEL_NAME = 'swin_unet' # 모델 이름
+RANDOM_STATE = 42 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -337,10 +183,10 @@ EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 5
-CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_attention2.hdf5'.format(MODEL_NAME, save_name)
+CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_swin.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_attention2.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_swin.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -381,24 +227,24 @@ masks_validation = [os.path.join(MASKS_PATH, mask) for mask in x_val['train_mask
 train_generator = generator_from_lists(images_train, masks_train, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
-learning_rate = 0.01
 
+learning_rate = 0.001
 model = models.swin_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), filter_num_begin=N_FILTERS, n_labels=1, 
                             depth=4, stack_num_down=2, stack_num_up=2, 
                             patch_size=(2, 2), num_heads=[4, 8, 8, 8], window_size=[4, 2, 2, 2], num_mlp=512, 
                             output_activation='Sigmoid', shift_window=True, name='swin_unet')
-model.compile(optimizer=Adamax(learning_rate=learning_rate), 
-              loss=sm.losses.bce_jaccard_loss, 
-            #   loss = sm.losses.binary_focal_dice_loss,
+model.compile(optimizer=Adam(learning_rate=learning_rate), 
+            #   loss=sm.losses.bce_jaccard_loss, 
+              loss = sm.losses.binary_focal_dice_loss,
               metrics=['accuracy', sm.metrics.iou_score])
 model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=7, restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
-save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
+es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
+save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=3, verbose=1, mode='auto')
+rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience=5, verbose=1, mode='max')
 
 print('---model 훈련 시작---')
 history = model.fit(
