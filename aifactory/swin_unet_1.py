@@ -382,6 +382,7 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 learning_rate = 0.01
+
 model = models.swin_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), filter_num_begin=N_FILTERS, n_labels=1, 
                             depth=4, stack_num_down=2, stack_num_up=2, 
                             patch_size=(2, 2), num_heads=[4, 8, 8, 8], window_size=[4, 2, 2, 2], num_mlp=512, 
