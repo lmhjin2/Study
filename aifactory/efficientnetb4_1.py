@@ -400,10 +400,12 @@ from sklearn.metrics import f1_score
 def my_f1(y_true,y_pred):
     score = tf.py_function(func=f1_score, inp=[y_true,y_pred], Tout=tf.float32, name='f1_score')
     return score
-
 # model 불러오기
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
+model.compile(optimizer = Adam(), 
+              loss = sm.losses.bce_jaccard_loss , 
+            #   loss = 'binary_crossentropy',
+              metrics = ['acc', sm.metrics.iou_score])
 model.summary()
 
 # print(np.unique(x_tr.shape,return_counts=True))

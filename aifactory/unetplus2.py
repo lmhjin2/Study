@@ -27,6 +27,7 @@ import numpy as np
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
+import segmentation_models as sm
 
 """&nbsp;
 
@@ -336,12 +337,12 @@ def pixel_accuracy (y_true, y_pred):
 
 # 사용할 데이터의 meta정보 가져오기
 
-train_meta = pd.read_csv('d:/data/aispark/dataset/train_meta.csv')
-test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
+train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
+test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 
 # 저장 이름
-save_name = 'efficientnetb4'
+save_name = 'unetplus2'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
@@ -353,8 +354,8 @@ RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
-IMAGES_PATH = 'd:/data/aispark/dataset/train_img/'
-MASKS_PATH = 'd:/data/aispark/dataset/train_mask/'
+IMAGES_PATH = 'c:/Study/aifactory/dataset/train_img/'
+MASKS_PATH = 'c:/Study/aifactory/dataset/train_mask/'
 
 # 가중치 저장 위치
 OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
@@ -418,7 +419,11 @@ def my_f1(y_true,y_pred):
 
 # model 불러오기
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
+model.compile(optimizer = Adam(), 
+              loss = sm.losses.bce_jaccard_loss , 
+            #   loss = 'binary_crossentropy',
+            #   loss = sm.losses.binary_focal_dice_loss  , 
+              metrics = ['acc', sm.metrics.iou_score])
 model.summary()
 
 # print(np.unique(x_tr.shape,return_counts=True))
@@ -426,11 +431,11 @@ model.summary()
 
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=10, restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='loss', verbose=1,
+es = EarlyStopping(monitor='val_iou_score', mode='min', verbose=1, patience=10, restore_best_weights=True)
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
-rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=5, verbose=1, factor=0.5)
+rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='auto', patience=5, verbose=1, factor=0.5)
 """&nbsp;
 
 ## model 훈련
@@ -479,7 +484,7 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
-    img = get_img_762bands(f'd:/data/aispark/dataset/test_img/{i}')
+    img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.5, 1, 0) # 임계값 처리
