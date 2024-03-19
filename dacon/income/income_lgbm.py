@@ -7,8 +7,6 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
 from lightgbm import LGBMRegressor
-import optuna
-
 #1
 def seed_everything(seed):
     random.seed(seed)

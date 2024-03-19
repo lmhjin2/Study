@@ -20,6 +20,7 @@ seed_everything(42) # Seed 고정
 train = pd.read_csv('d:/data/income/train.csv')
 test = pd.read_csv('d:/data/income/test.csv')
 
+'''
 labels = train.columns.tolist()
 # print(labels)
 # ['ID', 'Age', 'Gender', 'Education_Status', 'Employment_Status', 
@@ -30,6 +31,7 @@ labels = train.columns.tolist()
 
 # print(pd.value_counts(train['Tax_Status']))
 # print(np.unique(train['Race']))
+'''
 
 train_x = train.drop(columns=['ID', 'Income'])
 train_y = train['Income']
@@ -60,6 +62,62 @@ test_x = scaler.transform(test_x)
 
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
 
+def objective(trial):
+    # StratifiedKFold 설정
+    n_splits = 5
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+    
+    # 하이퍼파라미터 제안
+    param = {
+        'objective': 'binary',
+        'metric': 'binary_logloss',
+        'verbosity': -1,
+        'boosting_type': 'gbdt',
+        'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0),
+        'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0),
+        'num_leaves': trial.suggest_int('num_leaves', 2, 256),
+        'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
+        'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
+        'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
+        'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
+    }
+    
+    rmses = []
+    for train_idx, valid_idx in skf.split(train_x, train_y):
+        x_train_fold, x_valid_fold = train_x[train_idx], train_x[valid_idx]
+        y_train_fold, y_valid_fold = train_y[train_idx], train_y[valid_idx]
+        
+        model = LGBMRegressor(**param)
+        model.fit(x_train_fold, y_train_fold, eval_set=[(x_valid_fold, y_valid_fold)])
+        
+        preds = model.predict(x_valid_fold)
+        rmse = np.sqrt(mean_squared_error(y_valid_fold, preds))
+        rmses.append(rmse)
+    
+    # 평균 RMSE 반환
+    min_rmse = np.min(rmses)
+    return min_rmse
+
+study = optuna.create_study(direction='minimize')
+study.optimize(objective, n_trials=500) # 100회의 시도로 최적화
+
+print("Number of finished trials: ", len(study.trials))
+print("Best trial:")
+trial = study.best_trial
+
+optuna.visualization.plot_param_importances(study)      # 파라미터 중요도 확인 그래프
+optuna.visualization.plot_optimization_history(study)   # 최적화 과정 시각화
+
+print("  Value: ", trial.value)
+print("  Params: ")
+for key, value in trial.params.items():
+    print("    {}: {}".format(key, value))
+
+
+
+
+
+'''
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
@@ -114,3 +172,4 @@ print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
 print('best_rmse : ', best_rmse)
 
+'''
