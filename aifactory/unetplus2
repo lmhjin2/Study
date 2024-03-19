@@ -284,15 +284,32 @@ def EfficientNetB4_UNet(input_size=(256, 256, 3), n_classes=1, dropout=0.1, batc
     model = Model(inputs=base_model.input, outputs=[outputs])
     return model
 
-def get_model(model_name, input_height=256, input_width=256, n_classes=1, dropout=0.1, batchnorm=True, n_channels=3):
-    if model_name == 'efficientnetb4_unet':
-        return EfficientNetB4_UNet(input_size=(input_height, input_width, n_channels), n_classes=n_classes, dropout=dropout, batchnorm=batchnorm)
-    else:
-        print("Model name not recognized. Please check the model name and try again.")
-        return None
+def get_model(model_name, nClasses=1, input_height=256, input_width=256, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
+    if model_name == 'fcn':
+        model = FCN
+    elif model_name == 'unet':
+        model = get_unet
+    elif model_name == 'unetplus2':
+        model = get_unet_plus_plus
 
 
-model = get_model('efficientnetb4_unet', input_height=256, input_width=256, n_classes=1, dropout=0.1, batchnorm=True, n_channels=3)
+    return model(
+            nClasses      = nClasses,
+            input_height  = input_height,
+            input_width   = input_width,
+            n_filters     = n_filters,
+            dropout       = dropout,
+            batchnorm     = batchnorm,
+            n_channels    = n_channels
+        )
+
+# def get_model(model_name, input_height=256, input_width=256, n_classes=1, dropout=0.1, batchnorm=True, n_channels=3):
+#     if model_name == 'efficientnetb4_unet':
+#         return EfficientNetB4_UNet(input_size=(input_height, input_width, n_channels), n_classes=n_classes, dropout=dropout, batchnorm=batchnorm)
+#     else:
+#         print("Model name not recognized. Please check the model name and try again.")
+#         return None
+# model = get_model('efficientnetb4_unet', input_height=256, input_width=256, n_classes=1, dropout=0.1, batchnorm=True, n_channels=3)
 
 # 두 샘플 간의 유사성 metric
 def dice_coef(y_true, y_pred, smooth=1):
@@ -331,7 +348,7 @@ N_CHANNELS = 3 # channel 지정
 EPOCHS = 1 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'efficientnetb4' # 모델 이름
+MODEL_NAME = 'unetplus2' # 모델 이름
 RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -377,6 +394,8 @@ try:
 except:
     pass
 
+input_img = Input((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), name='img')
+model = get_unet_plus_plus(input_img, n_filters=N_FILTERS, dropout=0.1, batchnorm=True)
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
@@ -446,8 +465,8 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 """
 
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-model.summary()
+# model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
+# model.summary()
 
 # model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
