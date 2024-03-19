@@ -155,6 +155,21 @@ def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
     x = Activation("relu")(x)
     return x
 
+def conv_block(input_tensor, num_filters, batchnorm=True):
+    # first layer
+    x = Conv2D(filters=num_filters, kernel_size=(3,3), padding='same', kernel_initializer='he_normal')(input_tensor)
+    if batchnorm:
+        x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    
+    # second layer
+    x = Conv2D(filters=num_filters, kernel_size=(3,3), padding='same', kernel_initializer='he_normal')(x)
+    if batchnorm:
+        x = BatchNormalization()(x)
+    x = Activation('relu')(x)
+    
+    return x
+
 def get_unet(nClasses, input_height=256, input_width=256, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
     input_img = Input(shape=(input_height,input_width, n_channels))
 
@@ -202,82 +217,99 @@ def get_unet(nClasses, input_height=256, input_width=256, n_filters = 16, dropou
     model = Model(inputs=[input_img], outputs=[outputs])
     return model
 
-
-
-def get_unet_small1 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
-
-    input_img = Input(shape=(input_height,input_width, n_channels))
-
+def get_unet_plus_plus(input_img, n_filters=16, dropout=0.1, batchnorm=True):
     # Contracting Path
-    c1 = conv2d_block(input_img, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    c1 = conv_block(input_img, n_filters, batchnorm)
     p1 = MaxPooling2D((2, 2))(c1)
     p1 = Dropout(dropout)(p1)
-
-    c2 = conv2d_block(p1, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    
+    c2 = conv_block(p1, n_filters*2, batchnorm)
     p2 = MaxPooling2D((2, 2))(c2)
     p2 = Dropout(dropout)(p2)
-
-    c3 = conv2d_block(p2, n_filters = n_filters * 2, kernel_size = 3, batchnorm = batchnorm)
-
+    
+    bridge = conv_block(p2, n_filters*4, batchnorm)
+    
     # Expansive Path
-    u8 = Conv2DTranspose(n_filters * 2, (3, 3), strides = (2, 2), padding = 'same')(c3)
+    u1 = UpSampling2D((2, 2))(bridge)
+    u1 = concatenate([u1, c2])
+    u1 = Dropout(dropout)(u1)
+    c6 = conv_block(u1, n_filters*2, batchnorm)
+    
+    u2 = UpSampling2D((2, 2))(c6)
+    u2 = concatenate([u2, c1])
+    u2 = Dropout(dropout)(u2)
+    c7 = conv_block(u2, n_filters, batchnorm)
+    
+    outputs = Conv2D(1, (1, 1), activation='sigmoid')(c7)
+    model = Model(inputs=[input_img], outputs=[outputs])
+    return model
+
+from tensorflow.keras.applications import EfficientNetB4
+# from keras.applications import EfficientNetB4
+def EfficientNetB4_UNet(input_size=(256, 256, 3), n_classes=1, dropout=0.1, batchnorm=True):
+    base_model = EfficientNetB4(weights='imagenet', include_top=False, input_shape=input_size)
+    start_neurons = 16
+
+    c1 = base_model.get_layer("block2a_expand_activation").output
+    c2 = base_model.get_layer("block3a_expand_activation").output
+    c3 = base_model.get_layer("block4a_expand_activation").output
+    c4 = base_model.get_layer("block6a_expand_activation").output
+
+    c5 = base_model.get_layer("top_activation").output
+
+    u6 = Conv2DTranspose(start_neurons * 32, (3, 3), strides=(2, 2), padding="same")(c5)
+    u6 = concatenate([u6, c4])
+    u6 = Dropout(dropout)(u6)
+    c6 = conv2d_block(u6, start_neurons * 32, kernel_size=3, batchnorm=batchnorm)
+
+    u7 = Conv2DTranspose(start_neurons * 16, (3, 3), strides=(2, 2), padding="same")(c6)
+    u7 = concatenate([u7, c3])
+    u7 = Dropout(dropout)(u7)
+    c7 = conv2d_block(u7, start_neurons * 16, kernel_size=3, batchnorm=batchnorm)
+
+    u8 = Conv2DTranspose(start_neurons * 8, (3, 3), strides=(2, 2), padding="same")(c7)
     u8 = concatenate([u8, c2])
     u8 = Dropout(dropout)(u8)
-    c8 = conv2d_block(u8, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    c8 = conv2d_block(u8, start_neurons * 8, kernel_size=3, batchnorm=batchnorm)
 
-    u9 = Conv2DTranspose(n_filters * 1, (3, 3), strides = (2, 2), padding = 'same')(c8)
-    u9 = concatenate([u9, c1])
+    u9 = Conv2DTranspose(start_neurons * 4, (3, 3), strides=(2, 2), padding="same")(c8)
+    u9 = concatenate([u9, c1], axis=3)
     u9 = Dropout(dropout)(u9)
-    c9 = conv2d_block(u9, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
+    c9 = conv2d_block(u9, start_neurons * 4, kernel_size=3, batchnorm=batchnorm)
 
-    outputs = Conv2D(1, (1, 1), activation='relu')(c9)
-    model = Model(inputs=[input_img], outputs=[outputs])
+    u10 = Conv2DTranspose(start_neurons * 2, (3, 3), strides=(2, 2), padding="same")(c9)  # 최종 출력 크기를 256x256으로 만듭니다.
+    c10 = conv2d_block(u10, start_neurons * 2, kernel_size=3, batchnorm=batchnorm)
+
+    outputs = Conv2D(n_classes, (1, 1), activation='sigmoid')(c10)
+    model = Model(inputs=base_model.input, outputs=[outputs])
     return model
 
 
+# def get_model(model_name, nClasses=1, input_height=256, input_width=256, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
+#     if model_name == 'fcn':
+#         model = FCN
+#     elif model_name == 'unet':
+#         model = get_unet
+#     elif model_name == 'unetplus2':
+#         model = get_unet_plus_plus
 
 
-def get_unet_small2 (nClasses, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=3):
-
-    input_img = Input(shape=(input_height,input_width, n_channels))
-
-    # Contracting Path
-    c1 = conv2d_block(input_img, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-    p1 = MaxPooling2D((2, 2))(c1)
-    p1 = Dropout(dropout)(p1)
-
-    c2 = conv2d_block(p1, n_filters = n_filters * 4, kernel_size = 3, batchnorm = batchnorm)
-
-    # Expansive Path
-    u3 = Conv2DTranspose(n_filters * 1, (3, 3), strides = (2, 2), padding = 'same')(c2)
-    u3 = concatenate([u3, c1])
-    u3 = Dropout(dropout)(u3)
-    c3 = conv2d_block(u3, n_filters * 1, kernel_size = 3, batchnorm = batchnorm)
-
-    outputs = Conv2D(1, (1, 1), activation='relu')(c3)
-    model = Model(inputs=[input_img], outputs=[outputs])
-    return model
-
-def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
-    if model_name == 'fcn':
-        model = FCN
-    elif model_name == 'unet':
-        model = get_unet
-    elif model_name == 'unet_small':
-        model = get_unet_small1
-    elif model_name == 'unet_smaller':
-        model = get_unet_small2
-
-    return model(
-            nClasses      = nClasses,
-            input_height  = input_height,
-            input_width   = input_width,
-            n_filters     = n_filters,
-            dropout       = dropout,
-            batchnorm     = batchnorm,
-            n_channels    = n_channels
-        )
-
+#     return model(
+#             nClasses      = nClasses,
+#             input_height  = input_height,
+#             input_width   = input_width,
+#             n_filters     = n_filters,
+#             dropout       = dropout,
+#             batchnorm     = batchnorm,
+#             n_channels    = n_channels
+#         )
+def get_model(model_name, input_height=256, input_width=256, n_classes=1, dropout=0.1, batchnorm=True, n_channels=3):
+    if model_name == 'efficientnetb4_unet':
+        return EfficientNetB4_UNet(input_size=(input_height, input_width, n_channels), n_classes=n_classes, dropout=dropout, batchnorm=batchnorm)
+    else:
+        print("Model name not recognized. Please check the model name and try again.")
+        return None
+model = get_model('efficientnetb4_unet', input_height=256, input_width=256, n_classes=1, dropout=0.1, batchnorm=True, n_channels=3)
 # 두 샘플 간의 유사성 metric
 def dice_coef(y_true, y_pred, smooth=1):
     intersection = K.sum(y_true * y_pred, axis=[1,2,3])
@@ -308,14 +340,14 @@ test_meta = pd.read_csv('d:/data/aispark/dataset/test_meta.csv')
 
 
 # 저장 이름
-save_name = 'base_line'
+save_name = 'efficientnetb4'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 100 # 훈련 epoch 지정
+EPOCHS = 1 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'unet' # 모델 이름
+MODEL_NAME = 'unetplus2' # 모델 이름
 RANDOM_STATE = 47 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -335,7 +367,7 @@ CHECKPOINT_PERIOD = 5
 CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}.hdf5'.format(MODEL_NAME, save_name)
 
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_final_weights.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_unetplus2.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -364,7 +396,7 @@ except:
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
-print(len(x_tr), len(x_val))
+# print(len(x_tr), len(x_val))
 
 # train : val 지정 및 generator
 images_train = [os.path.join(IMAGES_PATH, image) for image in x_tr['train_img'] ]
@@ -382,12 +414,12 @@ def my_f1(y_true,y_pred):
     return score
 
 # model 불러오기
-model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
+# model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
 model.summary()
 
-print(np.unique(x_tr.shape,return_counts=True))
-print(np.unique(x_val.shape,return_counts=True))
+# print(np.unique(x_tr.shape,return_counts=True))
+# print(np.unique(x_val.shape,return_counts=True))
 
 
 # checkpoint 및 조기종료 설정
@@ -408,7 +440,7 @@ history = model.fit_generator(
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es],
-    epochs=EPOCHS,
+    epochs=1,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
@@ -429,11 +461,11 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 - 학습한 모델 불러오기
 """
 
-model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
+# model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
 model.summary()
 
-model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
+# model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 
 """## 제출 Predict
 - numpy astype uint8로 지정

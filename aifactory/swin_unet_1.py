@@ -133,10 +133,10 @@ def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True,
 ###################################################################
 def conv_block(input_tensor, num_filters):
     encoder = Conv2D(num_filters, (3, 3), padding='same')(input_tensor)
-    encoder = LayerNormalization()(encoder)
+    encoder = BatchNormalization()(encoder)
     encoder = Activation('relu')(encoder)
     encoder = Conv2D(num_filters, (3, 3), padding='same')(encoder)
-    encoder = LayerNormalization()(encoder)
+    encoder = BatchNormalization()(encoder)
     encoder = Activation('relu')(encoder)
     return encoder
 
@@ -145,14 +145,14 @@ def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
     x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
                padding="same")(input_tensor)
     if batchnorm:
-        x = LayerNormalization()(x)
+        x = BatchNormalization()(x)
     x = Activation("relu")(x)
 
     # second layer
     x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
                padding="same")(x)
     if batchnorm:
-        x = LayerNormalization()(x)
+        x = BatchNormalization()(x)
     x = Activation("relu")(x)
     return x
 
@@ -168,16 +168,16 @@ def attention_gate(F_g, F_l, inter_channel):
     """
     # Intermediate transformation on the gating signal
     W_g = Conv2D(inter_channel, kernel_size=1, strides=1, padding='same', kernel_initializer='he_normal')(F_g)
-    W_g = LayerNormalization()(W_g)
+    W_g = BatchNormalization()(W_g)
 
     # Intermediate transformation on the skip connection feature map
     W_x = Conv2D(inter_channel, kernel_size=1, strides=1, padding='same', kernel_initializer='he_normal')(F_l)
-    W_x = LayerNormalization()(W_x)
+    W_x = BatchNormalization()(W_x)
 
     # Combine the transformations
     psi = Activation('relu')(add([W_g, W_x]))
     psi = Conv2D(1, kernel_size=1, strides=1, padding='same', kernel_initializer='he_normal')(psi)
-    psi = LayerNormalization()(psi)
+    psi = BatchNormalization()(psi)
     psi = Activation('sigmoid')(psi)
 
     # Apply the attention coefficients to the feature map from the skip connection
@@ -186,7 +186,7 @@ def attention_gate(F_g, F_l, inter_channel):
 
 def attention_block(input_tensor, num_filters):
     att = Conv2D(num_filters, (1, 1), padding='same')(input_tensor)
-    att = LayerNormalization()(att)
+    att = BatchNormalization()(att)
     att = Activation('relu')(att)
     return att
 
@@ -394,7 +394,7 @@ es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=7, restor
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=3, verbose=1, mode='auto')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience=3, verbose=1, mode='auto')
 
 print('---model 훈련 시작---')
 history = model.fit(
