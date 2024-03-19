@@ -201,7 +201,7 @@ from keras.applications import VGG16
 def get_pretrained_attention_unet(input_height=256, input_width=256, nClasses=1, n_filters=16, dropout=0.5, batchnorm=True, n_channels=3):
     base_model = VGG16(weights='imagenet', include_top=False, input_shape=(input_height, input_width, n_channels))
     
-    # base_model.trainable = False
+    base_model.trainable = False
     
     # Define the inputs
     inputs = base_model.input
@@ -391,10 +391,10 @@ model.compile(optimizer = Adam(),
             #   loss = 'binary_crossentropy',
               loss = sm.losses.binary_focal_dice_loss  , 
               metrics = ['acc', sm.metrics.iou_score])
-model.summary()
+# model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_iou_score', mode='min', verbose=1, patience=10, restore_best_weights=True)
+es = EarlyStopping(monitor='val_iou_score', mode='auto', verbose=1, patience=10, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
