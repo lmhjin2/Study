@@ -394,9 +394,9 @@ model.compile(optimizer = Adam(),
 # model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_iou_score', mode='auto', verbose=1, patience=10, restore_best_weights=True)
+es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
-save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
+save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # rlr
 rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='auto', patience=5, verbose=1, factor=0.5)
 
