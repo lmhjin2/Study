@@ -201,6 +201,8 @@ from keras.applications import VGG16
 def get_pretrained_attention_unet(input_height=256, input_width=256, nClasses=1, n_filters=16, dropout=0.5, batchnorm=True, n_channels=3):
     base_model = VGG16(weights='imagenet', include_top=False, input_shape=(input_height, input_width, n_channels))
     
+    # base_model.trainable = False
+    
     # Define the inputs
     inputs = base_model.input
     
@@ -317,10 +319,10 @@ save_name = 'VGG'
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 8  # batch size 지정
+BATCH_SIZE = 6  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 569861969 # seed 고정
+RANDOM_STATE = 42 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -405,7 +407,7 @@ history = model.fit_generator(
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es, rlr],
-    epochs=100,
+    epochs=50,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
