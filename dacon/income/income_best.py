@@ -20,17 +20,6 @@ seed_everything(42) # Seed 고정
 train = pd.read_csv('d:/data/income/train.csv')
 test = pd.read_csv('d:/data/income/test.csv')
 
-labels = train.columns.tolist()
-# print(labels)
-# ['ID', 'Age', 'Gender', 'Education_Status', 'Employment_Status', 
-# 'Working_Week (Yearly)', 'Industry_Status', 'Occupation_Status', 'Race', 'Hispanic_Origin', 
-# 'Martial_Status', 'Household_Status', 'Household_Summary', 'Citizenship', 'Birth_Country', 
-# 'Birth_Country (Father)', 'Birth_Country (Mother)', 'Tax_Status', 'Gains', 'Losses', 
-# 'Dividends', 'Income_Status', 'Income']
-
-# print(pd.value_counts(train['Tax_Status']))
-# print(np.unique(train['Race']))
-
 train_x = train.drop(columns=['ID', 'Income'])
 train_y = train['Income']
 test_x = test.drop(columns=['ID'])
@@ -70,10 +59,9 @@ parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992
                'max_bin' : [100],
                'colsample_bytree' : [0.5],
                'seed' : [9]
-               
                }]
-# best_rmse :  588.2896713143929 seed: 9 lr : 0.00495
-# best_rmse :  588.2896767495979 seed: 9 lr : 0.00494992
+# best_rmse :  587.0828680513683
+
 #2
 model = GridSearchCV(LGBMRegressor(n_estimators = 1000 , 
                     #   learning_rate = 0.00495 , 

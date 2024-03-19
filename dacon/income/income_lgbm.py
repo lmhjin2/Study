@@ -7,6 +7,8 @@ from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
 from lightgbm import LGBMRegressor
+import optuna
+
 #1
 def seed_everything(seed):
     random.seed(seed)
@@ -17,17 +19,6 @@ seed_everything(42) # Seed 고정
 
 train = pd.read_csv('d:/data/income/train.csv')
 test = pd.read_csv('d:/data/income/test.csv')
-
-labels = train.columns.tolist()
-# print(labels)
-# ['ID', 'Age', 'Gender', 'Education_Status', 'Employment_Status', 
-# 'Working_Week (Yearly)', 'Industry_Status', 'Occupation_Status', 'Race', 'Hispanic_Origin', 
-# 'Martial_Status', 'Household_Status', 'Household_Summary', 'Citizenship', 'Birth_Country', 
-# 'Birth_Country (Father)', 'Birth_Country (Mother)', 'Tax_Status', 'Gains', 'Losses', 
-# 'Dividends', 'Income_Status', 'Income']
-
-# print(pd.value_counts(train['Tax_Status']))
-# print(np.unique(train['Race']))
 
 train_x = train.drop(columns=['ID', 'Income'])
 train_y = train['Income']
@@ -61,17 +52,17 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992
+parameters = [{'learning_rate' : [0.0058],  # 0.00495  / 0.00494992
                'max_depth' : [None],
-               'gamma' : [1],
                'subsample' : [1],
                'max_bin' : [100],
                'colsample_bytree' : [0.5],
                'seed' : [9]
-               
                }]
-# best_rmse :  588.2896713143929 seed: 9 lr : 0.00495
-# best_rmse :  588.2896767495979 seed: 9 lr : 0.00494992
+# best_rmse :  587.0828680513683 lr : 0.00494997
+# best_rmse :  587.0401301352774 lr : 0.005
+# best_rmse :  587.0061214498442 lr : 0.006
+# best_rmse :  586.9651563640591 lr : 0.0055
 #2
 model = GridSearchCV(LGBMRegressor(n_estimators = 1000 , 
                     #   learning_rate = 0.00495 , 
