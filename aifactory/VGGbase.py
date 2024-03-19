@@ -33,9 +33,9 @@ from sklearn.model_selection import train_test_split
 import joblib
 import segmentation_models as sm
 
-np.random.seed(1415988256)       # 0
-random.seed(1703967865)         # 42 
-tf.random.set_seed(2026793897)   # 7
+np.random.seed(0)       # 0
+random.seed(42)         # 42 
+tf.random.set_seed(7)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -398,7 +398,7 @@ es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, 
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # rlr
-rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='auto', patience=5, verbose=1, factor=0.5)
+rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.5)
 
 print('---model 훈련 시작---')
 history = model.fit_generator(
