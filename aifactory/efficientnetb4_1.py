@@ -246,10 +246,13 @@ def get_unet_plus_plus(input_img, n_filters=16, dropout=0.1, batchnorm=True):
 
 from tensorflow.keras.applications import EfficientNetB4
 # from keras.applications import EfficientNetB4
+
 def EfficientNetB4_UNet(input_size=(256, 256, 3), n_classes=1, dropout=0.1, batchnorm=True):
     base_model = EfficientNetB4(weights='imagenet', include_top=False, input_shape=input_size)
     start_neurons = 16
-
+    for layer in base_model.layers:
+        layer.trainable = False
+        
     c1 = base_model.get_layer("block2a_expand_activation").output
     c2 = base_model.get_layer("block3a_expand_activation").output
     c3 = base_model.get_layer("block4a_expand_activation").output
@@ -328,7 +331,7 @@ save_name = 'efficientnetb4'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 1 # 훈련 epoch 지정
+EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'efficientnetb4' # 모델 이름
@@ -344,7 +347,7 @@ OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
 WORKERS = 16    # 원래 4 // (코어 / 2 ~ 코어) 
 
 # 조기종료
-EARLY_STOP_PATIENCE = 20
+EARLY_STOP_PATIENCE = 10
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 5
@@ -407,11 +410,11 @@ model.summary()
 
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=10 ,restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
-rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=10, verbose=1, factor=0.5)
+rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=7, verbose=1, factor=0.5)
 """&nbsp;
 
 ## model 훈련
@@ -423,8 +426,8 @@ history = model.fit_generator(
     steps_per_epoch=len(images_train) // BATCH_SIZE,
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
-    callbacks=[checkpoint, es],
-    epochs=1,
+    callbacks=[checkpoint, es, rlr],
+    epochs=50,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
@@ -446,8 +449,8 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 """
 
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-model.summary()
+# model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
+# model.summary()
 
 # model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 

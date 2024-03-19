@@ -345,7 +345,7 @@ save_name = 'efficientnetb4'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 1 # 훈련 epoch 지정
+EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 8 # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'unetplus2' # 모델 이름
@@ -426,11 +426,11 @@ model.summary()
 
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=10, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='loss', verbose=1,
 save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
 # rlr
-rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=10, verbose=1, factor=0.5)
+rlr = ReduceLROnPlateau(monitor='val_loss', mode='auto', patience=5, verbose=1, factor=0.5)
 """&nbsp;
 
 ## model 훈련
@@ -442,8 +442,8 @@ history = model.fit_generator(
     steps_per_epoch=len(images_train) // BATCH_SIZE,
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
-    callbacks=[checkpoint, es],
-    epochs=1,
+    callbacks=[checkpoint, es, rlr],
+    epochs=50,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
