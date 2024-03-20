@@ -320,7 +320,7 @@ save_name = 'VGG'
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 6  # batch size 지정
+BATCH_SIZE = 16  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
 RANDOM_STATE = 42 # seed 고정
@@ -388,19 +388,15 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 
 optimizer = tfa.optimizers.AdamW(learning_rate=0.1, weight_decay=1e-4)
-
 model.compile(optimizer = optimizer,
-              loss = sm.losses.bce_jaccard_loss , 
+            #   loss = sm.losses.bce_jaccard_loss , 
             #   loss = 'binary_crossentropy',
-            #   loss = sm.losses.binary_focal_dice_loss  , 
-              metrics = ['acc', sm.metrics.iou_score])
+              loss = sm.losses.binary_focal_dice_loss  , 
+              metrics = ['acc', sm.metrics.iou_score, miou])
 # model.summary()
-
-# checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
-# rlr
 rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.1)
 
 print('---model 훈련 시작---')
