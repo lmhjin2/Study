@@ -160,12 +160,12 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'attention_unet2'
+save_name = 'swin_unet'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 4  # batch size 지정
+BATCH_SIZE = 6  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'swin_unet' # 모델 이름
 RANDOM_STATE = 42 # seed 고정
@@ -244,11 +244,11 @@ model.compile(optimizer=optimizer,
 model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
+es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience = 10 , restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience=5, verbose=1, mode='max')
+rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience = 5 , verbose=1, mode='max')
 
 print('---model 훈련 시작---')
 history = model.fit(
