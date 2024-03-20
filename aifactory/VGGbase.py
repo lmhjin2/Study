@@ -32,6 +32,7 @@ from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
 import segmentation_models as sm
+import tensorflow_addons as tfa
 
 np.random.seed(0)       # 0
 random.seed(42)         # 42 
@@ -201,7 +202,7 @@ from keras.applications import VGG16
 def get_pretrained_attention_unet(input_height=256, input_width=256, nClasses=1, n_filters=16, dropout=0.5, batchnorm=True, n_channels=3):
     base_model = VGG16(weights='imagenet', include_top=False, input_shape=(input_height, input_width, n_channels))
     
-    base_model.trainable = False
+    # base_model.trainable = False
     
     # Define the inputs
     inputs = base_model.input
@@ -386,10 +387,13 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 learning_rate = 0.001
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
-model.compile(optimizer = Adam(), 
-            #   loss = sm.losses.bce_jaccard_loss , 
+
+optimizer = tfa.optimizers.AdamW(learning_rate=1e-4, weight_decay=1e-4)
+
+model.compile(optimizer = optimizer,
+              loss = sm.losses.bce_jaccard_loss , 
             #   loss = 'binary_crossentropy',
-              loss = sm.losses.binary_focal_dice_loss  , 
+            #   loss = sm.losses.binary_focal_dice_loss  , 
               metrics = ['acc', sm.metrics.iou_score])
 # model.summary()
 
