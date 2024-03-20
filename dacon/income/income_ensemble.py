@@ -3,11 +3,12 @@ import random
 import os
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
-from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
 from lightgbm import LGBMRegressor
-import optuna
+from xgboost import XGBRegressor
+from sklearn.ensemble import BaggingRegressor, VotingRegressor, StackingRegressor
+from sklearn.linear_model import LinearRegression
 
 #1
 def seed_everything(seed):
@@ -52,49 +53,54 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.0058, 0.05292985892312656 ],  # 0.00495  / 0.00494992
-               'max_depth' : [None, 41],
-               'subsample' : [1, 0.8780358772252316],
-               'max_bin' : [100, 155],
-               'colsample_bytree' : [0.5, 0.6760662148568206],
-               'num_leaves' : [17],
-            #    'feature_fraction' : [0.5019194533422106],
-               'bagging_fraction' : [0.7995132575770451],
-               'bagging_freq' : [7],
-               'min_child_samples' : [67],
-               'seed' : [9],
-               }]
-# best_rmse :  587.0828680513683 lr : 0.00494997
-# best_rmse :  587.0401301352774 lr : 0.005
-# best_rmse :  587.0061214498442 lr : 0.006
-# best_rmse :  586.9651563640591 lr : 0.0055
+
 #2
-model = GridSearchCV(LGBMRegressor(n_estimators = 1000 , 
-                      ), parameters, cv=kfold, refit=True, n_jobs=-1 )
+lgbm = LGBMRegressor(n_estimators = 1000 , 
+                      learning_rate = 0.00494997 , 
+                      max_depth = None ,
+                      subsample = 1 ,
+                      max_bin = 100 ,
+                      colsample_bytree= 0.5 ,
+                      seed=9)
+xgb = XGBRegressor(n_estimators=1000,
+                   learning_rate=0.00494997,
+                   max_depth = None,
+                   gamma = 1,
+                   subsample = 1,
+                   max_bin = 100,
+                   colsample_bytree = 0.5,
+                   seed=9
+                   )
+
+base_models = [
+    ('lgbm', lgbm),
+    ('xgb', xgb)]
+
+meta_model = LinearRegression()
+
+stacking = StackingRegressor(
+    estimators=base_models,
+    final_estimator=meta_model,
+    cv=kfold
+)
 #3
-model.fit(x_train, y_train) 
+stacking.fit(x_train, y_train) 
 
 #4
-results = model.score(x_test, y_test)
-y_predict = model.predict(x_test)
-best_y_predict = model.best_estimator_.predict(x_test)
+results = stacking.score(x_test, y_test)
+y_predict = stacking.predict(x_test)
 # mse
 mse = mean_squared_error(y_test, y_predict)
-best_mse = mean_squared_error(y_test, best_y_predict)
 # rmse
 rmse = np.sqrt(mse)
-best_rmse = np.sqrt(best_mse)
 # submission
-preds = model.predict(test_x)
-best_pred = model.best_estimator_.predict(test_x)
+preds = stacking.predict(test_x)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0320_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0320_ens.csv', index=False)
 
-print("최적의 매개변수 : ", model.best_estimator_)
-print("최적의 파라미터 : ", model.best_params_) 
-print('best_rmse : ', best_rmse)
+print('RMSE : ', rmse)
 

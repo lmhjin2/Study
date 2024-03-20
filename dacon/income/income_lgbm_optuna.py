@@ -8,6 +8,9 @@ from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cr
 from sklearn.metrics import mean_squared_error
 from lightgbm import LGBMRegressor
 import optuna
+import warnings
+
+warnings.filterwarnings('ignore')
 
 #1
 def seed_everything(seed):
@@ -69,14 +72,19 @@ def objective(trial):
     
     # 하이퍼파라미터 제안
     param = {
-        'objective': 'binary',
-        'metric': 'binary_logloss',
-        'verbosity': -1,
-        'boosting_type': 'gbdt',
-        'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0),
-        'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0),
+        # 'objective': 'binary',
+        # 'metric': 'binary_logloss',
+        # 'verbosity': -1,
+        # 'boosting_type': 'gbdt',
+        # 'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0),
+        # 'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0),
+        'learning_rate' : trial.suggest_float('learning_rate', 0.0001, 0.1),
+        'max_depth' : trial.suggest_int('max_depth', 1, 100),
+        'subsample' : trial.suggest_float('subsample',0.2, 1.0),
+        'max_bin' : trial.suggest_int('max_bin', 1, 200),
+        'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.5, 1.0),
         'num_leaves': trial.suggest_int('num_leaves', 2, 256),
-        'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
+        # 'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
         'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
         'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
         'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
@@ -87,7 +95,7 @@ def objective(trial):
         x_train_fold, x_valid_fold = train_x[train_idx], train_x[valid_idx]
         y_train_fold, y_valid_fold = train_y[train_idx], train_y[valid_idx]
         
-        model = LGBMRegressor(**param)
+        model = LGBMRegressor(**param, seed=9)
         model.fit(x_train_fold, y_train_fold, eval_set=[(x_valid_fold, y_valid_fold)])
         
         preds = model.predict(x_valid_fold)
@@ -99,7 +107,7 @@ def objective(trial):
     return min_rmse
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=500) # 100회의 시도로 최적화
+study.optimize(objective, n_trials=100) # 100회의 시도로 최적화
 
 print("Number of finished trials: ", len(study.trials))
 print("Best trial:")
