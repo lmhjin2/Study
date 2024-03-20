@@ -412,7 +412,7 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/checkpoint-attention-attention_unet2-epoch_55_attention2.hdf5')
+model.load_weights('c:/Study/aifactory/train_output/checkpoint-attention-VGG-epoch_15_VGG.hdf5')
 
 y_pred_dict = {}
 
