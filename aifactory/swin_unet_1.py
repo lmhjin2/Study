@@ -33,6 +33,7 @@ from sklearn.model_selection import train_test_split
 import joblib
 from keras_unet_collection import models
 import segmentation_models as sm
+import tensorflow_addons as tfa
 
 np.random.seed(12922085)       # 0
 random.seed(22906815)         # 42 
@@ -233,9 +234,12 @@ model = models.swin_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), filter_n
                             depth=4, stack_num_down=2, stack_num_up=2, 
                             patch_size=(2, 2), num_heads=[4, 8, 8, 8], window_size=[4, 2, 2, 2], num_mlp=512, 
                             output_activation='Sigmoid', shift_window=True, name='swin_unet')
-model.compile(optimizer=Adam(learning_rate=learning_rate), 
-            #   loss=sm.losses.bce_jaccard_loss, 
-              loss = sm.losses.binary_focal_dice_loss,
+
+optimizer = tfa.optimizers.AdamW(learning_rate=1e-4, weight_decay=1e-4)
+
+model.compile(optimizer=optimizer,
+              loss=sm.losses.bce_jaccard_loss, 
+            #   loss = sm.losses.binary_focal_dice_loss,
               metrics=['accuracy', sm.metrics.iou_score])
 model.summary()
 
