@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cr
 from sklearn.metrics import mean_squared_error
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
+from catboost import CatBoostRegressor
 from sklearn.ensemble import BaggingRegressor, VotingRegressor, StackingRegressor
 from sklearn.linear_model import LinearRegression
 
@@ -56,12 +57,13 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
 #2
 lgbm = LGBMRegressor(n_estimators = 1000 , 
-                      learning_rate = 0.00494997 , 
-                      max_depth = None ,
-                      subsample = 1 ,
-                      max_bin = 100 ,
-                      colsample_bytree= 0.5 ,
-                      seed=9)
+                     learning_rate = 0.00494997 , 
+                     max_depth = None ,
+                     subsample = 1 ,
+                     max_bin = 100 ,
+                     colsample_bytree= 0.5 ,
+                     seed=9)
+
 xgb = XGBRegressor(n_estimators=1000,
                    learning_rate=0.00494997,
                    max_depth = None,
@@ -71,12 +73,19 @@ xgb = XGBRegressor(n_estimators=1000,
                    colsample_bytree = 0.5,
                    seed=9
                    )
+cbt = CatBoostRegressor(n_estimators=1000,
+                        learning_rate= 0.014795,
+                        random_seed=9
+                        )
+
+
 
 base_models = [
     ('lgbm', lgbm),
-    ('xgb', xgb)]
+    ('xgb', xgb),
+    ('cbt',cbt)]
 
-meta_model = LinearRegression()
+meta_model = lgbm
 
 stacking = StackingRegressor(
     estimators=base_models,
