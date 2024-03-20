@@ -338,7 +338,7 @@ WORKERS = 16    # 원래 4 // (코어 / 2 ~ 코어)
 EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
-CHECKPOINT_PERIOD = 5
+CHECKPOINT_PERIOD = 1
 CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_VGG.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
@@ -390,13 +390,12 @@ model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE
 optimizer = tfa.optimizers.AdamW(learning_rate=0.1, weight_decay=1e-4)
 model.compile(optimizer = optimizer,
             #   loss = sm.losses.bce_jaccard_loss , 
-            #   loss = 'binary_crossentropy',
               loss = sm.losses.binary_focal_dice_loss  , 
               metrics = ['acc', sm.metrics.iou_score, miou])
 # model.summary()
 es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
-save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
+                             save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.1)
 
 print('---model 훈련 시작---')
