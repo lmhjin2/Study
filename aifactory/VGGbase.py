@@ -385,10 +385,9 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 # model = get_attention_unet()
 
-learning_rate = 0.001
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 
-optimizer = tfa.optimizers.AdamW(learning_rate=1e-4, weight_decay=1e-4)
+optimizer = tfa.optimizers.AdamW(learning_rate=1e-2, weight_decay=1e-4)
 
 model.compile(optimizer = optimizer,
               loss = sm.losses.bce_jaccard_loss , 
