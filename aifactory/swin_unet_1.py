@@ -240,7 +240,7 @@ optimizer = tfa.optimizers.AdamW(learning_rate=1e-3, weight_decay=1e-4)
 model.compile(optimizer=optimizer,
               loss=sm.losses.bce_jaccard_loss, 
             #   loss = sm.losses.binary_focal_dice_loss,
-              metrics=['accuracy', sm.metrics.iou_score])
+              metrics=['accuracy', sm.metrics.iou_score, miou])
 model.summary()
 
 # checkpoint 및 조기종료 설정
