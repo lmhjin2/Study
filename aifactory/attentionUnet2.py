@@ -31,11 +31,12 @@ import numpy as np
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 import joblib
+import segmentation_models as sm
+import tensorflow_addons as tfa
 
-
-np.random.seed(1415988256)       # 0
-random.seed(1703967865)         # 42 
-tf.random.set_seed(2026793897)   # 7
+np.random.seed(12922085)       # 0
+random.seed(22906815)         # 42 
+tf.random.set_seed(3727687611)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -224,7 +225,7 @@ EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 569861969 # seed 고정
+RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -236,10 +237,10 @@ OUTPUT_DIR = 'c:/Study/aifactory/train_output/'
 WORKERS = 16    # 원래 4 // (코어 / 2 ~ 코어) 
 
 # 조기종료
-EARLY_STOP_PATIENCE = 20
+EARLY_STOP_PATIENCE = 10
 
 # 중간 가중치 저장 이름
-CHECKPOINT_PERIOD = 5
+CHECKPOINT_PERIOD = 1
 CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_attention2.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
@@ -272,7 +273,7 @@ except:
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
-print(len(x_tr), len(x_val))
+# print(len(x_tr), len(x_val))
 
 # train : val 지정 및 generator
 images_train = [os.path.join(IMAGES_PATH, image) for image in x_tr['train_img'] ]
@@ -286,16 +287,17 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 model = get_attention_unet()
 
-learning_rate = 0.01
-model.compile(optimizer=Adamax(learning_rate=learning_rate), loss='binary_crossentropy', metrics=['accuracy', miou])
-model.summary()
+optimizer = tfa.optimizers.AdamW(learning_rate=0.1, weight_decay=1e-4)
+model.compile(optimizer = optimizer,
+            #   loss = sm.losses.bce_jaccard_loss , 
+              loss = sm.losses.binary_focal_dice_loss  , 
+              metrics = ['acc', sm.metrics.iou_score, miou])
+# model.summary()
 
-# checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=30, restore_best_weights=True)
-checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_loss', verbose=1,
-save_best_only=True, mode='auto', period=CHECKPOINT_PERIOD)
-# Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.1, patience=10, verbose=1, mode='auto')
+es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
+                             save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
+rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.1)
 
 print('---model 훈련 시작---')
 history = model.fit_generator(
