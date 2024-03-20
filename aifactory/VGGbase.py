@@ -387,7 +387,7 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 
-optimizer = tfa.optimizers.AdamW(learning_rate=1e-2, weight_decay=1e-4)
+optimizer = tfa.optimizers.AdamW(learning_rate=0.1, weight_decay=1e-4)
 
 model.compile(optimizer = optimizer,
               loss = sm.losses.bce_jaccard_loss , 
@@ -401,7 +401,7 @@ es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, 
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # rlr
-rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.5)
+rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.1)
 
 print('---model 훈련 시작---')
 history = model.fit_generator(
