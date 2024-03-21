@@ -160,14 +160,14 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'u2net'
+save_name = 'attunet'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 6  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'u2net' # 모델 이름
+MODEL_NAME = 'attunet' # 모델 이름
 RANDOM_STATE = 42 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -184,10 +184,10 @@ EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 5
-CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_u2net.hdf5'.format(MODEL_NAME, save_name)
+CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_attunet.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_u2net.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_attunet.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -229,16 +229,15 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 
-
 # model = models.swin_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), filter_num_begin=N_FILTERS, n_labels=1, 
 #                             depth=4, stack_num_down=2, stack_num_up=2, 
 #                             patch_size=(2, 2), num_heads=[4, 8, 8, 8], window_size=[4, 2, 2, 2], num_mlp=512, 
 #                             output_activation='Sigmoid', shift_window=True, name='swin_unet')
 
-model = models.u2net_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), n_labels=1, 
-                        filter_num_down=[64, 128, 256],
-                        activation='ReLU', output_activation='Sigmoid', 
-                        batch_norm=True, pool=False, unpool=False, deep_supervision=True, name='u2net')
+model = models.att_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), [64, 128, 256, 512], n_labels=1,
+                           stack_num_down=2, stack_num_up=2,
+                           activation='ReLU', atten_activation='ReLU', attention='add', output_activation='Sigmoid', 
+                           batch_norm=True, pool=False, unpool='bilinear', name='attunet')
 
 optimizer = tfa.optimizers.AdamW(learning_rate=1e-3, weight_decay=1e-4)
 model.compile(
