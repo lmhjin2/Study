@@ -165,7 +165,7 @@ save_name = 'attunet'
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
-BATCH_SIZE = 6  # batch size 지정
+BATCH_SIZE = 8  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'attunet' # 모델 이름
 RANDOM_STATE = 42 # seed 고정
@@ -239,7 +239,7 @@ model = models.att_unet_2d((IMAGE_SIZE[0], IMAGE_SIZE[1], N_CHANNELS), [64, 128,
                            activation='ReLU', atten_activation='ReLU', attention='add', output_activation='Sigmoid', 
                            batch_norm=True, pool=False, unpool='bilinear', name='attunet')
 
-optimizer = tfa.optimizers.AdamW(learning_rate=1e-3, weight_decay=1e-4)
+optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)
 model.compile(
             #   optimizer=Adam(learning_rate=0.001),
               optimizer=optimizer,
