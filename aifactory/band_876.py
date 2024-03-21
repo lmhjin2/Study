@@ -70,7 +70,7 @@ def get_img_arr(path):
     return img
 
 def get_img_762bands(path):
-    img = rasterio.open(path).read((7,6,8)).transpose((1, 2, 0))    
+    img = rasterio.open(path).read((8,7,6)).transpose((1, 2, 0))    
     img = np.float32(img)/MAX_PIXEL_VALUE
     
     return img
