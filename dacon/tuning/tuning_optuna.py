@@ -19,19 +19,22 @@ def objective(trial):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # 탐색할 하이퍼파라미터 지정
-    n_estimators = trial.suggest_int('n_estimators', 100, 200)
-    max_depth = trial.suggest_int('max_depth', 1, 100)
-    min_samples_split = trial.suggest_int('min_samples_split', 2, 20)
-    min_samples_leaf = trial.suggest_int('min_samples_leaf', 1, 10)
-    min_weight_fraction_leaf = trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5)
+    params = {
+        'n_estimators': trial.suggest_int('n_estimators', 100, 1000),
+        'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
+        'max_depth': trial.suggest_int('max_depth', 1, 32, log=True),
+        'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
+        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
+        'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
+        'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
+        'max_leaf_nodes': trial.suggest_int('max_leaf_nodes', 10, 1000, log=True),
+        'min_impurity_decrease': trial.suggest_float('min_impurity_decrease', 0.0, 0.5),
+        'bootstrap': trial.suggest_categorical('bootstrap', [True, False])
+    }
 
     # 모델 생성 및 훈련
     model = RandomForestClassifier(
-        n_estimators=n_estimators,
-        max_depth=max_depth,
-        min_samples_split=min_samples_split,
-        min_samples_leaf=min_samples_leaf,
-        min_weight_fraction_leaf=min_weight_fraction_leaf,
+        **params,
         random_state=42
     )
     model.fit(X_train, y_train)
@@ -43,7 +46,7 @@ def objective(trial):
     return auc_score
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=200) # n_trials는 시도할 횟수
+study.optimize(objective, n_trials=2000) # n_trials는 시도할 횟수
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
@@ -51,11 +54,9 @@ print(f'Best ROC-AUC Score: {study.best_trial.value}')
 
 # 최적의 하이퍼파라미터 적용
 best_params = study.best_trial.params
-model = RandomForestClassifier(**best_params, random_state=42)
-model.fit(X, y)
 
-
-
+# model = RandomForestClassifier(**best_params, random_state=42)
+# model.fit(X, y)
 
 submit = pd.read_csv('d:/data/tuning/sample_submission.csv')
 
@@ -66,7 +67,7 @@ for param, value in best_params.items():
 
 submit.to_csv('c:/Study/dacon/tuning/output/0321_opt.csv', index=False)
 
-
+print(f"끝")
 
 
 
