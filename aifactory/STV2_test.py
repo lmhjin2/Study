@@ -173,7 +173,7 @@ def create_swin_transformer(input_shape=(256, 256, 3), embed_dim=128, num_heads=
 
 # Create model
 model = create_swin_transformer()
-model.summary()
+# model.summary()
 
 
 # 두 샘플 간의 유사성 metric
@@ -281,7 +281,7 @@ def my_f1(y_true,y_pred):
 
 # model 불러오기
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
-model.summary()
+# model.summary()
 
 print(np.unique(x_tr.shape,return_counts=True))
 print(np.unique(x_val.shape,return_counts=True))
@@ -327,7 +327,7 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 """
 
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-model.summary()
+# model.summary()
 
 # model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 

@@ -224,14 +224,14 @@ def my_f1(y_true,y_pred):
 # model 불러오기
 input_shape = (256,256,3)
 model = FCT(input_shape=input_shape)
-model.summary()
+# model.summary()
 optimizer = tfa.optimizers.AdamW(learning_rate=0.01, weight_decay=1e-4)
 model.compile(optimizer = optimizer,
             #   loss = sm.losses.bce_jaccard_loss , 
             #   loss = 'binary_crossentropy',
               loss = sm.losses.binary_focal_dice_loss, 
               metrics = ['acc', sm.metrics.iou_score])
-model.summary()
+# model.summary()
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)

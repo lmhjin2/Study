@@ -75,7 +75,7 @@ model.add(Dense(18, activation='relu'))
 model.add(Dense(9, activation='relu'))
 model.add(Dense(1, activation='relu'))
 
-model.summary
+model.summary()
 
 #3
 from keras.callbacks import EarlyStopping, ModelCheckpoint

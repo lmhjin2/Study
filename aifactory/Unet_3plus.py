@@ -246,7 +246,7 @@ model.compile(optimizer=optimizer,
               loss=sm.losses.bce_jaccard_loss, 
             #   loss = sm.losses.binary_focal_dice_loss,
               metrics=['accuracy', sm.metrics.iou_score, miou])
-model.summary()
+# model.summary()
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience = 10 , restore_best_weights=True)

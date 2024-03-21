@@ -288,7 +288,7 @@ model = get_attention_unet()
 
 learning_rate = 0.001
 model.compile(optimizer=Adam(learning_rate=learning_rate), loss='binary_crossentropy', metrics=['accuracy', miou])
-model.summary()
+# model.summary()
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE, restore_best_weights=True)

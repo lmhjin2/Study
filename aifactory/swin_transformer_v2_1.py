@@ -560,7 +560,7 @@ def SwinTransformerV2Tiny_window8(input_shape=(1,256, 256, 3), num_classes=0, cl
 
 model = SwinTransformerV2Tiny_window8()
 ######################  STV2  #################################################################################
-model.summary()
+# model.summary()
 
 ###################### 전처리 #################################################################################
 
@@ -668,7 +668,7 @@ def my_f1(y_true,y_pred):
 # model 불러오기
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
-model.summary()
+# model.summary()
 
 # checkpoint 및 조기종료 설정
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=EARLY_STOP_PATIENCE,restore_best_weights=True)
@@ -700,7 +700,7 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-model.summary()
+# model.summary()
 
 model.load_weights('c:/Study/aifactory/train_output/STV2_final_weights.h5')
 

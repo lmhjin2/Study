@@ -523,7 +523,7 @@ model = swin_transformer_with_mlp_model(
     dropout_rate=dropout_rate
 )
 # 모델 summary 출력
-model.summary()
+# model.summary()
 
 # input_shape = (256, 256, 3)
 # patch_size = (4, 4)  # 2-by-2 sized patches
@@ -574,7 +574,7 @@ def get_model(MODEL_NAME, input_height, input_width, n_filters, n_channels):
 # 모델 생성
 # model = create_swin_transformerl()
 # 모델 summary 출력
-# model.summary()
+# # model.summary()
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
@@ -597,7 +597,7 @@ num_patches = (input_shape[0] // patch_size[0]) * (input_shape[1] // patch_size[
         
 # 예시: 모델 이름으로 모델 생성
 # model = get_model('swin_transformer')
-model.summary()
+# model.summary()
 
 
 def dice_coef(y_true, y_pred, smooth=1):
@@ -707,7 +707,7 @@ loss = sm.losses.bce_jaccard_loss
 # model 불러오기
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(learning_rate=lr), loss = loss, metrics = ['accuracy', miou])
-model.summary()
+# model.summary()
 # sm.metrics.iou_score
 
 # checkpoint 및 조기종료 설정
@@ -747,7 +747,7 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 
 # model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 # model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-# model.summary()
+# # model.summary()
 
 # model.load_weights('C:\\_data\\AI factory\\train_output\\model_swin_transformer_base_line_final_weights_03_19_01.h5')
 

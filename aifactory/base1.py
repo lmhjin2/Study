@@ -384,7 +384,7 @@ def my_f1(y_true,y_pred):
 # model 불러오기
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['acc'])
-model.summary()
+# model.summary()
 
 print(np.unique(x_tr.shape,return_counts=True))
 print(np.unique(x_val.shape,return_counts=True))
@@ -431,7 +431,7 @@ print("저장된 가중치 명: {}".format(model_weights_output))
 
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 model.compile(optimizer = Adam(), loss = 'binary_crossentropy', metrics = ['accuracy'])
-model.summary()
+# model.summary()
 
 model.load_weights('c:/Study/aifactory/train_output/model_unet_base_line_final_weights.h5')
 

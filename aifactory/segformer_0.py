@@ -30,7 +30,7 @@ backbone = keras_cv.models.MiTBackbone.from_preset("segformer_b0")
 model = keras_cv.models.segmentation.SegFormer(
     num_classes=1, backbone=backbone,
 )
-model.summary()
+# model.summary()
 # # Evaluate model
 # model(images)
 
