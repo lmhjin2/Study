@@ -286,6 +286,7 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 model = get_attention_unet()
+model.load_weights('c:/Study/aifactory/train_output/0.8741649_attention.h5')
 
 optimizer = tfa.optimizers.AdamW(learning_rate=0.1, weight_decay=1e-4)
 model.compile(optimizer = optimizer,
@@ -317,7 +318,7 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
+# model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
 
 y_pred_dict = {}
 
