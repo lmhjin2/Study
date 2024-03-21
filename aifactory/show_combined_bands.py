@@ -43,9 +43,9 @@ def visualize_image_and_mask(image_path, mask_path, bands, num):
     plt.show()
 
 # 사용 예시
-num = 26  # 이미지 번호
+num = 16  # 이미지 번호
 image_path = 'c:/Study/aifactory/dataset/train_img/train_img_{num}.tif'
 mask_path = 'c:/Study/aifactory/dataset/train_mask/train_mask_{num}.tif'
-bands = (7,6,4)  # 밴드 조합 예시
+bands = (3,2,1)  # 밴드 조합 예시
 
 visualize_image_and_mask(image_path, mask_path, bands, num)
