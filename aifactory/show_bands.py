@@ -2,7 +2,7 @@ import rasterio
 import matplotlib.pyplot as plt
 
 # 위성 이미지 및 마스크 데이터 로드
-num = 11
+num = 16
 image_path = f'c:/Study/aifactory/dataset/train_img/train_img_{num}.tif'
 mask_path = f'c:/Study/aifactory/dataset/train_mask/train_mask_{num}.tif'
 
