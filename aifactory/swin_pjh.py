@@ -642,7 +642,7 @@ WORKERS = 20
 EARLY_STOP_PATIENCE = 25
 
 # 중간 가중치 저장 이름
-CHECKPOINT_PERIOD = 5
+CHECKPOINT_PERIOD = 1
 CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_03_19_01.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
