@@ -54,7 +54,7 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
 parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992
                'max_depth' : [None],
-               'gamma' : [1],
+            #    'gamma' : [1],
                'subsample' : [1],
                'max_bin' : [100],
                'colsample_bytree' : [0.5],
@@ -96,7 +96,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0319_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/best.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 

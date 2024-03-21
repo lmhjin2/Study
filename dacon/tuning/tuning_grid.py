@@ -10,9 +10,11 @@ data = pd.read_csv('d:/data/tuning/train.csv')
 X = data.drop(['person_id', 'login'], axis=1)
 y = data['login']
 
+x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=42, stratify=y, shuffle=True)
+
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
-    'n_estimators': [ 110, 166 ],  # 000인지 1000인지 모름;
+    'n_estimators': [ 100, 110, 200, 300], 
     # 'criterion' : ['gini'],
     'max_depth': [None, 1 ],
     'min_samples_split': [ 2, 17 ],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
@@ -34,12 +36,14 @@ model = GridSearchCV(estimator=rf, param_grid=param_search_space, cv=kfold, n_jo
 #3 GridSearchCV를 사용한 학습
 # model.fit(x_train, y_train)
 model.fit(X, y)
-
 #4 최적의 파라미터와 최고 점수 출력
 best_params = model.best_params_
 best_score = model.best_score_
 
 print(best_params,'\n', best_score)
+
+
+
 
 submit = pd.read_csv('d:/data/tuning/sample_submission.csv')
 
@@ -48,7 +52,7 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0320.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0321.csv', index=False)
 
 # {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
 #  0.8049404576607657

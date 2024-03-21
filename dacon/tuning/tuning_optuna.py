@@ -47,6 +47,7 @@ study.optimize(objective, n_trials=200) # n_trials는 시도할 횟수
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
+print(f'Best ROC-AUC Score: {study.best_trial.value}')
 
 # 최적의 하이퍼파라미터 적용
 best_params = study.best_trial.params
@@ -54,5 +55,23 @@ model = RandomForestClassifier(**best_params, random_state=42)
 model.fit(X, y)
 
 
+
+
+submit = pd.read_csv('d:/data/tuning/sample_submission.csv')
+
+# 찾은 최적의 파라미터들을 제출 양식에 맞게 제출
+for param, value in best_params.items():
+    if param in submit.columns:
+        submit[param] = value
+
+submit.to_csv('c:/Study/dacon/tuning/output/0321_opt.csv', index=False)
+
+
+
+
+
+
 # {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
 #  0.8049404576607657
+# n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,
+# min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap

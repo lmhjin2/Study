@@ -64,6 +64,30 @@ lgbm = LGBMRegressor(n_estimators = 1000 ,
                      colsample_bytree= 0.5 ,
                      seed=9)
 
+lgbm1 = LGBMRegressor(n_estimators = 1000 , 
+                     learning_rate = 0.00494997 , 
+                     max_depth = None ,
+                     subsample = 1 ,
+                     max_bin = 100 ,
+                     colsample_bytree= 0.5 ,
+                     seed=9)
+
+lgbm2 = LGBMRegressor(n_estimators = 1000 , 
+                     learning_rate = 0.00494997 , 
+                     max_depth = None ,
+                     subsample = 1 ,
+                     max_bin = 100 ,
+                     colsample_bytree= 0.5 ,
+                     seed=9)
+
+lgbm3 = LGBMRegressor(n_estimators = 1000 , 
+                     learning_rate = 0.00494997 , 
+                     max_depth = None ,
+                     subsample = 1 ,
+                     max_bin = 100 ,
+                     colsample_bytree= 0.5 ,
+                     seed=9)
+
 xgb = XGBRegressor(n_estimators=1000,
                    learning_rate=0.00494997,
                    max_depth = None,
@@ -73,6 +97,7 @@ xgb = XGBRegressor(n_estimators=1000,
                    colsample_bytree = 0.5,
                    seed=9
                    )
+
 cbt = CatBoostRegressor(n_estimators=1000,
                         learning_rate= 0.014795,
                         random_seed=9
@@ -81,9 +106,10 @@ cbt = CatBoostRegressor(n_estimators=1000,
 
 
 base_models = [
-    ('lgbm', lgbm),
-    ('xgb', xgb),
-    ('cbt',cbt)]
+    ('lgbm1', lgbm1),
+    ('lgbm2', lgbm2),
+    ('lgbm3', lgbm3)
+    ]
 
 meta_model = lgbm
 
@@ -109,7 +135,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0320_ens.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0321_ens.csv', index=False)
 
 print('RMSE : ', rmse)
 

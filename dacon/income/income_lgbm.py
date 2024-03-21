@@ -2,7 +2,7 @@ import numpy as np
 import random
 import os
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
+from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler, MaxAbsScaler, MinMaxScaler
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
@@ -43,33 +43,46 @@ for i in encoding_target:
     
     test_x[i] = le.transform(test_x[i])
 
+# from sklearn.preprocessing import RobustScaler, StandardScaler, MaxAbsScaler, MinMaxScaler
+
+
 scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
+# StandardScaler :  587.0828680513683
+# RobustScaler : 587.2863704501035
+# MinMaxScaler : 587.2878146692937
+# MaxAbsScaler : 587.2878146692937
+
+
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
 
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
+kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.0058, 0.05292985892312656 ],  # 0.00495  / 0.00494992
-               'max_depth' : [None, 41],
-               'subsample' : [1, 0.8780358772252316],
-               'max_bin' : [100, 155],
-               'colsample_bytree' : [0.5, 0.6760662148568206],
-               'num_leaves' : [17],
-            #    'feature_fraction' : [0.5019194533422106],
-               'bagging_fraction' : [0.7995132575770451],
-               'bagging_freq' : [7],
-               'min_child_samples' : [67],
-               'seed' : [9],
+parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992
+               'max_depth' : [None],
+            #    'gamma' : [1],
+               'subsample' : [1],
+               'max_bin' : [100],
+               'colsample_bytree' : [0.5],
+               'seed' : [9]
                }]
-# best_rmse :  587.0828680513683 lr : 0.00494997
-# best_rmse :  587.0401301352774 lr : 0.005
-# best_rmse :  587.0061214498442 lr : 0.006
-# best_rmse :  586.9651563640591 lr : 0.0055
+# best_rmse :  587.0828680513683
+
 #2
 model = GridSearchCV(LGBMRegressor(n_estimators = 1000 , 
+                    #   learning_rate = 0.00495 , 
+                    #   max_depth = None ,
+                    # #   min_child_weight= 35.723980094661194 ,
+                    #   gamma = 1 ,  
+                    #   subsample = 1 ,
+                    #   max_bin = 100 ,
+                    #   colsample_bytree= 0.5 ,
+                    #   objective= 'binary:logistic' ,
+                    #   nthread= 1 ,
+                      # scale_pos_weight= 1 , # 양수데이터가 적을때 양수 데이터 중요도 올리기. 10 = 10배
                       ), parameters, cv=kfold, refit=True, n_jobs=-1 )
 #3
 model.fit(x_train, y_train) 
@@ -92,7 +105,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0320_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0321_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
