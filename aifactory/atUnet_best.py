@@ -272,7 +272,7 @@ except:
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
-print(len(x_tr), len(x_val))
+# print(len(x_tr), len(x_val))
 
 # train : val 지정 및 generator
 images_train = [os.path.join(IMAGES_PATH, image) for image in x_tr['train_img'] ]

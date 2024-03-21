@@ -34,9 +34,9 @@ import joblib
 import segmentation_models as sm
 import tensorflow_addons as tfa
 
-np.random.seed(0)       # 0
-random.seed(42)         # 42 
-tf.random.set_seed(7)   # 7
+np.random.seed(12922085)       # 0
+random.seed(22906815)         # 42 
+tf.random.set_seed(3727687611)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -225,7 +225,7 @@ EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
 MODEL_NAME = 'band8' # 모델 이름
-RANDOM_STATE = 42 # seed 고정
+RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
