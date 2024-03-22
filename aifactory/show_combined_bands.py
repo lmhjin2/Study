@@ -60,15 +60,14 @@ def visualize_image_and_mask(image_path, mask_path, bands1, bands2, num):
     plt.show()
 
 
-# 기본색 비교 1 / 포인트색 비교 12, 13, 16 / 탐지 어려움 15, 16
-num = 16
+# 기본색 비교 1 / 포인트색 비교 12, 13, 16 / 탐지 어려움 15, 16 / 모양확인 19
+num = 23
 
 image_path = 'c:/Study/aifactory/dataset/train_img/train_img_{num}.tif'
 mask_path = 'c:/Study/aifactory/dataset/train_mask/train_mask_{num}.tif'
 
-bands1 = (10,7,5)
-bands2 = (10,7,2)
-# bands2 = (7,6,5)
+bands1 = (10,6,4)
+bands2 = (10,7,4)
 
 visualize_image_and_mask(image_path, mask_path, bands1, bands2, num)
 
