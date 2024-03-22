@@ -80,9 +80,10 @@ visualize_image_and_mask(image_path, mask_path, bands1, bands2, num)
 # 7,6,2 g <- 기본
 # 7,6,4 b
 # 7,6,5 g
+# 7,6,10 
 # 8,7,6 b
 # 10,5,4 
-# 10,7,2 
+# 10,7,2 b
 # 10,7,4 
 # 10,7,5 b
 # 10,7,6
