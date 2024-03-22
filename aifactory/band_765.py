@@ -217,14 +217,14 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'band5'
+save_name = 'band765'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 50 # 훈련 epoch 지정
+EPOCHS = 50 # 훈련 epoch 지정*
 BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'band5' # 모델 이름
+MODEL_NAME = 'band765' # 모델 이름
 RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -241,10 +241,10 @@ EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 1
-CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_band5.hdf5'.format(MODEL_NAME, save_name)
+CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_band765.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_band5.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_band765.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
@@ -286,7 +286,7 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 model = get_attention_unet()
-
+# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
 optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
@@ -296,11 +296,11 @@ model.compile(
 # model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience = 10 , restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='max', verbose=1, patience = 20 , restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
 save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience = 5 , verbose=1, mode='max')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='max')
 
 print('---model 훈련 시작---')
 history = model.fit(
@@ -309,7 +309,7 @@ history = model.fit(
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es, rlr],
-    epochs= 50 ,
+    epochs= 150 ,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
@@ -320,15 +320,15 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-# model.load_weights('c:/Study/aifactory/train_output/checkpoint-attention-attention_unet2-epoch_15_attention2.hdf5')
+# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
 
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.25, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.20, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
