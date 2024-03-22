@@ -23,19 +23,6 @@ seed_everything(42) # Seed 고정
 train = pd.read_csv('d:/data/income/train.csv')
 test = pd.read_csv('d:/data/income/test.csv')
 
-'''
-labels = train.columns.tolist()
-# print(labels)
-# ['ID', 'Age', 'Gender', 'Education_Status', 'Employment_Status', 
-# 'Working_Week (Yearly)', 'Industry_Status', 'Occupation_Status', 'Race', 'Hispanic_Origin', 
-# 'Martial_Status', 'Household_Status', 'Household_Summary', 'Citizenship', 'Birth_Country', 
-# 'Birth_Country (Father)', 'Birth_Country (Mother)', 'Tax_Status', 'Gains', 'Losses', 
-# 'Dividends', 'Income_Status', 'Income']
-
-# print(pd.value_counts(train['Tax_Status']))
-# print(np.unique(train['Race']))
-'''
-
 train_x = train.drop(columns=['ID', 'Income'])
 train_y = train['Income']
 test_x = test.drop(columns=['ID'])
@@ -78,16 +65,16 @@ def objective(trial):
         # 'boosting_type': 'gbdt',
         # 'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0),
         # 'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0),
-        'learning_rate' : trial.suggest_float('learning_rate', 0.0001, 0.1),
-        'max_depth' : trial.suggest_int('max_depth', 1, 100),
-        'subsample' : trial.suggest_float('subsample',0.2, 1.0),
-        'max_bin' : trial.suggest_int('max_bin', 1, 200),
+        'learning_rate' : trial.suggest_float('learning_rate', 0.0049, 0.0051),
+        'max_depth' : trial.suggest_int('max_depth', 1, 1000),
+        'subsample' : trial.suggest_float('subsample',0.5, 1.0),
+        'max_bin' : trial.suggest_int('max_bin', 2, 200),
         'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.5, 1.0),
-        'num_leaves': trial.suggest_int('num_leaves', 2, 256),
+        # 'num_leaves': trial.suggest_int('num_leaves', 2, 256),
         # 'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
-        'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
-        'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
-        'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
+        # 'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
+        # 'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
+        # 'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
     }
     
     rmses = []
@@ -102,19 +89,31 @@ def objective(trial):
         rmse = np.sqrt(mean_squared_error(y_valid_fold, preds))
         rmses.append(rmse)
     
-    # 평균 RMSE 반환
+    # 최소 RMSE 반환
     min_rmse = np.min(rmses)
     return min_rmse
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=100) # 100회의 시도로 최적화
+study.optimize(objective, n_trials=1000) # 100회의 시도로 최적화
 
-print("Number of finished trials: ", len(study.trials))
-print("Best trial:")
+print('Number of finished trials:', len(study.trials))
+print('Best trial:', study.best_trial.params)
+print(f'Best RMSE Score: {study.best_trial.value}')
+
 trial = study.best_trial
+best_params = study.best_trial.params
+
+best_model = LGBMRegressor(**best_params, seed=9)
+best_model.fit(train_x, train_y)
 
 optuna.visualization.plot_param_importances(study)      # 파라미터 중요도 확인 그래프
 optuna.visualization.plot_optimization_history(study)   # 최적화 과정 시각화
+
+bpred = best_model.predict(test_x)
+
+submission = pd.read_csv('d:/data/income/sample_submission.csv')
+submission['Income'] = bpred
+submission.to_csv('c:/Study/dacon/income/output/0322_opt.csv', index=False)
 
 print("  Value: ", trial.value)
 print("  Params: ")

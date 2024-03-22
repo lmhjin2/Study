@@ -21,15 +21,15 @@ def objective(trial):
     # 탐색할 하이퍼파라미터 지정
     params = {
         'n_estimators': trial.suggest_int('n_estimators', 100, 1000),
-        'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
-        'max_depth': trial.suggest_int('max_depth', 1, 32, log=True),
-        'min_samples_split': trial.suggest_int('min_samples_split', 2, 20),
-        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 20),
-        'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.5),
-        'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
-        'max_leaf_nodes': trial.suggest_int('max_leaf_nodes', 10, 1000, log=True),
-        'min_impurity_decrease': trial.suggest_float('min_impurity_decrease', 0.0, 0.5),
-        'bootstrap': trial.suggest_categorical('bootstrap', [True, False])
+        # 'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
+        'max_depth': trial.suggest_int('max_depth', 1, 1000),   # log=True
+        'min_samples_split': trial.suggest_int('min_samples_split', 2, 200),
+        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 2, 200),
+        # 'min_weight_fraction_leaf': [0.0],
+        # 'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
+        # 'max_leaf_nodes': trial.suggest_int('max_leaf_nodes', 10, 1000),    # log=True
+        # 'min_impurity_decrease': [0.0],
+        # 'bootstrap': True
     }
 
     # 모델 생성 및 훈련
@@ -46,7 +46,7 @@ def objective(trial):
     return auc_score
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=2000) # n_trials는 시도할 횟수
+study.optimize(objective, n_trials=500) # n_trials는 시도할 횟수
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
@@ -65,7 +65,7 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0321_opt.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0322_opt.csv', index=False)
 
 print(f"끝")
 

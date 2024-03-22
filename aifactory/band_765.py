@@ -290,8 +290,8 @@ model = get_attention_unet()
 optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
-              loss = sm.losses.binary_focal_dice_loss,
-            #   loss=sm.losses.bce_jaccard_loss, 
+            #   loss = sm.losses.binary_focal_dice_loss,
+              loss=sm.losses.bce_jaccard_loss, 
               metrics=['accuracy', sm.metrics.iou_score, miou])
 # model.summary()
 
