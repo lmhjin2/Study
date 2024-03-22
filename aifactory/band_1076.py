@@ -70,7 +70,7 @@ def get_img_arr(path):
     return img
 
 def get_img_762bands(path):
-    img = rasterio.open(path).read((10,7,5)).transpose((1, 2, 0))    
+    img = rasterio.open(path).read((10,7,6)).transpose((1, 2, 0))    
     img = np.float32(img)/MAX_PIXEL_VALUE
     
     return img
@@ -217,14 +217,14 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'band1075'
+save_name = 'band1076'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
 EPOCHS = 50 # 훈련 epoch 지정
 BATCH_SIZE = 32  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'band1075' # 모델 이름
+MODEL_NAME = 'band1076' # 모델 이름
 RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
@@ -241,10 +241,10 @@ EARLY_STOP_PATIENCE = 20
 
 # 중간 가중치 저장 이름
 CHECKPOINT_PERIOD = 1
-CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_band1075.hdf5'.format(MODEL_NAME, save_name)
+CHECKPOINT_MODEL_NAME = 'checkpoint-{}-{}-epoch_{{epoch:02d}}_band1076.hdf5'.format(MODEL_NAME, save_name)
  
 # 최종 가중치 저장 이름
-FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_band1075.h5'.format(MODEL_NAME, save_name)
+FINAL_WEIGHTS_OUTPUT = 'model_{}_{}_band1076.h5'.format(MODEL_NAME, save_name)
 
 # 사용할 GPU 이름
 CUDA_DEVICE = 0
