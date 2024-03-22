@@ -296,11 +296,11 @@ model.compile(
 # model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience = 10 , restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='max', verbose=1, patience = 20 , restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
-save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
+                             save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience = 5 , verbose=1, mode='max')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='max')
 
 print('---model 훈련 시작---')
 history = model.fit(
@@ -309,7 +309,7 @@ history = model.fit(
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es, rlr],
-    epochs= 50 ,
+    epochs= 150 ,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
@@ -328,7 +328,7 @@ for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.20, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.15, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
