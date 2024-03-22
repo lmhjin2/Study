@@ -34,9 +34,9 @@ import joblib
 import segmentation_models as sm
 import tensorflow_addons as tfa
 
-np.random.seed(0)       # 0
-random.seed(42)         # 42 
-tf.random.set_seed(7)   # 7
+np.random.seed(12922085)       # 0
+random.seed(22906815)         # 42 
+tf.random.set_seed(3727687611)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
 THESHOLDS = 0.25
@@ -296,11 +296,11 @@ model.compile(
 # model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='max', verbose=1, patience = 20 , restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience = 20 , restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
                              save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 # Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='max')
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='min')
 
 print('---model 훈련 시작---')
 history = model.fit(
