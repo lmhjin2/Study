@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # 밴드 조합 함수 정의
-def get_combined_image(image_path, bands):
+def get_combined_image1(image_path, bands1):
     # 이미지 데이터 로드
     with rasterio.open(image_path) as img:
-        img_data = img.read(bands)  # 선택한 밴드 읽기
+        img_data = img.read(bands1)  # 선택한 밴드 읽기
         
     # 밴드 데이터를 float32 타입으로 변환하고 정규화
     img_data = np.float32(img_data)
@@ -17,27 +17,44 @@ def get_combined_image(image_path, bands):
     
     return img_data
 
+def get_combined_image2(image_path, bands2):
+    with rasterio.open(image_path) as img:
+        img_data2 = img.read(bands2)
+    
+    img_data2 = np.float32(img_data2)
+    img_data2 /= img_data2.max()
+    
+    img_data2 = np.transpose(img_data2, (1, 2, 0))
+    
+    return img_data2
+
 # 메인 시각화 함수
-def visualize_image_and_mask(image_path, mask_path, bands, num):
+def visualize_image_and_mask(image_path, mask_path, bands1, bands2, num):
     # 조합된 이미지 생성
-    combined_image = get_combined_image(image_path.format(num=num), bands)
+    combined_image1 = get_combined_image1(image_path.format(num=num), bands1)
+    combined_image2 = get_combined_image2(image_path.format(num=num), bands2)
     
     # 마스크 데이터 로드
     with rasterio.open(mask_path.format(num=num)) as mask:
         mask_data = mask.read(1)  # 첫 번째 밴드만 읽기
         
-    # 시각화
-    fig, axs = plt.subplots(1, 2, figsize=(12, 6))
+    # 시각화 1
+    fig, axs = plt.subplots(1, 3, figsize=(18, 9))
     
     # 조합된 이미지 시각화
-    axs[0].imshow(combined_image)
-    axs[0].set_title('Combined Bands Image')
+    axs[0].imshow(combined_image1)
+    axs[0].set_title(f'{bands1} combined')
     axs[0].axis('off')
     
     # 마스크 시각화
     axs[1].imshow(mask_data, cmap='gray')
     axs[1].set_title('Mask')
     axs[1].axis('off')
+    
+    # 시각화 2
+    axs[2].imshow(combined_image2)
+    axs[2].set_title(f'{bands2} combined')
+    axs[2].axis('off')
     
     plt.tight_layout()
     plt.show()
@@ -46,6 +63,7 @@ def visualize_image_and_mask(image_path, mask_path, bands, num):
 num = 16  # 이미지 번호
 image_path = 'c:/Study/aifactory/dataset/train_img/train_img_{num}.tif'
 mask_path = 'c:/Study/aifactory/dataset/train_mask/train_mask_{num}.tif'
-bands = (3,2,1)  # 밴드 조합 예시
+bands1 = (3,2,1)  
+bands2 = (1,2,3)  
 
-visualize_image_and_mask(image_path, mask_path, bands, num)
+visualize_image_and_mask(image_path, mask_path, bands1, bands2, num)
