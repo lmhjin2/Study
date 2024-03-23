@@ -46,7 +46,7 @@ def objective(trial):
     return auc_score
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=500) # n_trials는 시도할 횟수
+study.optimize(objective, n_trials=100) # n_trials는 시도할 횟수
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
@@ -65,7 +65,7 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0322_opt.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0323_opt.csv', index=False)
 
 print(f"끝")
 
