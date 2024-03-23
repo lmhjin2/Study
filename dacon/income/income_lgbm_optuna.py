@@ -94,7 +94,7 @@ def objective(trial):
     return min_rmse
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=1000) # 100회의 시도로 최적화
+study.optimize(objective, n_trials=100) # 100회의 시도로 최적화
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
@@ -113,7 +113,7 @@ bpred = best_model.predict(test_x)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = bpred
-submission.to_csv('c:/Study/dacon/income/output/0322_opt.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0323_opt.csv', index=False)
 
 print("  Value: ", trial.value)
 print("  Params: ")
