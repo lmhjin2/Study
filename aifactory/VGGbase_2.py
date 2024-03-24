@@ -70,7 +70,7 @@ def get_img_arr(path):
     return img
 
 def get_img_762bands(path):
-    img = rasterio.open(path).read((7,6,5)).transpose((1, 2, 0))    
+    img = rasterio.open(path).read((7,6,1)).transpose((1, 2, 0))    
     img = np.float32(img)/MAX_PIXEL_VALUE
     
     return img
@@ -253,7 +253,7 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'band765'
+save_name = 'band761'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
@@ -363,7 +363,7 @@ for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.2, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.15, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
