@@ -23,7 +23,7 @@ import numpy as np
 import sys
 from sklearn.utils import shuffle as shuffle_lists
 from keras.models import Model
-from keras.layers import Input, Conv2D, BatchNormalization, Activation, UpSampling2D, Concatenate, DepthwiseConv2D, LayerNormalization
+from keras.layers import Input, Conv2D, BatchNormalization, Activation, UpSampling2D, Concatenate, DepthwiseConv2D
 from keras.applications import MobileNetV2
 from keras.models import *
 from keras.layers import *
@@ -70,7 +70,7 @@ def get_img_arr(path):
     return img
 
 def get_img_762bands(path):
-    img = rasterio.open(path).read((7,6,2)).transpose((1, 2, 0))    
+    img = rasterio.open(path).read((7,6,5)).transpose((1, 2, 0))    
     img = np.float32(img)/MAX_PIXEL_VALUE
     
     return img
@@ -130,16 +130,9 @@ def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True,
                 masks = []
 
 
-###################################################################
-def conv_block(input_tensor, num_filters):
-    encoder = Conv2D(num_filters, (3, 3), padding='same')(input_tensor)
-    encoder = BatchNormalization()(encoder)
-    encoder = Activation('relu')(encoder)
-    encoder = Conv2D(num_filters, (3, 3), padding='same')(encoder)
-    encoder = BatchNormalization()(encoder)
-    encoder = Activation('relu')(encoder)
-    return encoder
+################# 모델 ############################################
 
+#Default Conv2D
 def conv2d_block(input_tensor, n_filters, kernel_size = 3, batchnorm = True):
     # first layer
     x = Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal",
@@ -183,27 +176,10 @@ def attention_gate(F_g, F_l, inter_channel):
     # Apply the attention coefficients to the feature map from the skip connection
     return multiply([F_l, psi])
 
-
-def attention_block(input_tensor, num_filters):
-    att = Conv2D(num_filters, (1, 1), padding='same')(input_tensor)
-    att = BatchNormalization()(att)
-    att = Activation('relu')(att)
-    return att
-
-def up_block(input_tensor, concat_tensor, num_filters):
-    up = UpSampling2D((2, 2))(input_tensor)
-    up = Concatenate()([up, concat_tensor])
-    up = conv_block(up, num_filters)
-    return up
-
-
 from keras.applications import VGG16
-
 def get_pretrained_attention_unet(input_height=256, input_width=256, nClasses=1, n_filters=16, dropout=0.5, batchnorm=True, n_channels=3):
     base_model = VGG16(weights='imagenet', include_top=False, input_shape=(input_height, input_width, n_channels))
-    
-    # base_model.trainable = False
-    
+    base_model.trainable = False   # True / False
     # Define the inputs
     inputs = base_model.input
     
@@ -235,46 +211,9 @@ def get_pretrained_attention_unet(input_height=256, input_width=256, nClasses=1,
     model = Model(inputs=[inputs], outputs=[outputs])
     return model
 
-def get_attention_unet(input_height=256, input_width=256, n_channels=3, n_classes=1, num_filters=16):
-    inputs = Input((input_height, input_width, n_channels))
-
-    # Encoder
-    enc1 = conv_block(inputs, num_filters)
-    pool1 = MaxPooling2D(pool_size=(2, 2))(enc1)
-
-    enc2 = conv_block(pool1, num_filters*2)
-    pool2 = MaxPooling2D(pool_size=(2, 2))(enc2)
-
-    enc3 = conv_block(pool2, num_filters*4)
-    pool3 = MaxPooling2D(pool_size=(2, 2))(enc3)
-
-    enc4 = conv_block(pool3, num_filters*8)
-    pool4 = MaxPooling2D(pool_size=(2, 2))(enc4)
-
-    # Center
-    center = conv_block(pool4, num_filters*16)
-
-    # Decoder
-    att4 = attention_block(center, num_filters*8)
-    dec4 = up_block(att4, enc4, num_filters*8)
-
-    att3 = attention_block(dec4, num_filters*4)
-    dec3 = up_block(att3, enc3, num_filters*4)
-
-    att2 = attention_block(dec3, num_filters*2)
-    dec2 = up_block(att2, enc2, num_filters*2)
-
-    att1 = attention_block(dec2, num_filters)
-    dec1 = up_block(att1, enc1, num_filters)
-
-    outputs = Conv2D(n_classes, (1, 1), activation='sigmoid')(dec1)
-
-    model = Model(inputs=[inputs], outputs=[outputs])
-    return model
-
 def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filters = 16, dropout = 0.1, batchnorm = True, n_channels=10):
     
-    if model_name == 'attention':
+    if model_name == 'pretrained_attention_unet':
         model = get_pretrained_attention_unet
         
         
@@ -287,7 +226,6 @@ def get_model(model_name, nClasses=1, input_height=128, input_width=128, n_filte
             batchnorm     = batchnorm,
             n_channels    = n_channels
         )
-
 ###################################################################
 
 # 두 샘플 간의 유사성 metric
@@ -315,15 +253,15 @@ train_meta = pd.read_csv('c:/Study/aifactory/dataset/train_meta.csv')
 test_meta = pd.read_csv('c:/Study/aifactory/dataset/test_meta.csv')
 
 #  저장 이름
-save_name = 'VGG'
+save_name = 'band765'
 
 N_FILTERS = 16 # 필터수 지정
 N_CHANNELS = 3 # channel 지정
-EPOCHS = 50 # 훈련 epoch 지정
+EPOCHS = 50 # 훈련 epoch 지정*
 BATCH_SIZE = 16  # batch size 지정
 IMAGE_SIZE = (256, 256) # 이미지 크기 지정
-MODEL_NAME = 'attention' # 모델 이름
-RANDOM_STATE = 42 # seed 고정
+MODEL_NAME = 'pretrained_attention_unet' # 모델 이름
+RANDOM_STATE = 1013 # seed 고정
 INITIAL_EPOCH = 0 # 초기 epoch
 
 # 데이터 위치
@@ -383,29 +321,32 @@ masks_validation = [os.path.join(MASKS_PATH, mask) for mask in x_val['train_mask
 train_generator = generator_from_lists(images_train, masks_train, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
-# model = get_attention_unet()
-
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 
-optimizer = tfa.optimizers.AdamW(learning_rate=0.1, weight_decay=1e-4)
-model.compile(optimizer = optimizer,
-            #   loss = sm.losses.bce_jaccard_loss , 
-              loss = sm.losses.binary_focal_dice_loss  , 
-              metrics = ['acc', sm.metrics.iou_score, miou])
-# # model.summary()
-es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience=10, restore_best_weights=True)
+# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
+optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)  # 1e-4 = 0.0001
+model.compile(
+              optimizer=optimizer,
+            #   loss = sm.losses.binary_focal_dice_loss,
+              loss=sm.losses.bce_jaccard_loss, 
+              metrics=['accuracy', sm.metrics.iou_score, miou])
+# model.summary()
+
+# checkpoint 및 조기종료 설정
+es = EarlyStopping(monitor='val_loss', mode='max', verbose=1, patience = 20 , restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
                              save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
-rlr = ReduceLROnPlateau(monitor='val_iou_score', mode='max', patience=5, verbose=1, factor=0.1)
+# Reduce
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='max')
 
 print('---model 훈련 시작---')
-history = model.fit_generator(
+history = model.fit(
     train_generator,
     steps_per_epoch=len(images_train) // BATCH_SIZE,
     validation_data=validation_generator,
     validation_steps=len(images_validation) // BATCH_SIZE,
     callbacks=[checkpoint, es, rlr],
-    epochs=50,
+    epochs= 150 ,
     workers=WORKERS,
     initial_epoch=INITIAL_EPOCH
 )
@@ -416,15 +357,15 @@ model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
 model.save_weights(model_weights_output)
 print("저장된 가중치 명: {}".format(model_weights_output))
 
-# model.load_weights('c:/Study/aifactory/train_output/model_attention_attention_unet2_attention2.h5')
+# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
 
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
 
-    y_pred = np.where(y_pred[0, :, :, 0] > 0.25, 1, 0) # 임계값 처리
+    y_pred = np.where(y_pred[0, :, :, 0] > 0.15, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
     y_pred_dict[i] = y_pred
 
@@ -432,4 +373,3 @@ from datetime import datetime
 dt = datetime.now()
 joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
 print(f'끝. : train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl ')
-
