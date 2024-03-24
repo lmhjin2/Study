@@ -361,7 +361,7 @@ y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.15, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
