@@ -14,11 +14,11 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random
 
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
-    'n_estimators': [ 100, 110, 200, 300], 
+    'n_estimators': [110, 200, 300], 
     # 'criterion' : ['gini'],
     'max_depth': [None, 1 ],
-    'min_samples_split': [ 2, 17 ],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
-    'min_samples_leaf': [1,3,8],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
+    'min_samples_split': [ 2,8,17 ],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
+    'min_samples_leaf': [1,2,3,8],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
     'min_weight_fraction_leaf' : [0.0, 0.007657523859569021],     # 0.0 ~ 0.5 실수
     # 'max_features' : ['auto']               # https://dacon.io/competitions/official/236229/data
     # 'max_leaf_nodes' : [None],              # None 또는 양의 정수
@@ -52,7 +52,7 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0323.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0324.csv', index=False)
 
 # {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
 #  0.8049404576607657
