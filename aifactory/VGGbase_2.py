@@ -322,16 +322,43 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 model = get_model(MODEL_NAME, input_height=IMAGE_SIZE[0], input_width=IMAGE_SIZE[1], n_filters=N_FILTERS, n_channels=N_CHANNELS)
 
 # model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
-
 optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
             #   loss = sm.losses.binary_focal_dice_loss,
               loss=sm.losses.bce_jaccard_loss, 
               metrics=['accuracy', sm.metrics.iou_score, miou])
+# model.summary()
 
+# checkpoint 및 조기종료 설정
+es = EarlyStopping(monitor='val_loss', mode='max', verbose=1, patience = 20 , restore_best_weights=True)
+checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
+                             save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
+# Reduce
+rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='max')
+
+print('---model 훈련 시작---')
+history = model.fit(
+    train_generator,
+    steps_per_epoch=len(images_train) // BATCH_SIZE,
+    validation_data=validation_generator,
+    validation_steps=len(images_validation) // BATCH_SIZE,
+    callbacks=[checkpoint, es, rlr],
+    epochs= 150 ,
+    workers=WORKERS,
+    initial_epoch=INITIAL_EPOCH
+)
+print('---model 훈련 종료---')
+
+print('가중치 저장')
+model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
+model.save_weights(model_weights_output)
+print("저장된 가중치 명: {}".format(model_weights_output))
+
+# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
 
 y_pred_dict = {}
+
 for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
     y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
