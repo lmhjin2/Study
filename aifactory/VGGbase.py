@@ -290,7 +290,6 @@ CUDA_DEVICE = 0
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
 
-
 # GPU 설정
 os.environ["CUDA_VISIBLE_DEVICES"] = str(CUDA_DEVICE)
 try:
@@ -305,7 +304,6 @@ try:
     np.random.bit_generator = np.random._bit_generator
 except:
     pass
-
 
 # train : val = 8 : 2 나누기
 x_tr, x_val = train_test_split(train_meta, test_size=0.2, random_state=RANDOM_STATE)
