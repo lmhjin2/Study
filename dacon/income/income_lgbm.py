@@ -61,7 +61,7 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.00494999],  # 0.00495  / 0.00494992
+parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992 / 0.00494997
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [1],
