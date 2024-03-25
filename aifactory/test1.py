@@ -131,6 +131,9 @@ def generator_from_lists(images_path, masks_path, batch_size=32, shuffle = True,
 
 
 ###################################################################
+input1 = Input(shape=(256,256,3))
+
+
 model = Sequential()
 model.add(Conv2D(16, (1,1), padding='same', input_shape=(256,256,3)))
 model.add(Dropout(0.2))
@@ -251,7 +254,6 @@ masks_validation = [os.path.join(MASKS_PATH, mask) for mask in x_val['train_mask
 train_generator = generator_from_lists(images_train, masks_train, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
-model = get_attention_unet()
 # model.load_weights('c:/Study/aifactory/train_output/0.8928256.hdf5')
 # optimizer = Adam(learning_rate= )
 optimizer = Adam(learning_rate=1e-2)  # 1e-4 = 0.0001
