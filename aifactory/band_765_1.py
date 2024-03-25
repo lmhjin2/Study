@@ -287,7 +287,7 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 model = get_attention_unet()
 model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
-optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)  # 1e-4 = 0.0001
+optimizer = tfa.optimizers.AdamW(learning_rate=0.0001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
             #   loss = sm.losses.binary_focal_dice_loss,
