@@ -135,7 +135,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0321_ens.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0325_ens.csv', index=False)
 
 print('RMSE : ', rmse)
 

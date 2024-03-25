@@ -58,6 +58,10 @@ test_x = scaler.transform(test_x)
 
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
 
+print(x_train.shape, x_test.shape)
+print(y_train.shape, y_test.shape)
+# (16000, 21) (4000, 21)
+# (16000,) (4000,)
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
