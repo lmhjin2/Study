@@ -286,7 +286,7 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 model = get_attention_unet()
-model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
+# model.load_weights('c:/Study/aifactory/train_output/checkpoint-band765-band765-epoch_15_band765.hdf5')
 optimizer = tfa.optimizers.AdamW(learning_rate=0.00001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
@@ -319,7 +319,8 @@ rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience = 10 , verb
 # model.save_weights(model_weights_output)
 # print("저장된 가중치 명: {}".format(model_weights_output))
 
-model.load_weights('c:/Study/aifactory/train_output/checkpoint-band765-band765-epoch_01_band765.hdf5')
+model.load_weights('c:/Study/aifactory/train_output/checkpoint-band765-band765-epoch_15_band765.hdf5')
+
 
 y_pred_dict = {}
 
