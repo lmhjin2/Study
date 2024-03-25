@@ -287,7 +287,7 @@ validation_generator = generator_from_lists(images_validation, masks_validation,
 
 model = get_attention_unet()
 model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
-optimizer = tfa.optimizers.AdamW(learning_rate=1e-5, weight_decay=1e-4)  # 1e-4 = 0.0001
+optimizer = tfa.optimizers.AdamW(learning_rate=0.00001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
             #   loss = sm.losses.binary_focal_dice_loss,
@@ -301,31 +301,31 @@ checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), mo
                              save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
 rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience = 10 , verbose=1, mode='max')
 
-print('---model 훈련 시작---')
-history = model.fit(
-    train_generator,
-    steps_per_epoch=len(images_train) // BATCH_SIZE,
-    validation_data=validation_generator,
-    validation_steps=len(images_validation) // BATCH_SIZE,
-    callbacks=[checkpoint, es, rlr],
-    epochs= 150 ,
-    workers=WORKERS,
-    initial_epoch=INITIAL_EPOCH
-)
-print('---model 훈련 종료---')
+# print('---model 훈련 시작---')
+# history = model.fit(
+#     train_generator,
+#     steps_per_epoch=len(images_train) // BATCH_SIZE,
+#     validation_data=validation_generator,
+#     validation_steps=len(images_validation) // BATCH_SIZE,
+#     callbacks=[checkpoint, es, rlr],
+#     epochs= 150 ,
+#     workers=WORKERS,
+#     initial_epoch=INITIAL_EPOCH
+# )
+# print('---model 훈련 종료---')
 
-print('가중치 저장')
-model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
-model.save_weights(model_weights_output)
-print("저장된 가중치 명: {}".format(model_weights_output))
+# print('가중치 저장')
+# model_weights_output = os.path.join(OUTPUT_DIR, FINAL_WEIGHTS_OUTPUT)
+# model.save_weights(model_weights_output)
+# print("저장된 가중치 명: {}".format(model_weights_output))
 
-# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
+model.load_weights('c:/Study/aifactory/train_output/checkpoint-band765-band765-epoch_01_band765.hdf5')
 
 y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.15, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
