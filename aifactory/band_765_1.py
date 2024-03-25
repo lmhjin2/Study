@@ -286,8 +286,9 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 model = get_attention_unet()
-model.load_weights('c:/Study/aifactory/train_output/0.8928256.hdf5')
-optimizer = tfa.optimizers.AdamW(learning_rate=1e-5, weight_decay=1e-4)  # 1e-4 = 0.0001
+# model.load_weights('c:/Study/aifactory/train_output/0.8928256.hdf5')
+# optimizer = Adam(learning_rate= )
+optimizer = Adam(learning_rate=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
             #   loss = sm.losses.binary_focal_dice_loss,
