@@ -286,8 +286,8 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 model = get_attention_unet()
-model.load_weights('c:/Study/aifactory/train_output/0.928256.hdf5')
-optimizer = tfa.optimizers.AdamW(learning_rate=1e-6, weight_decay=1e-4)  # 1e-4 = 0.0001
+model.load_weights('c:/Study/aifactory/train_output/0.8928256.hdf5')
+optimizer = tfa.optimizers.AdamW(learning_rate=1e-5, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
             #   loss = sm.losses.binary_focal_dice_loss,
@@ -335,3 +335,4 @@ from datetime import datetime
 dt = datetime.now()
 joblib.dump(y_pred_dict, f'c:/Study/aifactory/train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl')
 print(f'끝. : train_output/y_pred_{dt.day}_{dt.hour}_{dt.minute}.pkl ')
+# 0.88235
