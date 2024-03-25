@@ -2,7 +2,7 @@ import numpy as np
 import random
 import os
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
+from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler, MaxAbsScaler, MinMaxScaler
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import mean_squared_error
@@ -43,16 +43,29 @@ for i in encoding_target:
     
     test_x[i] = le.transform(test_x[i])
 
+# from sklearn.preprocessing import RobustScaler, StandardScaler, MaxAbsScaler, MinMaxScaler
+
+
 scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
+# StandardScaler :  587.0828680513683
+# RobustScaler : 587.2863704501035
+# MinMaxScaler : 587.2878146692937
+# MaxAbsScaler : 587.2878146692937
+
+
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
 
+# print(x_train.shape, x_test.shape)
+# print(y_train.shape, y_test.shape)
+# (16000, 21) (4000, 21)
+# (16000,) (4000,)
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
+kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992
+parameters = [{'learning_rate' : [0.00494995],  # 0.00494995
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [1],
