@@ -39,7 +39,7 @@ random.seed(22906815)         # 42
 tf.random.set_seed(3727687611)   # 7
 
 MAX_PIXEL_VALUE = 65535 # 이미지 정규화를 위한 픽셀 최대값
-THESHOLDS = 0.25
+THESHOLDS = 0.15
 
 class threadsafe_iter:
     """
@@ -286,7 +286,7 @@ train_generator = generator_from_lists(images_train, masks_train, batch_size=BAT
 validation_generator = generator_from_lists(images_validation, masks_validation, batch_size=BATCH_SIZE, random_state=RANDOM_STATE, image_mode="762")
 
 model = get_attention_unet()
-# model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
+model.load_weights('c:/Study/aifactory/train_output/0.8889375_band765.h5')
 optimizer = tfa.optimizers.AdamW(learning_rate=0.001, weight_decay=1e-4)  # 1e-4 = 0.0001
 model.compile(
               optimizer=optimizer,
@@ -296,11 +296,10 @@ model.compile(
 # model.summary()
 
 # checkpoint 및 조기종료 설정
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience = 20 , restore_best_weights=True)
+es = EarlyStopping(monitor='val_iou_score', mode='max', verbose=1, patience = 20 , restore_best_weights=True)
 checkpoint = ModelCheckpoint(os.path.join(OUTPUT_DIR, CHECKPOINT_MODEL_NAME), monitor='val_iou_score', verbose=1,
                              save_best_only=True, mode='max', period=CHECKPOINT_PERIOD)
-# Reduce
-rlr = ReduceLROnPlateau(monitor='val_loss',factor=0.5, patience = 10 , verbose=1, mode='min')
+rlr = ReduceLROnPlateau(monitor='val_iou_score',factor=0.5, patience = 10 , verbose=1, mode='max')
 
 print('---model 훈련 시작---')
 history = model.fit(
@@ -326,7 +325,7 @@ y_pred_dict = {}
 
 for i in test_meta['test_img']:
     img = get_img_762bands(f'c:/Study/aifactory/dataset/test_img/{i}')
-    y_pred = model.predict(np.array([img]), batch_size=1, verbose=1)
+    y_pred = model.predict(np.array([img]), batch_size=1, verbose=0)
 
     y_pred = np.where(y_pred[0, :, :, 0] > 0.15, 1, 0) # 임계값 처리
     y_pred = y_pred.astype(np.uint8)
