@@ -65,7 +65,7 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.00494995],  # 0.00494995
+parameters = [{'learning_rate' : [0.004949951, 0.0049499512, 0.0049499511],  # 0.00494995
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [1],
@@ -74,7 +74,7 @@ parameters = [{'learning_rate' : [0.00494995],  # 0.00494995
                'seed' : [9]
                }]
 # best_rmse :  587.0828680513683
-
+# best_rmse :  587.0828792521608
 #2
 model = GridSearchCV(LGBMRegressor(n_estimators = 1000 , 
                     #   learning_rate = 0.00495 , 
@@ -109,7 +109,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0325_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0326_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
