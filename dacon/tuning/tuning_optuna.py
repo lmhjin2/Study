@@ -20,8 +20,8 @@ def objective(trial):
         'max_depth': trial.suggest_int('max_depth', 1, 100),   # log=True
         'min_samples_split': trial.suggest_int('min_samples_split', 2, 200),
         'min_samples_leaf': trial.suggest_int('min_samples_leaf', 2, 200),
-        'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.2),
-        'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
+        # 'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.2),
+        # 'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
         'max_leaf_nodes': trial.suggest_int('max_leaf_nodes', 2, 1000),    # log=True
         # 'min_impurity_decrease': [0.0],
         # 'bootstrap': True
