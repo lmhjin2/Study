@@ -10,24 +10,19 @@ data = pd.read_csv('d:/data/tuning/train.csv')
 # person_id 컬럼 제거
 X = data.drop(['person_id', 'login'], axis=1)
 y = data['login']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 def objective(trial):
-    # 데이터 로드 및 준비
-    data = pd.read_csv('d:/data/tuning/train.csv')
-    X = data.drop(['person_id', 'login'], axis=1)
-    y = data['login']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
     # 탐색할 하이퍼파라미터 지정
     params = {
-        'n_estimators': trial.suggest_int('n_estimators', 100, 1000, log=True),
+        'n_estimators': trial.suggest_int('n_estimators', 100, 1000),
         'criterion': trial.suggest_categorical('criterion', ['gini', 'entropy']),
-        'max_depth': trial.suggest_int('max_depth', 1, 100, log=True),   # log=True
-        'min_samples_split': trial.suggest_int('min_samples_split', 2, 200, log=True),
-        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 2, 200, log=True),
+        'max_depth': trial.suggest_int('max_depth', 1, 100),   # log=True
+        'min_samples_split': trial.suggest_int('min_samples_split', 2, 200),
+        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 2, 200),
         'min_weight_fraction_leaf': trial.suggest_float('min_weight_fraction_leaf', 0.0, 0.2),
         'max_features': trial.suggest_categorical('max_features', [None, 'sqrt', 'log2']),
-        'max_leaf_nodes': trial.suggest_int('max_leaf_nodes', 2, 1000, log=True),    # log=True
+        'max_leaf_nodes': trial.suggest_int('max_leaf_nodes', 2, 1000),    # log=True
         # 'min_impurity_decrease': [0.0],
         # 'bootstrap': True
     }
@@ -68,8 +63,6 @@ for param, value in best_params.items():
 submit.to_csv('c:/Study/dacon/tuning/output/0326_opt.csv', index=False)
 
 print(f"끝")
-
-
 
 
 # {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
