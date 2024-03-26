@@ -12,19 +12,21 @@ b = tf.Variable(tf.random_normal([1]), dtype=tf.float32)
 
 sess = tf.compat.v1.Session()
 sess.run(tf.global_variables_initializer())
-print(sess.run(w), sess.run(b))
+# print(sess.run(w), sess.run(b))
 
+X = tf.compat.v1.placeholder(tf.float32)
+Y = tf.compat.v1.placeholder(tf.float32)
 
 #2. model
-hypothesis = x * w + b
+hypothesis = X * w + b
 # ★ y = xw + b ★
 
-
 #3-1 compile
-loss = tf.reduce_mean(tf.square(hypothesis - y)) # mse
+loss = tf.reduce_mean(tf.square(hypothesis - Y)) # mse
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train = optimizer.minimize(loss)
 # model.compile(loss='mse', optimizer='sgd') stochastic gradient descent
+
 
 #3-2 train
 # sess = tf.compat.v1.Session()
@@ -34,10 +36,9 @@ with tf.compat.v1.Session() as sess:
     # model.fit
     epochs = 3001
     for step in range(epochs):
-        sess.run(train)
-        if step % 20 == 0:  # verbose
+        _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={X: x, Y: y})
+        if step % 20 == 0 or step == epochs-1 :  
             print(step, sess.run(loss), sess.run(w), sess.run(b))
         
     # sess.close()
 # 이렇게 하면 sess.close()를 안해도 알아서 닫힘.
-
