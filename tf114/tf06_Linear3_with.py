@@ -19,15 +19,18 @@ train = optimizer.minimize(loss)
 # model.compile(loss='mse', optimizer='sgd') stochastic gradient descent
 
 #3-2 train
-sess = tf.compat.v1.Session()
+# sess = tf.compat.v1.Session()
+with tf.compat.v1.Session() as sess:
+    sess.run(tf.global_variables_initializer())
 
-sess.run(tf.global_variables_initializer())
+    # model.fit
+    epochs = 3000
+    for step in range(epochs):
+        sess.run(train)
+        if step % 20 == 0:  # verbose
+            print(step, sess.run(loss), sess.run(w), sess.run(b))
+        
+    # sess.close()
+# 이렇게 하면 sess.close()를 안해도 알아서 닫힘.
 
-# model.fit
-epochs = 3000
-for step in range(epochs):
-    sess.run(train)
-    if step % 20 == 0:  # verbose
-        print(step, sess.run(loss), sess.run(w), sess.run(b))
-    
-sess.close()
+
