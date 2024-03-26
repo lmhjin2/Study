@@ -1,3 +1,7 @@
+# 실습
+# lr 수정해서 데ㅐ촌 101번 줄여서
+# step = 100이하, w = 1.99, b=0.99
+
 import tensorflow as tf
 tf.set_random_seed(777)
 
@@ -22,23 +26,28 @@ hypothesis = x * w + b
 
 #3-1 compile
 loss = tf.reduce_mean(tf.square(hypothesis - y)) # mse
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.08235)
 train = optimizer.minimize(loss)
 # model.compile(loss='mse', optimizer='sgd') stochastic gradient descent
 
-
+# 100 0.0011131145 [2.0119038] [0.9912439]  0.0825
+# 100 0.00068634364 [2.0099583] [0.9906625] 0.0824
+# 100 0.0004264488 [2.0084443] [0.99020076] 0.0823
 #3-2 train
 # sess = tf.compat.v1.Session()
 with tf.compat.v1.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     # model.fit
-    epochs = 3001
+    epochs = 101
     for step in range(epochs):
         # sess.run(train)
         _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={x:x_data, y:y_data})
         if step % 20 == 0 or step == epochs-1 :  
             print(step, loss_val, w_val, b_val)
         
-    # sess.close()
-# 이렇게 하면 sess.close()를 안해도 알아서 닫힘.
+
+
+
+
+
