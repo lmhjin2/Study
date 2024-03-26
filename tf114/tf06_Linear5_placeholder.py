@@ -2,8 +2,10 @@ import tensorflow as tf
 tf.set_random_seed(777)
 
 #1. data
-x = [1,2,3,4,5]
-y = [3,5,7,9,11]
+# x = [1,2,3,4,5]
+# y = [3,5,7,9,11]
+x = tf.placeholder(tf.float32, shape=[None])
+y = tf.placeholder(tf.float32, shape=[None])
 
 # w = tf.Variable(111, dtype=tf.float32)
 # b = tf.Variable(0, dtype=tf.float32)
@@ -14,15 +16,12 @@ sess = tf.compat.v1.Session()
 sess.run(tf.global_variables_initializer())
 # print(sess.run(w), sess.run(b))
 
-X = tf.compat.v1.placeholder(tf.float32)
-Y = tf.compat.v1.placeholder(tf.float32)
-
 #2. model
-hypothesis = X * w + b
+hypothesis = x * w + b
 # ★ y = xw + b ★
 
 #3-1 compile
-loss = tf.reduce_mean(tf.square(hypothesis - Y)) # mse
+loss = tf.reduce_mean(tf.square(hypothesis - y)) # mse
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train = optimizer.minimize(loss)
 # model.compile(loss='mse', optimizer='sgd') stochastic gradient descent
@@ -36,9 +35,10 @@ with tf.compat.v1.Session() as sess:
     # model.fit
     epochs = 3001
     for step in range(epochs):
-        _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={X: x, Y: y})
+        # sess.run(train)
+        _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={x:[1,2,3,4,5], y:[3,5,7,9,11]})
         if step % 20 == 0 or step == epochs-1 :  
-            print(step, sess.run(loss), sess.run(w), sess.run(b))
+            print(step, loss_val, w_val, b_val)
         
     # sess.close()
 # 이렇게 하면 sess.close()를 안해도 알아서 닫힘.
