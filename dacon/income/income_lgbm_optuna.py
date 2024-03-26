@@ -65,13 +65,13 @@ def objective(trial):
         # 'boosting_type': 'gbdt',
         # 'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0),
         # 'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0), 
-        'learning_rate' : trial.suggest_float('learning_rate', 0.0049, 0.0051), # 5e-3
-        'learning_rate' : trial.suggest_float('learning_rate', 1e-8, 1e-2), # 5e-3
-        'max_depth' : trial.suggest_int('max_depth', 1, 100),
+        # 'learning_rate' : trial.suggest_float('learning_rate', 0.0049, 0.0051), # 5e-3
+        'learning_rate' : trial.suggest_float('learning_rate', 1e-4, 1e-1), # 5e-3
+        'max_depth' : trial.suggest_int('max_depth', 1, 50),
         'subsample' : trial.suggest_float('subsample',0.7, 1.0),
-        'max_bin' : trial.suggest_int('max_bin', 2, 200),
+        'max_bin' : trial.suggest_int('max_bin', 200, 300),
         'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.5, 1.0),
-        'num_leaves': trial.suggest_int('num_leaves', 2, 256),
+        'num_leaves': trial.suggest_int('num_leaves', 31, 128),
         # 'feature_fraction': trial.suggest_float('feature_fraction', 0.4, 1.0),
         # 'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
         # 'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
