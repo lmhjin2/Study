@@ -55,19 +55,20 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 def objective(trial):
     # StratifiedKFold 설정
     n_splits = 5
-    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+    kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
     
     # 하이퍼파라미터 제안
     param = {
-        # 'objective': 'binary',
-        # 'metric': 'binary_logloss',
+        'objective': 'binary',
+        'metric': 'rmse',
         # 'verbosity': -1,
         # 'boosting_type': 'gbdt',
         # 'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0),
-        # 'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0),
-        'learning_rate' : trial.suggest_float('learning_rate', 0.0049, 0.0051),
+        # 'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0), 
+        'learning_rate' : trial.suggest_float('learning_rate', 0.0049, 0.0051), # 5e-3
+        'learning_rate' : trial.suggest_float('learning_rate', 1e-8, 1e-2), # 5e-3
         'max_depth' : trial.suggest_int('max_depth', 1, 100),
-        'subsample' : trial.suggest_float('subsample',0.5, 1.0),
+        'subsample' : trial.suggest_float('subsample',0.7, 1.0),
         'max_bin' : trial.suggest_int('max_bin', 2, 200),
         'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.5, 1.0),
         'num_leaves': trial.suggest_int('num_leaves', 2, 256),
@@ -78,7 +79,7 @@ def objective(trial):
     }
     
     rmses = []
-    for train_idx, valid_idx in skf.split(train_x, train_y):
+    for train_idx, valid_idx in kfold.split(train_x, train_y):
         x_train_fold, x_valid_fold = train_x[train_idx], train_x[valid_idx]
         y_train_fold, y_valid_fold = train_y[train_idx], train_y[valid_idx]
         
@@ -94,7 +95,7 @@ def objective(trial):
     return min_rmse
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=100) # 100회의 시도로 최적화
+study.optimize(objective, n_trials=3000) # 100회의 시도로 최적화
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
@@ -113,7 +114,7 @@ bpred = best_model.predict(test_x)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = bpred
-submission.to_csv('c:/Study/dacon/income/output/0323_opt.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0326_opt.csv', index=False)
 
 print("  Value: ", trial.value)
 print("  Params: ")
