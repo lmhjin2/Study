@@ -65,12 +65,12 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.004949951, 0.0049499512, 0.0049499511],  # 0.00494995
+parameters = [{'learning_rate' : [0.004949951, 0.0049499512, 0.0049499511, 0.00494995105], 
                'max_depth' : [None],
             #    'gamma' : [1],
-               'subsample' : [0.18, 0.2, 0.22],
-               'max_bin' : [100,120,None],
-               'colsample_bytree' : [0.48, 0.5, 0.52],
+               'subsample' : [0.18, 0.17, 0.19],
+               'max_bin' : [None],
+               'colsample_bytree' : [0.48, 0.47, 0.49],
                'seed' : [9]
                }]
 # best_rmse :  587.0828680513683
