@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, RobustScaler, StandardScaler
 from xgboost import XGBRegressor
-from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV
+from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cross_val_score, GridSearchCV, RepeatedKFold, RepeatedStratifiedKFold
 from sklearn.metrics import mean_squared_error
 
 #1
@@ -59,14 +59,16 @@ test_x = scaler.transform(test_x)
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
 
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
-
+kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
+# best_rmse :  588.3828076855463
 parameters = [{'learning_rate' : [0.00494997],  # 0.00495  / 0.00494992
-               'max_depth' : [None],
-               'gamma' : [1],
-               'subsample' : [1],
-               'max_bin' : [100],
-               'colsample_bytree' : [0.5],
+               'max_depth' : [None], 
+               'gamma' : [0.5], 
+               'min_child_weight' : [1], 
+               'subsample' : [0.99], 
+               'colsample_bytree' : [0.49],
+               'lambda' : [0.999], 
+               'alpha' : [0.9,0.99,0.999], 
                'seed' : [9]
                
                }]
@@ -102,11 +104,17 @@ best_rmse = np.sqrt(best_mse)
 preds = model.predict(test_x)
 best_pred = model.best_estimator_.predict(test_x)
 
+# 절대값
+preds = np.abs(preds)
+
+# # 음수 -> 0
+# preds = np.where(preds<0, 0, preds)
+
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0320_xgb.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0327_xgb.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
