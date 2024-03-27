@@ -60,7 +60,7 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0326_opt.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0327_opt.csv', index=False)
 
 print(f"끝")
 
