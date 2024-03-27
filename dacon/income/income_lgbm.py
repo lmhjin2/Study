@@ -68,9 +68,9 @@ kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 parameters = [{'learning_rate' : [0.004949951, 0.0049499512, 0.0049499511],  # 0.00494995
                'max_depth' : [None],
             #    'gamma' : [1],
-               'subsample' : [1],
-               'max_bin' : [100],
-               'colsample_bytree' : [0.5],
+               'subsample' : [0.5, 0.7, 1],
+               'max_bin' : [32,64,96,100],
+               'colsample_bytree' : [0.3, 0.5, 0.7],
                'seed' : [9]
                }]
 # best_rmse :  587.0828680513683
@@ -109,7 +109,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0326_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0327_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
