@@ -65,12 +65,12 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.004949951, 0.0049499512, 0.0049499511, 0.00494995105], 
+parameters = [{'learning_rate' : [0.0049499512, 0.0049499511, 0.00494995110], 
                'max_depth' : [None],
             #    'gamma' : [1],
-               'subsample' : [0.18, 0.17, 0.19],
+               'subsample' : [0.18],
                'max_bin' : [None],
-               'colsample_bytree' : [0.48, 0.47, 0.49],
+               'colsample_bytree' : [0.48],
                'seed' : [9]
                }]
 # best_rmse :  587.0828680513683
@@ -104,6 +104,12 @@ best_rmse = np.sqrt(best_mse)
 # submission
 preds = model.predict(test_x)
 best_pred = model.best_estimator_.predict(test_x)
+
+# 절대값
+preds = np.abs(preds)
+
+# # 음수 -> 0
+# preds = np.where(preds<0, 0, preds)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
