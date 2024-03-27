@@ -68,9 +68,9 @@ kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 parameters = [{'learning_rate' : [0.004949951, 0.0049499512, 0.0049499511],  # 0.00494995
                'max_depth' : [None],
             #    'gamma' : [1],
-               'subsample' : [0.5, 0.7, 1],
-               'max_bin' : [32,64,96,100],
-               'colsample_bytree' : [0.3, 0.5, 0.7],
+               'subsample' : [0.18, 0.2, 0.22],
+               'max_bin' : [100,120,None],
+               'colsample_bytree' : [0.48, 0.5, 0.52],
                'seed' : [9]
                }]
 # best_rmse :  587.0828680513683
