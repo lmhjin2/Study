@@ -1,9 +1,5 @@
-# 실습
-# lr 수정해서 데ㅐ촌 101번 줄여서
-# step = 100이하, w = 1.99, b=0.99
-
 import tensorflow as tf
-tf.set_random_seed(777)
+tf.compat.v1.set_random_seed(777)
 
 #1. data
 x_data = [1,2,3,4,5]
