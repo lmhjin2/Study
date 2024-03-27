@@ -41,7 +41,7 @@ def objective(trial):
     return auc_score
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=3000) # n_trials는 시도할 횟수
+study.optimize(objective, n_trials=1000) # n_trials는 시도할 횟수
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
