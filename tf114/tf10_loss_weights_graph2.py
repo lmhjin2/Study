@@ -14,8 +14,6 @@ w_values = [-30,-15,-1,0,1,15,30,50]
 x_data = [1,2]
 y_data = [1,2]
 
-
-
 w_history = []
 loss_history=[]
 
@@ -31,10 +29,8 @@ print(w_history)
 print("="*50, 'L history', "="*50)
 print(loss_history)
 
-plt.scatter(w_history, loss_history)
+plt.plot(w_history, loss_history)
 plt.xlabel('Weights')
 plt.ylabel('Loss')
 plt.show()
-
-
 
