@@ -105,11 +105,11 @@ best_rmse = np.sqrt(best_mse)
 preds = model.predict(test_x)
 best_pred = model.best_estimator_.predict(test_x)
 
-# 절대값
-preds = np.abs(preds)
+# # 절대값
+# preds = np.abs(preds)
 
-# # 음수 -> 0
-# preds = np.where(preds<0, 0, preds)
+# 음수 -> 0
+preds = np.where(preds<0, 0, preds)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
