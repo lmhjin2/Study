@@ -20,15 +20,16 @@ b = tf.compat.v1.Variable(tf.compat.v1.random_normal([1], dtype=tf.float32))
 #2 model
 hypothesis = tf.matmul(x,w) + b
 
-#3 
+#3-1 compile
 loss = tf.reduce_mean(tf.square(hypothesis - y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=8e-5)
 train = optimizer.minimize(loss)
 
+#3-2 train
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-epochs = 1001
+epochs = 2001
 for step in range(epochs):
     _, loss_val = sess.run([train, loss], feed_dict={x:x_data, y:y_data})
     if step % 100 == 0: # step 을 100으로 나눴을때 나머지가 0이라면
