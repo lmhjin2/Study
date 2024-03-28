@@ -65,7 +65,7 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
-parameters = [{'learning_rate' : [0.0049499512, 0.0049499511, 0.00494995110], 
+parameters = [{'learning_rate' : [0.0049499511], 
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [0.18],
@@ -115,7 +115,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0327_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0328_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
