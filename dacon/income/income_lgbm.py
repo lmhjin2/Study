@@ -60,7 +60,7 @@ n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
 parameters = [{'learning_rate' : [0.0049499511], 
-               'n_estimators' : [900,895,890],
+               'n_estimators' : [890],
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [0.18],
