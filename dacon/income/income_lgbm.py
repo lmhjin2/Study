@@ -46,15 +46,9 @@ for i in encoding_target:
 # from sklearn.preprocessing import RobustScaler, StandardScaler, MaxAbsScaler, MinMaxScaler
 
 
-scaler = StandardScaler()
+scaler = RobustScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
-
-# StandardScaler :  587.0828680513683
-# RobustScaler : 587.2863704501035
-# MinMaxScaler : 587.2878146692937
-# MaxAbsScaler : 587.2878146692937
-
 
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
 
@@ -66,6 +60,7 @@ n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
 parameters = [{'learning_rate' : [0.0049499511], 
+               'n_estimators' : [900,895,890],
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [0.18],
@@ -76,10 +71,11 @@ parameters = [{'learning_rate' : [0.0049499511],
 # best_rmse :  587.0828680513683
 # best_rmse :  587.0828792521608
 #2
-model = GridSearchCV(LGBMRegressor(n_estimators = 1000 , 
+model = GridSearchCV(LGBMRegressor(
+                    #   n_estimators = 1000 , 
                     #   learning_rate = 0.00495 , 
                     #   max_depth = None ,
-                    # #   min_child_weight= 35.723980094661194 ,
+                    #   min_child_weight= 35.723980094661194 ,
                     #   gamma = 1 ,  
                     #   subsample = 1 ,
                     #   max_bin = 100 ,
@@ -115,7 +111,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0328_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0329_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
