@@ -40,10 +40,13 @@ y = tf.compat.v1.placeholder(tf.float32, shape=[None,1])
 w = tf.compat.v1.Variable(tf.compat.v1.random_normal([2,1], dtype=tf.float32))
 b = tf.compat.v1.Variable(tf.compat.v1.zeros([1], dtype=tf.float32))
 #2. model
-hypothesis = tf.compat.v1.matmul(x,w) + b
+hypothesis = tf.compat.v1.sigmoid(tf.compat.v1.matmul(x,w) + b)
 
 #3-1. compile
-loss = tf.reduce_mean(tf.compat.v1.square(hypothesis-y))
+# loss = tf.reduce_mean(tf.compat.v1.square(hypothesis-y))
+
+loss = -tf.reduce_mean(y*tf.log(hypothesis) + (1-y)*tf.log(1-hypothesis))
+#                   y의 실제값이 1인거 계산 // 실제값 0인거 계산.  ## 나머지는 죽음
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
 train = optimizer.minimize(loss)
 
@@ -51,17 +54,19 @@ train = optimizer.minimize(loss)
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-epochs = 3001
+epochs = 30001
 for step in range(epochs):
     loss_val, _, w_val, b_val = sess.run([loss, train, w, b],
                                          feed_dict={x:x_data, y:y_data})
-    if step % 100 == 0:
+    if step % 300 == 0:
         print(step, "loss : ", loss_val)
 
-print(w_val, b_val)
+# print(w_val, b_val)
 # print(type(w_val))  # <class 'numpy.ndarray'>
 ## sess.run 을 통과해서 나온 값은 모두 'numpy' 형태다
 
+
+'''
 #4 평가 예측. evaluate predict
 x_test = tf.compat.v1.placeholder(tf.float32, shape = [None,2])
 
@@ -78,5 +83,6 @@ print("MSE : ", mse)
 
 sess.close()
 
-# R2 :  -4.7032060739352275
-# MSE :  1.4258015184838069
+# R2 :  -63.59553736271759
+# MSE :  16.1488843406794
+'''
