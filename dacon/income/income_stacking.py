@@ -57,44 +57,45 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
 #2
 lgbm = LGBMRegressor(n_estimators = 1000 , 
-                     learning_rate = 0.00494997 , 
+                     learning_rate = 0.0049499511 , 
                      max_depth = None ,
-                     subsample = 1 ,
-                     max_bin = 100 ,
-                     colsample_bytree= 0.5 ,
+                     subsample = 0.18 ,
+                     max_bin = None ,
+                     colsample_bytree= 0.48 ,
                      seed=9)
 
 lgbm1 = LGBMRegressor(n_estimators = 1000 , 
-                     learning_rate = 0.00494997 , 
+                     learning_rate = 0.0049499511 , 
                      max_depth = None ,
-                     subsample = 1 ,
-                     max_bin = 100 ,
-                     colsample_bytree= 0.5 ,
+                     subsample = 0.18 ,
+                     max_bin = None ,
+                     colsample_bytree= 0.48 ,
                      seed=9)
 
 lgbm2 = LGBMRegressor(n_estimators = 1000 , 
-                     learning_rate = 0.00494997 , 
+                     learning_rate = 0.0049499511 , 
                      max_depth = None ,
-                     subsample = 1 ,
-                     max_bin = 100 ,
-                     colsample_bytree= 0.5 ,
+                     subsample = 0.18 ,
+                     max_bin = None ,
+                     colsample_bytree= 0.48 ,
                      seed=9)
 
 lgbm3 = LGBMRegressor(n_estimators = 1000 , 
-                     learning_rate = 0.00494997 , 
+                     learning_rate = 0.0049499511 , 
                      max_depth = None ,
-                     subsample = 1 ,
-                     max_bin = 100 ,
-                     colsample_bytree= 0.5 ,
+                     subsample = 0.18 ,
+                     max_bin = None ,
+                     colsample_bytree= 0.48 ,
                      seed=9)
 
 xgb = XGBRegressor(n_estimators=1000,
                    learning_rate=0.00494997,
                    max_depth = None,
-                   gamma = 1,
-                   subsample = 1,
-                   max_bin = 100,
-                   colsample_bytree = 0.5,
+                   gamma = 0.5,
+                   min_child_weight = 1,
+                   subsample = 0.99,
+                   colsample_bytree = 0.49,
+                   alpha = 0.99,                   
                    seed=9
                    )
 
@@ -135,7 +136,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0325_ens.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0329_ens.csv', index=False)
 
 print('RMSE : ', rmse)
 

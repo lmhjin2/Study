@@ -46,7 +46,7 @@ for i in encoding_target:
 # from sklearn.preprocessing import RobustScaler, StandardScaler, MaxAbsScaler, MinMaxScaler
 
 
-scaler = RobustScaler()
+scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
