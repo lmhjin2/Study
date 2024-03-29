@@ -46,15 +46,17 @@ hypothesis = tf.compat.v1.sigmoid(tf.compat.v1.matmul(x,w) + b)
 # loss = tf.reduce_mean(tf.compat.v1.square(hypothesis-y))
 
 loss = -tf.reduce_mean(y*tf.log(hypothesis) + (1-y)*tf.log(1-hypothesis))
-#                   y의 실제값이 1인거 계산 // 실제값 0인거 계산.  ## 나머지는 죽음
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+#                   y의 실제값이 1인거 계산 // 실제값 0인거 계산.  
+#                      실제값이 0이면 죽음  // 실제값이 1이면 죽음.
+
+optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-2)
 train = optimizer.minimize(loss)
 
 #3-2 train
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-epochs = 30001
+epochs = 5001
 for step in range(epochs):
     loss_val, _, w_val, b_val = sess.run([loss, train, w, b],
                                          feed_dict={x:x_data, y:y_data})
@@ -65,24 +67,18 @@ for step in range(epochs):
 # print(type(w_val))  # <class 'numpy.ndarray'>
 ## sess.run 을 통과해서 나온 값은 모두 'numpy' 형태다
 
-
-'''
 #4 평가 예측. evaluate predict
 x_test = tf.compat.v1.placeholder(tf.float32, shape = [None,2])
 
 # y_predict = x_test * w_val + b_val
-y_pred = tf.matmul(x_test, w_val) + b_val
-y_predict = sess.run(y_pred, feed_dict={x_test:x_data})
-
+y_pred = tf.compat.v1.sigmoid(tf.matmul(x_test, w_val) + b_val)
+y_predict = sess.run(tf.cast(y_pred > 0.5, dtype=tf.float32), feed_dict={x_test:x_data})
+#                    < 반올림 하는 부분 >
 print(y_predict)
-from sklearn.metrics import r2_score, mean_squared_error
-r2 = r2_score(y_data, y_predict)
-mse = mean_squared_error(y_data, y_predict)
-print("R2 : ", r2)
-print("MSE : ", mse)
+from sklearn.metrics import r2_score, mean_squared_error, accuracy_score
+
+acc = accuracy_score(y_data, y_predict)
+print("ACC : ", acc)
+
 
 sess.close()
-
-# R2 :  -63.59553736271759
-# MSE :  16.1488843406794
-'''
