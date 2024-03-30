@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split, KFold, StratifiedKFold, cr
 from sklearn.metrics import mean_squared_error
 from lightgbm import LGBMRegressor
 import optuna
-
+  
 #1
 def seed_everything(seed):
     random.seed(seed)
