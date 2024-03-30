@@ -9,7 +9,7 @@ data = pd.read_csv('d:/data/tuning/train.csv')
 # person_id 컬럼 제거
 X = data.drop(['person_id', 'login'], axis=1)
 y = data['login']
-
+  
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
     'n_estimators': [110],

@@ -12,7 +12,7 @@ X = data.drop(['person_id', 'login'], axis=1)
 y = data['login']
 
 from hyperopt import hp, fmin,tpe, Trials, STATUS_OK
-
+ 
 param_search_space = {
     'n_estimators' : hp.quniform('n_estimators',100, 900, 100),
     'max_depth': hp.quniform('max_depth', 1, 9, 1),

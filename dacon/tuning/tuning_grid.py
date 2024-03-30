@@ -12,7 +12,7 @@ y = data['login']
 
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
-    'n_estimators': [107,108,109,110,111,112,113],
+    'n_estimators': [107,108,109,110,111,112,113],  
     # 'criterion' : ['gini'],
     'max_depth': [None],
     'min_samples_split': [2],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
