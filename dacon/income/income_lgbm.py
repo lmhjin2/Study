@@ -15,7 +15,7 @@ def seed_everything(seed):
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
 
-seed_everything(42) # Seed 고정
+seed_everything(42) # Seed 고정 / 점수 변화 x
 
 train = pd.read_csv('d:/data/income/train.csv')
 test = pd.read_csv('d:/data/income/test.csv')
@@ -50,12 +50,8 @@ scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
-x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 0 )
+x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 0 ) # random_state 점수 변화 O
 
-# print(x_train.shape, x_test.shape)
-# print(y_train.shape, y_test.shape)
-# (16000, 21) (4000, 21)
-# (16000,) (4000,)
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
 
