@@ -12,8 +12,10 @@ y_data = datasets.target
 # print(np.unique(y, return_counts=True))
 # (array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([178, 182, 177, 183, 181, 182, 181, 179, 174, 180], dtype=int64))
 y_data = y_data.reshape(-1,1)
+
 encoder = OneHotEncoder(sparse=False)
 y_data = encoder.fit_transform(y_data)
+
 scaler = StandardScaler()
 x_data = scaler.fit_transform(x_data)
 # print(y_data.shape)  # (1797, 10)
