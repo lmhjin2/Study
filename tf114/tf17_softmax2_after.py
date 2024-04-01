@@ -30,7 +30,7 @@ b = tf.compat.v1.Variable(tf.compat.v1.zeros([1, 3]), name='bias')
 hypothesis = tf.nn.softmax(tf.compat.v1.matmul(x, w) + b)
 
 #3-1 compile
-loss = tf.reduce_mean( -tf.reduce_sum(y * tf.log(hypothesis), axis=1))
+loss = tf.reduce_mean( -tf.reduce_sum(y * tf.log(hypothesis), axis=1)) # categorical_crossentropy
 optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3)
 train = optimizer.minimize(loss)
 # 두줄에서 한줄로 만들기.
