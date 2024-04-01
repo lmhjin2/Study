@@ -2,9 +2,7 @@ import tensorflow as tf
 import numpy as np
 tf.set_random_seed(777)
 
-
 # 1. data
-
 x_data = [[1,2,1,1],
           [2,1,3,2],
           [3,1,3,4],
@@ -12,8 +10,7 @@ x_data = [[1,2,1,1],
           [1,7,5,5],
           [1,2,5,6],
           [1,6,6,6],
-          [1,7,6,7]]
-
+          [1,7,6,7]]  # (8,4)
 y_data = [[0,0,1],
           [0,0,1],
           [0,0,1],
@@ -21,7 +18,7 @@ y_data = [[0,0,1],
           [0,1,0],
           [0,1,0],
           [1,0,0],
-          [1,0,0]]
+          [1,0,0]]  # (8,3)
 
 x = tf.compat.v1.placeholder(tf.float32, shape=[None,4])
 w = tf.compat.v1.Variable(tf.random_normal([4,3]), name='weight')   # None,4 - None,3
