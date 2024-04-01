@@ -42,7 +42,7 @@ train = optimizer.minimize(loss)
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
 
-    epochs = 2001
+    epochs = 24101
     for step in range(epochs):
         _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={x:x_data, y:y_data})
         if step % 100 == 0:
