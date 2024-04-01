@@ -58,5 +58,5 @@ acc = accuracy_score(y_data,pred)
 print("acc : ", acc)
 
 sess.close()
-# 20000 loss :  0.13160355
+
 # acc :  0.9749582637729549

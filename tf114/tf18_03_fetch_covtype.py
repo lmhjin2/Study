@@ -58,4 +58,4 @@ print("acc : ", acc)
 
 sess.close()
 
-
+# acc :  0.7034364178364646
