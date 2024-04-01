@@ -50,7 +50,7 @@ scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
-x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 42)
+x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 0 )
 
 # print(x_train.shape, x_test.shape)
 # print(y_train.shape, y_test.shape)
@@ -68,8 +68,8 @@ parameters = [{'learning_rate' : [0.0049499511],
                'colsample_bytree' : [0.48],
                'seed' : [9]
                }]
-# best_rmse :  587.0828680513683
-# best_rmse :  587.0828792521608
+# best_rmse :  587.7561705540978
+
 #2
 model = GridSearchCV(LGBMRegressor(
                     #   n_estimators = 1000 , 
@@ -111,7 +111,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0329_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0401_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
