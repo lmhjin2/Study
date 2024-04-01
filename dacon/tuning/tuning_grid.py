@@ -13,7 +13,7 @@ y = data['login']
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
     'n_estimators': [107,108,109,110,111,112,113],
-    # 'criterion' : ['gini'],
+    # 'criterion' : ['gini'],   
     'max_depth': [None],
     'min_samples_split': [2],   # 2이상의 정수 또는 0과 1사이의 실수(비율)
     'min_samples_leaf': [8],    # 1이상의 정수 또는 0과 0.5 사이의 실수(비율)
@@ -22,7 +22,7 @@ param_search_space = {
     # 'max_leaf_nodes' : [None],              # None 또는 양의 정수
     # 'min_impurity_decrease' : [0.0],          # 0.0 이상의 실수
     # 'bootstrap' : [True, False]             # 부스스트랩 샘플 사용.
-    }
+    } 
 
 #2 RandomForestClassifier 객체 생성
 rf = RandomForestClassifier(random_state = 42)

@@ -9,7 +9,7 @@ data = pd.read_csv('d:/data/tuning/train.csv')
 # person_id 컬럼 제거
 X = data.drop(['person_id', 'login'], axis=1)
 y = data['login']
-
+  
 # GridSearchCV를 위한 하이퍼파라미터 설정
 param_search_space = {
     'n_estimators': [110],
@@ -22,7 +22,7 @@ param_search_space = {
     # 'max_leaf_nodes' : [None],              # None 또는 양의 정수
     # 'min_impurity_decrease' : [0.0],          # 0.0 이상의 실수
     # 'bootstrap' : [True, False]             # 부스스트랩 샘플 사용.
-    }
+    }  
 
 #2 RandomForestClassifier 객체 생성
 rf = RandomForestClassifier(random_state = 42)
