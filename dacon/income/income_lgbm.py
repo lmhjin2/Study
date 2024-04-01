@@ -53,7 +53,7 @@ test_x = scaler.transform(test_x)
 x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 0 ) # random_state 점수 변화 O
 
 n_splits = 5
-kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
+kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 0 )
 
 parameters = [{'learning_rate' : [0.0049499511], 
                'n_estimators' : [890],
