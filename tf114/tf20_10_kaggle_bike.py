@@ -33,19 +33,19 @@ layer2 = tf.compat.v1.matmul(layer1,w2) + b2    # (N, 32)
 #layer3 : model.add(Dense(8))
 w3 = tf.compat.v1.Variable(tf.compat.v1.random_normal([32,16], name = 'weight3'))
 b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([16], name = 'bias3' ))
-layer3 = tf.compat.v1.matmul(layer2,w3) + b3    # (N, 16)
+layer3 = tf.nn.swish(tf.compat.v1.matmul(layer2,w3) + b3)    # (N, 16)
 #layer4 : model.add(Dense(7))
 w4 = tf.compat.v1.Variable(tf.compat.v1.random_normal([16,8], name = 'weight4'))
 b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([8], name = 'bias4' ))
-layer4 = tf.compat.v1.sigmoid(tf.compat.v1.matmul(layer3,w4) + b4)    # (N, 8)
+layer4 = tf.compat.v1.matmul(layer3,w4) + b4    # (N, 8)
 #output_layer : model.add(dense(1), activation='sigmoid')
 w5 = tf.compat.v1.Variable(tf.compat.v1.random_normal([8,1], name = 'weight5'))
 b5 = tf.compat.v1.Variable(tf.compat.v1.zeros([1], name = 'bias5' ))
-hypothesis = tf.nn.softmax(tf.compat.v1.matmul(layer4,w5) + b5) # (N,1)
+hypothesis = tf.nn.swish(tf.compat.v1.matmul(layer4,w5) + b5) # (N,1)
 
 #3-1 컴파일
 loss = tf.reduce_mean(tf.square(hypothesis - y))
-optimizer = tf.train.AdamOptimizer(learning_rate=1)
+optimizer = tf.train.AdamOptimizer(learning_rate=2e-4)
 train = optimizer.minimize(loss)
 
 #3-2 훈련
@@ -66,5 +66,5 @@ print(f'MSE : {mse} \nR2 : {r2}')
 
 sess.close()
 
-# MSE : 25064.127819122506
-# R2 : 0.25041774932536576
+# MSE : 23465.4488782332
+# R2 : 0.29822876302853074
