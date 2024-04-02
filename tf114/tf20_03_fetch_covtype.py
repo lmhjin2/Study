@@ -54,7 +54,7 @@ train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-2).minimize
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-epochs = 20001
+epochs = 10001
 for step in range(epochs):
     cost_val, _ = sess.run([loss,train],
                                          feed_dict={x:x_data, y:y_data})
