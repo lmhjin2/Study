@@ -38,5 +38,3 @@ print('y_predict',y_predict)
 # accuracy 1.0
 # y_data [0 1 1 0]
 # y_predict [0 1 1 0]
-
-
