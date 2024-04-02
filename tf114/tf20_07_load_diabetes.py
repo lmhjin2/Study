@@ -31,16 +31,16 @@ layer3 = tf.compat.v1.matmul(layer2,w3) + b3    # (N, 16)
 #layer4 : model.add(Dense(7))
 w4 = tf.compat.v1.Variable(tf.compat.v1.random_normal([16,8], name = 'weight4'))
 b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([8], name = 'bias4' ))
-layer4 = tf.compat.v1.sigmoid(tf.compat.v1.matmul(layer3,w4) + b4)    # (N, 8)
+layer4 = tf.nn.swish(tf.compat.v1.matmul(layer3,w4) + b4)    # (N, 8)
 #output_layer : model.add(dense(1), activation='sigmoid')
 w5 = tf.compat.v1.Variable(tf.compat.v1.random_normal([8,1], name = 'weight5'))
 b5 = tf.compat.v1.Variable(tf.compat.v1.zeros([1], name = 'bias5' ))
-hypothesis = tf.nn.softmax(tf.compat.v1.matmul(layer4,w5) + b5) # (N,1)
+hypothesis = tf.nn.swish(tf.compat.v1.matmul(layer4,w5) + b5) # (N,1)
 
 
 #3-1 컴파일
 loss = tf.reduce_mean(tf.square(hypothesis - y))
-optimizer = tf.train.AdamOptimizer(learning_rate=1e-1)
+optimizer = tf.train.AdamOptimizer(learning_rate=1e-5)
 train = optimizer.minimize(loss)
 
 #3-2 훈련
@@ -50,7 +50,7 @@ sess.run(tf.compat.v1.global_variables_initializer())
 epochs = 30001
 for step in range(epochs):
     _, val_loss = sess.run([train, loss], feed_dict={x:x_train, y:y_train})
-    if step % 100 == 0:
+    if step % 1000 == 0:
         print(step, val_loss)
 
 y_predict = sess.run(hypothesis, feed_dict={x:x_test})
@@ -61,5 +61,5 @@ print(f'MSE : {mse} \nR2 : {r2}')
 
 sess.close()
 
-# MSE : 2395.558580013047
-# R2 : 0.5628200301844604
+# MSE : 2679.227504127932
+# R2 : 0.5110515730417939

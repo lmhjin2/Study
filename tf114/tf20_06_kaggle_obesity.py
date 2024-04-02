@@ -90,7 +90,7 @@ loss = tf.reduce_mean(-tf.reduce_sum(y*tf.log(hypothesis + 1e-7 ),axis=1))  #cat
 # optimizer = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-4)
 # train = optimizer.minimize(loss)
 # ===똑같음
-train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-2).minimize(loss)
+train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-1).minimize(loss)
 
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
@@ -115,5 +115,6 @@ print("acc : ", acc)
 
 sess.close()
 
-# acc :  0.617930436458233
+# 20000 loss :  0.4850469
+# acc :  0.8329800558820696
 

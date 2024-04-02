@@ -20,7 +20,7 @@ y = tf.compat.v1.placeholder(tf.float32, shape = [None,1])
 #layer1 : model.add(Dense(10, input_dim=2))
 w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([8,64], name = 'weight1'))
 b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([64], name = 'bias1' ))
-layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 64)
+layer1 = tf.nn.relu(tf.compat.v1.matmul(x,w1) + b1)         # (N, 64)
 #layer2 : model.add(Dense(9))
 w2 = tf.compat.v1.Variable(tf.compat.v1.random_normal([64,32], name = 'weight2'))
 b2 = tf.compat.v1.Variable(tf.compat.v1.zeros([32], name = 'bias2' ))
@@ -36,18 +36,18 @@ layer4 = tf.compat.v1.sigmoid(tf.compat.v1.matmul(layer3,w4) + b4)    # (N, 8)
 #output_layer : model.add(dense(1), activation='sigmoid')
 w5 = tf.compat.v1.Variable(tf.compat.v1.random_normal([8,1], name = 'weight5'))
 b5 = tf.compat.v1.Variable(tf.compat.v1.zeros([1], name = 'bias5' ))
-hypothesis = tf.nn.softmax(tf.compat.v1.matmul(layer4,w5) + b5) # (N,1)
+hypothesis = tf.compat.v1.matmul(layer4,w5) + b5 # (N,1)
 
 #3-1 compile
 loss = tf.reduce_mean(tf.square(hypothesis - y))
-optimizer = tf.train.AdamOptimizer(learning_rate=1e-3)
+optimizer = tf.train.AdamOptimizer(learning_rate=1e-2)
 train = optimizer.minimize(loss)
 
 #3-2
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-epochs=30001
+epochs=10001
 for step in range(epochs):
     _, val_loss = sess.run([train, loss], feed_dict={x:x_train, y:y_train})
     if step % 100 == 0:
@@ -61,8 +61,7 @@ print(f'MSE : {mse} \nR2 : {r2}')
 
 sess.close()
 
-# MSE : 0.6171168638971158
-# R2 : 0.5212619805111574
 
-
+# MSE : 1.2876434452235648
+# R2 : 0.00109054080737081
 
