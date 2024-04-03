@@ -27,8 +27,10 @@ y = tf.compat.v1.placeholder(tf.float32, shape = [None,10])
 keep_prob = tf.compat.v1.placeholder(tf.float32)
 
 #layer1 : model.add(Dense(128, input_dim=784))
-w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([784,128], name = 'weight1'))
-# w1 = tf.compat.v1.get_variable('w1', shape=[784,128]) # random_normal 이미 포함
+# w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([784,128], name = 'weight1'))
+w1 = tf.compat.v1.get_variable('w1', shape=[784,128],   # random_normal 이미 포함
+                               initializer=tf.contrib.layers.xavier_initializer()) 
+# xavier = 가중치 초기화 기법. 이거 말고도 많은데 얘는 쓸만함.                                
 b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([128], name = 'bias1' ))
 layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 128)
 layer1 = tf.compat.v1.nn.relu(layer1)
