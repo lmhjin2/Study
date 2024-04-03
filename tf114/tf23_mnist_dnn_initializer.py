@@ -17,7 +17,7 @@ x_test = x_test.reshape(10000, 28*28).astype('float32')/255.    # (60000, 784) /
 # x_train = x_train.reshape(x_train.shape[0], x_train.shape[1]*x_train.shape[2]).astype('float32')/255. 
 # x_test = x_test.reshape(x_test.shape[0], x_test.shape[1]*x_test.shape[2]).astype('float32')/255. 
 
-learning_rate = 3e-1
+learning_rate = 1e-3
 # [실습]
 
 # 2
@@ -25,12 +25,13 @@ x = tf.compat.v1.placeholder(tf.float32, shape = [None,784])
 y = tf.compat.v1.placeholder(tf.float32, shape = [None,10])
 
 keep_prob = tf.compat.v1.placeholder(tf.float32)
-
+# 가중치 초기화 = 임의의 초기 값으로 변수들 지정
 #layer1 : model.add(Dense(128, input_dim=784))
 # w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([784,128], name = 'weight1'))
 w1 = tf.compat.v1.get_variable('w1', shape=[784,128],   # random_normal 이미 포함
                                initializer=tf.contrib.layers.xavier_initializer()) 
-# xavier = 가중치 초기화 기법. 이거 말고도 많은데 얘는 쓸만함.                                
+        # xavier = 가중치 초기화 기법. 이거 말고도 많은데 이거 쓸만함.           
+        # get_variable 안에 if 문이 들어있어서 initializer는 최초에 한번(1epoch때)만 적용됨.                     
 b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([128], name = 'bias1' ))
 layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 128)
 layer1 = tf.compat.v1.nn.relu(layer1)
@@ -97,5 +98,10 @@ sess.close()
 # 5000 loss :  0.4394274
 # acc :  0.9343
 
+# dropout
 # 5000 loss :  0.2932881
 # acc :  0.9479
+
+# initializer
+# 5000 loss :  0.018009841
+# acc :  0.9708
