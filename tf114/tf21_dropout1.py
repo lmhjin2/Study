@@ -17,6 +17,8 @@ layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 10)
 w2 = tf.compat.v1.Variable(tf.compat.v1.random_normal([10,9], name = 'weight2'))
 b2 = tf.compat.v1.Variable(tf.compat.v1.zeros([9], name = 'bias2' ))
 layer2 = tf.compat.v1.matmul(layer1,w2) + b2    # (N, 9)
+layer2 = tf.nn.dropout(layer2, keep_prob=0.5) # dropout(0.5)
+
 #layer3 : model.add(Dense(8))
 w3 = tf.compat.v1.Variable(tf.compat.v1.random_normal([9,8], name = 'weight3'))
 b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([8], name = 'bias3' ))
