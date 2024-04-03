@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.datasets import load_digits
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+tf.compat.v1.set_random_seed(777)
 
 #1 data
 datasets = load_digits()
@@ -42,7 +43,6 @@ w3 = tf.compat.v1.Variable(tf.compat.v1.random_normal([32,16], name = 'weight3')
 b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([16], name = 'bias3' ))
 layer3 = tf.compat.v1.matmul(layer2,w3) + b3    # (N, 16)
 
-
 #layer4 : model.add(Dense(10))
 w4 = tf.compat.v1.Variable(tf.compat.v1.random_normal([16,10], name = 'weight4'))
 b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([10], name = 'bias4' ))
@@ -66,12 +66,12 @@ sess.run(tf.compat.v1.global_variables_initializer())
 epochs = 20001
 for step in range(epochs):
     loss_val, _ = sess.run([loss,train],
-                           feed_dict={x:x_data, y:y_data})
+                           feed_dict={x:x_data, y:y_data, keep_prob:0.8})
     if step %100 == 0:
         print(step, "loss : ", loss_val)
 
 
-pred = sess.run(hypothesis, feed_dict={x:x_data})
+pred = sess.run(hypothesis, feed_dict={x:x_data, keep_prob:1.0})
 # print(pred) 
 pred = sess.run(tf.argmax(pred,axis=1))
 # print(pred)
@@ -83,5 +83,5 @@ print("acc : ", acc)
 
 sess.close()
 
-# 20000 loss :  0.2307978
-# acc :  0.9232053422370617
+# 20000 loss :  0.20560896
+# acc :  0.9348914858096828
