@@ -31,7 +31,7 @@ keep_prob = tf.compat.v1.placeholder(tf.float32)
 w1 = tf.compat.v1.get_variable('w1', shape=[784,128],   # random_normal 이미 포함
                                initializer=tf.contrib.layers.xavier_initializer()) 
         # xavier = 가중치 초기화 기법. 이거 말고도 많은데 이거 쓸만함.           
-        # get_variable 안에 if 문이 들어있어서 initializer는 최초에 한번(1epoch때)만 적용됨.                     
+        # get_variable 안에 if 문이 들어있어서 initializer는 최초에 한번(1epoch때)만 적용됨.
 b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([128], name = 'bias1' ))
 layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 128)
 layer1 = tf.compat.v1.nn.relu(layer1)
@@ -79,7 +79,7 @@ total_batch = int(len(x_train) / batch_size)
 # 60000 / 100
 
 
-training_epochs = 101
+training_epochs = 2001
 for step in range(training_epochs):
     avg_loss = 0    # loss == cost
     for i in range(total_batch):
@@ -121,3 +121,6 @@ sess.close()
 # initializer
 # 5000 loss :  0.018009841
 # acc :  0.9708
+
+# 2000 loss :  0.2113182081095873
+# acc :  0.9672
