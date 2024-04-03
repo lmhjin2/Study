@@ -26,42 +26,46 @@ y = tf.compat.v1.placeholder(tf.float32, shape = [None,10])
 
 keep_prob = tf.compat.v1.placeholder(tf.float32)
 
-#layer1 : model.add(Dense(64, input_dim=784))
-w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([784,64], name = 'weight1'))
-b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([64], name = 'bias1' ))
-layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 64)
+#layer1 : model.add(Dense(128, input_dim=784))
+w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([784,128], name = 'weight1'))
+# w1 = tf.compat.v1.get_variable('w1', shape=[784,128]) # random_normal 이미 포함
+b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([128], name = 'bias1' ))
+layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 128)
 layer1 = tf.compat.v1.nn.relu(layer1)
 layer1 = tf.compat.v1.nn.dropout(layer1, keep_prob=keep_prob)
 
 #layer2 : model.add(Dense(32))
-w2 = tf.compat.v1.Variable(tf.compat.v1.random_normal([64,32], name = 'weight2'))
-b2 = tf.compat.v1.Variable(tf.compat.v1.zeros([32], name = 'bias2' ))
-layer2 = tf.compat.v1.matmul(layer1,w2) + b2    # (N, 32)
-layer2 = tf.nn.dropout(layer2, keep_prob=keep_prob)
+w2 = tf.compat.v1.Variable(tf.compat.v1.random_normal([128,64], name = 'weight2'))
+b2 = tf.compat.v1.Variable(tf.compat.v1.zeros([64], name = 'bias2' ))
+layer2 = tf.compat.v1.matmul(layer1,w2) + b2    # (N, 64)
+layer2 = tf.nn.dropout(layer2, keep_prob=keep_prob)  # tf : keep_prob / keras : rate // 의미 역전 주의
 
 #layer3 : model.add(Dense(16))
-w3 = tf.compat.v1.Variable(tf.compat.v1.random_normal([32,16], name = 'weight3'))
-b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([16], name = 'bias3' ))
-layer3 = tf.compat.v1.matmul(layer2,w3) + b3    # (N, 16)
+w3 = tf.compat.v1.Variable(tf.compat.v1.random_normal([64,32], name = 'weight3'))
+b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([32], name = 'bias3' ))
+layer3 = tf.compat.v1.matmul(layer2,w3) + b3    # (N, 32)
 layer3 = tf.compat.v1.nn.relu(layer3)
 layer3 = tf.nn.dropout(layer3, keep_prob=keep_prob)
 
 #layer4 : model.add(Dense(10))
-w4 = tf.compat.v1.Variable(tf.compat.v1.random_normal([16,10], name = 'weight4'))
-b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([10], name = 'bias4' ))
-layer4 = tf.compat.v1.sigmoid(tf.compat.v1.matmul(layer3,w4) + b4)    # (N, 10)
+w4 = tf.compat.v1.Variable(tf.compat.v1.random_normal([32,16], name = 'weight4'))
+b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([16], name = 'bias4' ))
+layer4 = tf.compat.v1.sigmoid(tf.compat.v1.matmul(layer3,w4) + b4)    # (N, 16)
 
-#output_layer : model.add(dense(10), activation='sigmoid')
-w5 = tf.compat.v1.Variable(tf.compat.v1.random_normal([10,10], name = 'weight5'))
+#output_layer : model.add(dense(16), activation='sigmoid')
+w5 = tf.compat.v1.Variable(tf.compat.v1.random_normal([16,10], name = 'weight5'))
 b5 = tf.compat.v1.Variable(tf.compat.v1.zeros([10], name = 'bias5' ))
 hypothesis = tf.nn.softmax(tf.compat.v1.matmul(layer4,w5) + b5) # (N,10)
 
 
 # 3-1. compile
 loss = tf.reduce_mean(-tf.reduce_sum(y*tf.log(hypothesis + 1e-7 ),axis=1))  #categorical
+# loss = tf.reduce_mean(-tf.reduce_sum( y * tf.compat.v1.nn.log_softmax(hypothesis), axis =1))
+
 # optimizer = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-4)
 # train = optimizer.minimize(loss)
 # ===똑같음
+
 train = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3).minimize(loss)
 
 sess = tf.compat.v1.Session()
@@ -88,7 +92,8 @@ print("acc : ", acc)
 sess.close()
 
 
-# 3000 loss :  0.616116
-# acc :  0.9141
+# 5000 loss :  0.4394274
+# acc :  0.9343
 
-
+# 5000 loss :  0.2932881
+# acc :  0.9479
