@@ -55,8 +55,8 @@ x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 0 )
 
-parameters = [{'learning_rate' : [0.0049499511], 
-               'n_estimators' : [890],
+parameters = [{'learning_rate' : [0.0049499511, 0.0049499510, 0.0049499512 ], 
+               'n_estimators' : [890, 889, 891],
                'max_depth' : [None],
             #    'gamma' : [1],
                'subsample' : [0.18],
