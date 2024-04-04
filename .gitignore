@@ -26,3 +26,5 @@ dacon/income/output/
 dacon/tuning/output/
 .pyc
 temp123/
+test/__pycache__/
+
