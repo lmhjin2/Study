@@ -50,7 +50,7 @@ scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
-x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.2, random_state= 3 ) # random_state 점수 변화 O
+x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.15, random_state= 5 ) # random_state 점수 변화 O
 
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
@@ -107,7 +107,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0404_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0405_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
