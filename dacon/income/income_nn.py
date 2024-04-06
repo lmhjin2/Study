@@ -91,6 +91,6 @@ preds = model.predict(test_x)
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 
-submission.to_csv('c:/Study/dacon/income/output/best.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0406_nn.csv', index=False)
 
 
