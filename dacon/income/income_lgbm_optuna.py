@@ -114,7 +114,7 @@ bpred = best_model.predict(test_x)
 
 submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = bpred
-submission.to_csv('c:/Study/dacon/income/output/0326_opt.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0406_opt.csv', index=False)
 
 print("  Value: ", trial.value)
 print("  Params: ")
