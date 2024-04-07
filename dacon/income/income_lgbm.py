@@ -107,7 +107,7 @@ submission = pd.read_csv('d:/data/income/sample_submission.csv')
 submission['Income'] = preds
 # print(submission)
 
-submission.to_csv('c:/Study/dacon/income/output/0406_lgbm.csv', index=False)
+submission.to_csv('c:/Study/dacon/income/output/0407_lgbm.csv', index=False)
 
 print("최적의 매개변수 : ", model.best_estimator_)
 print("최적의 파라미터 : ", model.best_params_) 
