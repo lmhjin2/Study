@@ -50,7 +50,7 @@ scaler = StandardScaler()
 train_x = scaler.fit_transform(train_x)
 test_x = scaler.transform(test_x)
 
-x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.15, random_state= 5 ) # random_state 점수 변화 O
+x_train, x_test, y_train, y_test = train_test_split(train_x, train_y, test_size=0.15, random_state= 8 ) # random_state 점수 변화 O
 
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 42 )
