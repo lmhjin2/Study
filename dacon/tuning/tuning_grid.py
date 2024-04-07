@@ -27,7 +27,7 @@ param_search_space = {
 #2 RandomForestClassifier 객체 생성  
 rf = RandomForestClassifier(random_state = 42 )
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 8 )
+kfold = StratifiedKFold(n_splits=n_splits, shuffle = True, random_state = 9 )
 # GridSearchCV 객체 생성
 model = GridSearchCV(estimator=rf, param_grid=param_search_space, cv=kfold, n_jobs=-1, verbose=2, scoring='roc_auc')
 
@@ -48,7 +48,7 @@ for param, value in best_params.items():
     if param in submit.columns:
         submit[param] = value
 
-submit.to_csv('c:/Study/dacon/tuning/output/0406.csv', index=False)
+submit.to_csv('c:/Study/dacon/tuning/output/0407.csv', index=False)
 
 # {'max_depth': None, 'min_samples_leaf': 8, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 110} 
 #  0.8049404576607657
