@@ -27,4 +27,14 @@ dacon/tuning/output/
 .pyc
 temp123/
 test/__pycache__/
+dacon/bird/output/
+dacon/bird/test/
+dacon/bird/train/
+dacon/bird/upscale_train/
+open.zip
+sample_submission.csv
+test.csv
+train.csv
+
+
 
