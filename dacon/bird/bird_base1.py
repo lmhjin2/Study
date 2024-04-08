@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers, models
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from keras import layers, models
+from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, f1_score
@@ -23,7 +23,7 @@ CFG = {
 tf.random.set_seed(CFG['SEED'])
 
 # Train & Validation Split
-df = pd.read_csv('./train.csv')
+df = pd.read_csv('c:/Study/dacon/bird/train.csv')
 train, val = train_test_split(df, test_size=0.3, stratify=df['label'], random_state=CFG['SEED'])
 
 # Label-Encoding
@@ -49,7 +49,7 @@ val_datagen = ImageDataGenerator(rescale=1./255)
 def get_data_generator(df, datagen, batch_size=32):
     generator = datagen.flow_from_dataframe(
         dataframe=df,
-        directory="./",
+        directory="c:/Study/dacon/bird/train/",
         x_col="img_path",
         y_col="label",
         target_size=(CFG['IMG_SIZE'], CFG['IMG_SIZE']),
@@ -88,12 +88,12 @@ history = model.fit(
 )
 
 # Inference
-test = pd.read_csv('./test.csv')
+test = pd.read_csv('c:/Study/dacon/bird/test.csv')
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_generator = test_datagen.flow_from_dataframe(
     dataframe=test,
-    directory="./",
+    directory="c:/Study/dacon/bird/test/",
     x_col="img_path",
     batch_size=CFG['BATCH_SIZE'],
     shuffle=False,
@@ -106,6 +106,6 @@ preds = np.argmax(preds, axis=1)
 preds = le.inverse_transform(preds)
 
 # Submission
-submit = pd.read_csv('./sample_submission.csv')
+submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv('./keras_baseline_submit.csv', index=False)
+submit.to_csv('c:/Study/dacon/bird/output/keras_baseline_submit.csv', index=False)
