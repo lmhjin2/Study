@@ -13,7 +13,7 @@ import os
 # Hyperparameter Setting
 CFG = {
     'IMG_SIZE': 224,
-    'EPOCHS': 50,
+    'EPOCHS': 20,
     'LEARNING_RATE': 3e-4,
     'BATCH_SIZE': 32,
     'SEED': 41
@@ -117,4 +117,4 @@ print(report)
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv(f'c:/Study/dacon/bird/output/0408_{f1:.8f}.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/best.csv', index=False)
