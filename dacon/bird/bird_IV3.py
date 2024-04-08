@@ -5,7 +5,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, f1_score, accuracy_score
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 import pandas as pd
 import numpy as np
 import cv2
@@ -66,7 +66,7 @@ from keras.applications import EfficientNetV2L, EfficientNetB2, InceptionResNetV
 
 # Model Define
 def create_model(num_classes):
-    base_model = tf.keras.applications.EfficientNetB2(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
+    base_model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
     base_model.trainable = True
 
     inputs = keras.Input(shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
@@ -82,8 +82,10 @@ def create_model(num_classes):
     return model
 
 model = create_model(len(le.classes_))
-es = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+
 # Train
+es = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 history = model.fit(
     train_generator,
     epochs=CFG['EPOCHS'],
