@@ -61,11 +61,11 @@ def get_data_generator(df, datagen, batch_size=32):
 train_generator = get_data_generator(train, train_datagen, CFG['BATCH_SIZE'])
 val_generator = get_data_generator(val, val_datagen, CFG['BATCH_SIZE'])
 
-from keras.applications import EfficientNetV2L, EfficientNetB7, InceptionResNetV2, InceptionV3
+from keras.applications import EfficientNetV2L, EfficientNetB2, InceptionResNetV2, InceptionV3, EfficientNetB0
 
 # Model Define
 def create_model(num_classes):
-    base_model = tf.keras.applications.EfficientNetB0(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
+    base_model = tf.keras.applications.EfficientNetB2(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
     base_model.trainable = True
 
     inputs = keras.Input(shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
