@@ -4,7 +4,7 @@ from keras import layers, models
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import classification_report, f1_score
+from sklearn.metrics import classification_report, f1_score, accuracy_score
 import pandas as pd
 import numpy as np
 import cv2
@@ -107,7 +107,11 @@ preds = model.predict(test_generator)
 preds = np.argmax(preds, axis=1)
 preds = le.inverse_transform(preds)
 
+val_true = val_generator.labels
+f1 = f1_score(val_true, preds, average='macro')
+print(f'F1 Score : {f1}')
+
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv('c:/Study/dacon/bird/output/keras_baseline_submit.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/0408_{f1}.csv', index=False)
