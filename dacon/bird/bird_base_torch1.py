@@ -253,4 +253,4 @@ preds = inference(infer_model, test_loader, device)
 
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv('c:/Study/dacon/bird/output/0408.csv', index=False)
+submit.to_csv('c:/Study/dacon/bird/output/0408_11.csv', index=False)
