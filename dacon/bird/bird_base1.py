@@ -109,14 +109,7 @@ preds = model.predict(test_generator)
 preds = np.argmax(preds, axis=1)
 preds = le.inverse_transform(preds)
 
-val_true = val_generator.labels
-f1 = f1_score(val_true, preds, average='macro')
-print(f'F1 Score : {f1:.9f}')
-
-report = classification_report(val_true, preds)
-print(report)
-
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv(f'c:/Study/dacon/bird/output/0408_{f1:.8f}.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/0408_3.csv', index=False)
