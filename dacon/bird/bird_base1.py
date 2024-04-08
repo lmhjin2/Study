@@ -13,7 +13,7 @@ import os
 # Hyperparameter Setting
 CFG = {
     'IMG_SIZE': 224,
-    'EPOCHS': 5,
+    'EPOCHS': 20,
     'LEARNING_RATE': 3e-4,
     'BATCH_SIZE': 32,
     'SEED': 41
@@ -49,7 +49,7 @@ val_datagen = ImageDataGenerator(rescale=1./255)
 def get_data_generator(df, datagen, batch_size=32):
     generator = datagen.flow_from_dataframe(
         dataframe=df,
-        directory="c:/Study/dacon/bird/train/",
+        directory="c:/Study/dacon/bird/",
         x_col="img_path",
         y_col="label",
         target_size=(CFG['IMG_SIZE'], CFG['IMG_SIZE']),
@@ -60,6 +60,8 @@ def get_data_generator(df, datagen, batch_size=32):
 
 train_generator = get_data_generator(train, train_datagen, CFG['BATCH_SIZE'])
 val_generator = get_data_generator(val, val_datagen, CFG['BATCH_SIZE'])
+
+from keras.applications import EfficientNetV2L, EfficientNetB7, InceptionResNetV2, InceptionV3
 
 # Model Define
 def create_model(num_classes):
@@ -93,7 +95,7 @@ test_datagen = ImageDataGenerator(rescale=1./255)
 
 test_generator = test_datagen.flow_from_dataframe(
     dataframe=test,
-    directory="c:/Study/dacon/bird/test/",
+    directory="c:/Study/dacon/bird/",
     x_col="img_path",
     batch_size=CFG['BATCH_SIZE'],
     shuffle=False,
