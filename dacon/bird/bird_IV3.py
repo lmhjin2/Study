@@ -66,7 +66,7 @@ from keras.applications import EfficientNetV2L, EfficientNetB2, InceptionResNetV
 
 # Model Define
 def create_model(num_classes):
-    base_model = tf.keras.applications.EfficientNetB7(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
+    base_model = tf.keras.applications.EfficientNetB5(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
     base_model.trainable = True
 
     inputs = keras.Input(shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
