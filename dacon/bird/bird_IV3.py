@@ -16,7 +16,7 @@ CFG = {
     'IMG_SIZE': 224,
     'EPOCHS': 50,
     'LEARNING_RATE': 3e-4,
-    'BATCH_SIZE': 32,
+    'BATCH_SIZE': 8,
     'SEED': 41
 }
 
@@ -62,11 +62,11 @@ def get_data_generator(df, datagen, batch_size=32):
 train_generator = get_data_generator(train, train_datagen, CFG['BATCH_SIZE'])
 val_generator = get_data_generator(val, val_datagen, CFG['BATCH_SIZE'])
 
-from keras.applications import EfficientNetV2L, EfficientNetB2, InceptionResNetV2, InceptionV3, EfficientNetB0
+from keras.applications import EfficientNetV2L, EfficientNetB2, InceptionResNetV2, InceptionV3, EfficientNetB0, ResNet152
 
 # Model Define
 def create_model(num_classes):
-    base_model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
+    base_model = tf.keras.applications.EfficientNetB7(include_top=False, weights='imagenet', input_shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
     base_model.trainable = True
 
     inputs = keras.Input(shape=(CFG['IMG_SIZE'], CFG['IMG_SIZE'], 3))
@@ -114,4 +114,4 @@ preds = le.inverse_transform(preds)
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv(f'c:/Study/dacon/bird/output/0409_V3_01.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/0409_RN152_02.csv', index=False)
