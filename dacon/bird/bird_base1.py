@@ -16,7 +16,7 @@ CFG = {
     'IMG_SIZE': 224,
     'EPOCHS': 20,
     'LEARNING_RATE': 1e-3,
-    'BATCH_SIZE': 32,
+    'BATCH_SIZE': 16,
     'SEED': 41
 }
 
@@ -112,4 +112,4 @@ preds = le.inverse_transform(preds)
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv(f'c:/Study/dacon/bird/output/0412_1.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/0412_2.csv', index=False)
