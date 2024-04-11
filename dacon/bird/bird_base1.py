@@ -112,4 +112,4 @@ preds = le.inverse_transform(preds)
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv(f'c:/Study/dacon/bird/output/0408_3.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/0412_1.csv', index=False)
