@@ -117,7 +117,7 @@ test_loader = DataLoader(test_dataset, batch_size=CFG['BATCH_SIZE'], shuffle=Fal
 class BaseModel(nn.Module):
     def __init__(self, num_classes=len(le.classes_)):
         super(BaseModel, self).__init__()
-        self.backbone = models.efficientnet_b0(pretrained=True)
+        self.backbone = models.efficientnet_b7(pretrained=True)
         self.classifier = nn.Linear(1000, num_classes)
         
     def forward(self, x):
@@ -253,4 +253,4 @@ preds = inference(infer_model, test_loader, device)
 
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv('c:/Study/dacon/bird/output/0411_1.csv', index=False)
+submit.to_csv('c:/Study/dacon/bird/output/0411_b7_1.csv', index=False)
