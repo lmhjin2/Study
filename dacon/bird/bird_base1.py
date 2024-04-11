@@ -14,8 +14,8 @@ import os
 # Hyperparameter Setting
 CFG = {
     'IMG_SIZE': 224,
-    'EPOCHS': 100,
-    'LEARNING_RATE': 3e-4,
+    'EPOCHS': 20,
+    'LEARNING_RATE': 1e-3,
     'BATCH_SIZE': 32,
     'SEED': 41
 }
