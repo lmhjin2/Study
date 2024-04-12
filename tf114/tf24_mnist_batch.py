@@ -3,6 +3,8 @@ import numpy as np
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import accuracy_score
+tf.compat.v1.disable_eager_execution()
+# tf.compat.v1.enable_eager_execution()
 
 # 1
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -24,31 +26,26 @@ learning_rate = 1e-3
 x = tf.compat.v1.placeholder(tf.float32, shape = [None,784])
 y = tf.compat.v1.placeholder(tf.float32, shape = [None,10])
 
-keep_prob = tf.compat.v1.placeholder(tf.float32)
 # 가중치 초기화 = 임의의 초기 값으로 변수들 지정
 #layer1 : model.add(Dense(128, input_dim=784))
 # w1 = tf.compat.v1.Variable(tf.compat.v1.random_normal([784,128], name = 'weight1'))
-w1 = tf.compat.v1.get_variable('w1', shape=[784,128],   # random_normal 이미 포함
-                               initializer=tf.contrib.layers.xavier_initializer()) 
+w1 = tf.compat.v1.get_variable('w1', shape=[784,128])   # random_normal 이미 포함
         # xavier = 가중치 초기화 기법. 이거 말고도 많은데 이거 쓸만함.           
         # get_variable 안에 if 문이 들어있어서 initializer는 최초에 한번(1epoch때)만 적용됨.
 b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([128], name = 'bias1' ))
 layer1 = tf.compat.v1.matmul(x,w1) + b1         # (N, 128)
 layer1 = tf.compat.v1.nn.relu(layer1)
-layer1 = tf.compat.v1.nn.dropout(layer1, keep_prob=keep_prob)
 
 #layer2 : model.add(Dense(32))
 w2 = tf.compat.v1.Variable(tf.compat.v1.random_normal([128,64], name = 'weight2'))
 b2 = tf.compat.v1.Variable(tf.compat.v1.zeros([64], name = 'bias2' ))
 layer2 = tf.compat.v1.matmul(layer1,w2) + b2    # (N, 64)
-layer2 = tf.nn.dropout(layer2, keep_prob=keep_prob)  # tf : keep_prob / keras : rate // 의미 역전 주의
 
 #layer3 : model.add(Dense(16))
 w3 = tf.compat.v1.Variable(tf.compat.v1.random_normal([64,32], name = 'weight3'))
 b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([32], name = 'bias3' ))
 layer3 = tf.compat.v1.matmul(layer2,w3) + b3    # (N, 32)
 layer3 = tf.compat.v1.nn.relu(layer3)
-layer3 = tf.nn.dropout(layer3, keep_prob=keep_prob)
 
 #layer4 : model.add(Dense(10))
 w4 = tf.compat.v1.Variable(tf.compat.v1.random_normal([32,16], name = 'weight4'))
@@ -62,7 +59,7 @@ hypothesis = tf.nn.softmax(tf.compat.v1.matmul(layer4,w5) + b5) # (N,10)
 
 
 # 3-1. compile
-loss = tf.reduce_mean(-tf.reduce_sum(y*tf.log(hypothesis + 1e-7 ),axis=1))  #categorical
+loss = tf.reduce_mean(-tf.reduce_sum(y*tf.math.log(hypothesis + 1e-7 ),axis=1))  #categorical
 # loss = tf.reduce_mean(-tf.reduce_sum( y * tf.compat.v1.nn.log_softmax(hypothesis), axis =1))
 
 # optimizer = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-4)
@@ -87,7 +84,7 @@ for step in range(training_epochs):
         end = start + batch_size
         
         batch_x, batch_y = x_train[start:end], y_train[start:end]
-        feed_dict = {x:batch_x, y:batch_y, keep_prob:0.7}
+        feed_dict = {x:batch_x, y:batch_y}
         
         loss_val, _ = sess.run([loss,train], feed_dict=feed_dict)
         
@@ -98,7 +95,7 @@ for step in range(training_epochs):
         print(step, "loss : ", avg_loss)
 
 
-pred = sess.run(hypothesis, feed_dict={x:x_test, keep_prob:1.0})
+pred = sess.run(hypothesis, feed_dict={x:x_test})
 # print(pred) 
 pred = sess.run(tf.argmax(pred,axis=1))
 # print(pred)

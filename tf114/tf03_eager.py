@@ -32,3 +32,22 @@ print(sess.run(hello))  # 코드6번줄 쓰면 에러. 없으면 잘돌아감
 # tf.compat.v1.disable_eager_execution() 을 쓰면 어디서든 됨
 
 sess.close()
+
+'''
+Tensor 1은 '그래프연산' 모드
+Tensor 2는 '즉시 실행' 모드
+
+tf.compat.v1.enable_eager_execution()   # 즉시실행모드 켜
+                -> Tensor 2의 디폴트
+
+tf.compat.v1.disable_eager_execution()  # 즉시실행모드 꺼
+                                        -> 그래프 연산 모드로 돌아감
+                                        -> Tensor 1 코드를 쓸 수 있음
+
+tf.executing_eagerly()  # True면 즉시실행모드, -> Tensor 2 코드만 써야함
+                          False면 그래프 연산모드 -> Tensor 1 코드를 쓸 수 있다
+
+
+
+'''
+
