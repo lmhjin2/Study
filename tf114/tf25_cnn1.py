@@ -28,7 +28,7 @@ L1 = tf.nn.conv2d(x, w1, strides=[1,1,1,1], padding='VALID') # 4차원이라서 
 
 # Layer2
 w2 = tf.compat.v1.get_variable('w2', shape= [3,3,64,32])
-L2 = tf.compat.v1.layers.conv2d(L1, w2, strides=[1,1,1,1], padding='VALID' )
+L2 = tf.compat.v1.layers.conv2d(L1, w2, strides=[1,1,1,1], padding='SAME' )
 # tf.nn.conv2d 와 tf.layers.conv2d는 내부 구조가 다름. 비슷한데 결과가 다름.
 
 # Layer3
