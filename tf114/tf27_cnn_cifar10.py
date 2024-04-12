@@ -82,7 +82,7 @@ sess.run(tf.compat.v1.global_variables_initializer())
 batch_size = 100
 total_batch = int(len(x_train) / batch_size)
 
-epochs = 301
+epochs = 501
 for step in range(epochs):
     avg_loss = 0    # loss == cost
     for i in range(total_batch):
@@ -113,6 +113,6 @@ print("acc : ", acc)
 
 sess.close()
 
-# 300 loss :  1.0355706146955501
-# acc :  0.513
+# 500 loss :  0.5803430391550065
+# acc :  0.6622
 

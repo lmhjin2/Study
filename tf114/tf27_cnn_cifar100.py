@@ -74,7 +74,7 @@ hypothesis = tf.nn.softmax(L5)
 
 #3 compile
 loss = tf.reduce_mean(-tf.reduce_sum(y*tf.math.log(hypothesis + 1e-7 ),axis=1))
-train = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-5).minimize(loss)
+train = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-4).minimize(loss)
 
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
@@ -113,5 +113,6 @@ print("acc : ", acc)
 
 sess.close()
 
-
+# 300 loss :  1.5849161081314098
+# acc :  0.3063
 
