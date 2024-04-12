@@ -47,34 +47,34 @@ L2_maxpool = tf.nn.max_pool2d(L2, ksize=[1,2,2,1], strides=[1,2,2,1], padding='V
 # print(L2_maxpool)   # (?, 6, 6, 16)
 
 # Layer3
-w3 = tf.compat.v1.get_variable('w3', shape = [3, 3, 16, 10])
-b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([10], name = 'b3'))
+w3 = tf.compat.v1.get_variable('w3', shape = [3, 3, 16, 32])
+b3 = tf.compat.v1.Variable(tf.compat.v1.zeros([32], name = 'b3'))
 
 L3 = tf.nn.conv2d(L2_maxpool, w3, strides=[1,1,1,1], padding='SAME') 
 L3 += b3
 L3 = tf.nn.elu(L3)
 # L3 = tf.nn.dropout(L3, rate=rate)
 # L3_maxpool = tf.nn.max_pool2d(L3, ksize=[1,2,2,1], strides=[1,2,2,1], padding='VALID')
-print(L3)   # (?, 7, 7, 10)
+# print(L3)   # (?, 7, 7, 32)
 
 # Flatten
-L_flat = tf.compat.v1.reshape(L3, [-1, 7*7*10])
-print("Flatten : ", L_flat)  # Flatten :  Tensor("Reshape:0", shape=(?, 1152), dtype=float32)
+L_flat = tf.compat.v1.reshape(L3, [-1, 7*7*32])
+# print("Flatten : ", L_flat)  # Flatten :  Tensor("Reshape:0", shape=(?, 1152), dtype=float32)
 
 # Layer4 DNN
-w4 = tf.compat.v1.get_variable('w4', shape=[7*7*10, 10])
-b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([10], name='b4'))
+w4 = tf.compat.v1.get_variable('w4', shape=[7*7*32, 64])
+b4 = tf.compat.v1.Variable(tf.compat.v1.zeros([64], name='b4'))
 L4 = tf.nn.relu(tf.compat.v1.matmul(L_flat, w4) + b4)
 
 # Layer5 DNN
-w5 = tf.compat.v1.get_variable('w5', shape=[10,100])
+w5 = tf.compat.v1.get_variable('w5', shape=[64,100])
 b5 = tf.compat.v1.Variable(tf.compat.v1.zeros([100], name='b5'))
 L5 = tf.nn.relu(tf.matmul(L4, w5) + b5)
 hypothesis = tf.nn.softmax(L5)
 
 #3 compile
 loss = tf.reduce_mean(-tf.reduce_sum(y*tf.math.log(hypothesis + 1e-7 ),axis=1))
-train = tf.compat.v1.train.AdamOptimizer(learning_rate=2e-3).minimize(loss)
+train = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-5).minimize(loss)
 
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())

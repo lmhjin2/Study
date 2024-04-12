@@ -55,11 +55,11 @@ L3 += b3
 L3 = tf.nn.elu(L3)
 # L3 = tf.nn.dropout(L3, rate=rate)
 # L3_maxpool = tf.nn.max_pool2d(L3, ksize=[1,2,2,1], strides=[1,2,2,1], padding='VALID')
-print(L3)   # (?, 7, 7, 10)
+# print(L3)   # (?, 7, 7, 10)
 
 # Flatten
 L_flat = tf.compat.v1.reshape(L3, [-1, 7*7*10])
-print("Flatten : ", L_flat)  # Flatten :  Tensor("Reshape:0", shape=(?, 1152), dtype=float32)
+# print("Flatten : ", L_flat)  # Flatten :  Tensor("Reshape:0", shape=(?, 1152), dtype=float32)
 
 # Layer4 DNN
 w4 = tf.compat.v1.get_variable('w4', shape=[7*7*10, 10])
@@ -74,7 +74,7 @@ hypothesis = tf.nn.softmax(L5)
 
 #3 compile
 loss = tf.reduce_mean(-tf.reduce_sum(y*tf.math.log(hypothesis + 1e-7 ),axis=1))
-train = tf.compat.v1.train.AdamOptimizer(learning_rate=2e-3).minimize(loss)
+train = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3).minimize(loss)
 
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
