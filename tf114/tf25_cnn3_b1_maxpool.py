@@ -22,14 +22,15 @@ w1 = tf.compat.v1.get_variable('w1', shape = [2, 2, 1, 128])
                                       # 커널사이즈, 컬러(채널), 필터(아웃풋)
 b1 = tf.compat.v1.Variable(tf.compat.v1.zeros([128], name = 'b1'))
 
-L1 = tf.nn.conv2d(x, w1, strides=[1,1,1,1], padding='VALID') # 4차원이라서 [1,1,1,1], 중간 두개가 stride고 앞뒤의 1은 그냥 shape 맞춰주는놈임. 두칸씩 하려면 [1,2,2,1]. 2번이 가로 3번이 세로
+L1 = tf.nn.conv2d(x, w1, strides=[1,1,1,1], padding='VALID') # 4차원이라서 [1,1,1,1], 중간 두개가 stride고 앞뒤의 1은 그냥 shape 맞춰주는용. 두칸씩 하려면 [1,2,2,1]. 2번이 가로 3번이 세로
 # model.add(Conv2D(64, kernel_size=(2,2), input_shape=(28,28,1), strides=(1,1)))
 L1 += b1    # L1 = L1 + b1
 L1 = tf.nn.relu(L1)
 L1_maxpool = tf.nn.max_pool2d(L1, ksize=[1,2,2,1], strides=[1,2,2,1], padding='VALID')  # 4차원이라 앞뒤로 1넣음
 
-print(L1)   # (?, 27, 27, 128)
-print(L1_maxpool)   # (?, 13, 13, 128)
+# print(L1)   # (?, 27, 27, 128)
+# print(L1_maxpool)   # VALID = (?, 13, 13, 128)
+#                     # SAME = (?, 14, 14, 128)
 
 '''
 
