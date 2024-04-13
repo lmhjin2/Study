@@ -30,9 +30,9 @@ train, val = train_test_split(df, test_size=0.3, stratify=df['label'], random_st
 le = LabelEncoder()
 train['label'] = le.fit_transform(train['label'])
 val['label'] = le.transform(val['label'])
-
+  
 # Image Data Generator
-train_datagen = ImageDataGenerator(
+train_datagen = ImageDataGenerator(  
     rescale=1./255,
     rotation_range=20,
     width_shift_range=0.2,
