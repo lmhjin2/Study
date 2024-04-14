@@ -45,7 +45,7 @@ train_datagen = ImageDataGenerator(
 )
 
 val_datagen = ImageDataGenerator(rescale=1./255)
-
+  
 # Data Loading
 def get_data_generator(df, datagen, batch_size=32):
     generator = datagen.flow_from_dataframe(
@@ -114,4 +114,4 @@ preds = le.inverse_transform(preds)
 # Submission
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv(f'c:/Study/dacon/bird/output/0412_ENV2L_01.csv', index=False)
+submit.to_csv(f'c:/Study/dacon/bird/output/0414_ENV2L_01.csv', index=False)
