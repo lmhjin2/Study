@@ -41,7 +41,7 @@ train_datagen = ImageDataGenerator(
     zoom_range=0.2,
     horizontal_flip=True,
     fill_mode='nearest'
-)
+)  
 
 val_datagen = ImageDataGenerator(rescale=1./255)
 
