@@ -18,7 +18,7 @@ CFG = {
     'BATCH_SIZE': 32,
     'SEED': 41
 }
-
+  
 # Seed 고정
 tf.random.set_seed(CFG['SEED'])
 
