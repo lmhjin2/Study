@@ -26,10 +26,10 @@ from tqdm import tqdm
 import warnings
 warnings.filterwarnings(action='ignore') 
 
-df = pd.read_csv('/home/aia/Study/dacon/bird/train.csv')
-test = pd.read_csv('/home/aia/Study/dacon/bird/test.csv')
-train_img = '/home/aia/Study/dacon/bird/'
-test_img = '/home/aia/Study/dacon/bird/'
+df = pd.read_csv('c:/Study/dacon/bird/train.csv')
+test = pd.read_csv('c:/Study/dacon/bird/test.csv')
+train_img = 'c:/Study/dacon/bird/'
+test_img = 'c:/Study/dacon/bird/'
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
@@ -251,6 +251,6 @@ def inference(model, test_loader, device):
 
 preds = inference(infer_model, test_loader, device)
 
-submit = pd.read_csv('/home/aia/Study/dacon/bird/sample_submission.csv')
+submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv('/home/aia/Study/dacon/bird/output/0415_RN50_1.csv', index=False)
+submit.to_csv('c:/Study/dacon/bird/output/0416_RN50_2.csv', index=False)
