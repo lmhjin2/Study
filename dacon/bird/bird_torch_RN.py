@@ -35,8 +35,8 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 
 CFG = {
     'IMG_SIZE':224,
-    'EPOCHS':30,
-    'LEARNING_RATE':3e-4,
+    'EPOCHS':100,
+    'LEARNING_RATE':5e-5,
     'BATCH_SIZE': 64,
     'SEED':3
 }
@@ -253,4 +253,4 @@ preds = inference(infer_model, test_loader, device)
 
 submit = pd.read_csv('c:/Study/dacon/bird/sample_submission.csv')
 submit['label'] = preds
-submit.to_csv('c:/Study/dacon/bird/output/0416_RN50_2.csv', index=False)
+submit.to_csv('c:/Study/dacon/bird/output/0416_RN50_3.csv', index=False)
