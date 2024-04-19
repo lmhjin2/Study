@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow as tf  
 from tensorflow import keras
 from keras import layers, models
 from keras.preprocessing.image import ImageDataGenerator
@@ -16,7 +16,7 @@ CFG = {
     'EPOCHS': 20,
     'LEARNING_RATE': 3e-4,
     'BATCH_SIZE': 32,
-    'SEED': 41
+    'SEED': 41  
 }
   
 # Seed 고정
@@ -26,7 +26,7 @@ tf.random.set_seed(CFG['SEED'])
 df = pd.read_csv('c:/Study/dacon/bird/train.csv')
 train, val = train_test_split(df, test_size=0.3, stratify=df['label'], random_state=CFG['SEED'])
 
-# Label-Encoding
+# Label-Encoding  
 le = LabelEncoder()
 train['label'] = le.fit_transform(train['label'])
 val['label'] = le.transform(val['label'])
