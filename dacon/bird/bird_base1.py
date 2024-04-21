@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, f1_score, accuracy_score
 from keras.callbacks import EarlyStopping
 import pandas as pd
 import numpy as np
-import cv2
+import cv2  
 import os
   
 # Hyperparameter Setting
@@ -20,7 +20,7 @@ CFG = {
     'SEED': 41
 }
   
-# Seed 고정
+# Seed 고정  
 tf.random.set_seed(CFG['SEED'])
 
 # Train & Validation Split
