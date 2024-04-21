@@ -27,7 +27,7 @@ df = pd.read_csv('c:/Study/dacon/bird/train.csv')
 train, val = train_test_split(df, test_size=0.3, stratify=df['label'], random_state=CFG['SEED'])
 
 # Label-Encoding  
-le = LabelEncoder()
+le = LabelEncoder()  
 train['label'] = le.fit_transform(train['label'])
 val['label'] = le.transform(val['label'])
   
