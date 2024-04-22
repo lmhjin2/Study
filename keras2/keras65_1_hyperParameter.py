@@ -3,7 +3,7 @@ from keras.datasets import mnist
 from keras.models import Sequential, Model
 from keras.layers import *
 
-#1 data
+#1 data  
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
 # print(x_train.shape)    # (60000, 28, 28)
