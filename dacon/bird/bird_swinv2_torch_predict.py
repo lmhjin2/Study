@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import pytorch_lightning as L
-  
+
 from glob import glob
 from tqdm.auto import tqdm
 from sklearn.metrics import f1_score
@@ -169,37 +169,37 @@ val_transform = transforms.Compose([
 train_collate_fn = CustomCollateFn(train_transform, 'train')
 val_collate_fn = CustomCollateFn(val_transform, 'val')
 
-for fold_idx, (train_index, val_index) in enumerate(skf.split(train_df, train_df['class'])):
-    train_fold_df = train_df.loc[train_index,:]
-    val_fold_df = train_df.loc[val_index,:]
+# for fold_idx, (train_index, val_index) in enumerate(skf.split(train_df, train_df['class'])):
+#     train_fold_df = train_df.loc[train_index,:]
+#     val_fold_df = train_df.loc[val_index,:]
 
-    train_dataset = CustomDataset(train_fold_df, 'img_path', mode='train')
-    val_dataset = CustomDataset(val_fold_df, 'img_path', mode='val')
+#     train_dataset = CustomDataset(train_fold_df, 'img_path', mode='train')
+#     val_dataset = CustomDataset(val_fold_df, 'img_path', mode='val')
 
-    train_dataloader = DataLoader(train_dataset, collate_fn=train_collate_fn, batch_size=BATCH_SIZE)
-    val_dataloader = DataLoader(val_dataset, collate_fn=val_collate_fn, batch_size=BATCH_SIZE*2)
+#     train_dataloader = DataLoader(train_dataset, collate_fn=train_collate_fn, batch_size=BATCH_SIZE)
+#     val_dataloader = DataLoader(val_dataset, collate_fn=val_collate_fn, batch_size=BATCH_SIZE*2)
 
-    model = Swinv2Model.from_pretrained("microsoft/swinv2-large-patch4-window12to16-192to256-22kto1k-ft")
-    lit_model = LitCustomModel(model)
+#     model = Swinv2Model.from_pretrained("microsoft/swinv2-large-patch4-window12to16-192to256-22kto1k-ft")
+#     lit_model = LitCustomModel(model)
 
-    checkpoint_callback = ModelCheckpoint(
-        monitor='val_score',
-        mode='max',
-        dirpath='./checkpoints/',
-        filename=f'swinv2-large-resize-fold_idx={fold_idx}'+'-{epoch:02d}-{train_loss:.4f}-{val_score:.4f}',
-        save_top_k=1,
-        save_weights_only=True,
-        verbose=True
-    )
-    earlystopping_callback = EarlyStopping(monitor="val_score", mode="max", patience=3)
-    trainer = L.Trainer(max_epochs=100, accelerator='auto', precision=32, callbacks=[checkpoint_callback, earlystopping_callback], val_check_interval=0.5)
-    trainer.fit(lit_model, train_dataloader, val_dataloader)
+#     checkpoint_callback = ModelCheckpoint(
+#         monitor='val_score',
+#         mode='max',
+#         dirpath='/home/aia/Study/dacon/bird/checkpoints/',
+#         filename=f'swinv2-large-resize-fold_idx={fold_idx}'+'-{epoch:02d}-{train_loss:.4f}-{val_score:.4f}',
+#         save_top_k=1,
+#         save_weights_only=True,
+#         verbose=True
+#     )
+#     earlystopping_callback = EarlyStopping(monitor="val_score", mode="max", patience=3)
+#     trainer = L.Trainer(max_epochs= 15, accelerator='auto', precision=32, callbacks=[checkpoint_callback, earlystopping_callback], val_check_interval=0.5)
+#     trainer.fit(lit_model, train_dataloader, val_dataloader)
 
-    model.cpu()
-    lit_model.cpu()
-    del model, lit_model, checkpoint_callback, earlystopping_callback, trainer
-    gc.collect()
-    torch.cuda.empty_cache()
+#     model.cpu()
+#     lit_model.cpu()
+#     del model, lit_model, checkpoint_callback, earlystopping_callback, trainer
+#     gc.collect()
+#     torch.cuda.empty_cache()
 
 test_df = pd.read_csv('/home/aia/Study/dacon/bird/test.csv')
 test_df['img_path'] = test_df['img_path'].apply(lambda x: os.path.join('/home/aia/Study/dacon/bird/', x))
@@ -217,7 +217,7 @@ test_dataset = CustomDataset(test_df, 'img_path', mode='inference')
 test_dataloader = DataLoader(test_dataset, collate_fn=test_collate_fn, batch_size=BATCH_SIZE*2)
 
 fold_preds = []
-for checkpoint_path in glob('/home/aia/Study/dacon/bird/checkpoints/swinv2-large-resize*.ckpt'):
+for checkpoint_path in glob('/home/aia/Study/dacon/bird/checkpoints_temp/swinv2-large-resize*.ckpt'):
     model = Swinv2Model.from_pretrained("microsoft/swinv2-large-patch4-window12to16-192to256-22kto1k-ft")
     lit_model = LitCustomModel.load_from_checkpoint(checkpoint_path, model=model)
     trainer = L.Trainer( accelerator='auto', precision=32)
@@ -228,7 +228,7 @@ pred_ensemble = list(map(lambda x: np.bincount(x).argmax(),np.stack(fold_preds,a
 
 submission = pd.read_csv('/home/aia/Study/dacon/bird/sample_submission.csv')
 submission['label'] = le.inverse_transform(pred_ensemble)
-submission.to_csv('/home/aia/Study/dacon/bird/outputs/swinv2_large_resize.csv',index=False)
+submission.to_csv('/home/aia/Study/dacon/bird/output/0419_1.csv',index=False)
 
 
 

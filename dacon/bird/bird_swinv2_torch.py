@@ -192,7 +192,7 @@ for fold_idx, (train_index, val_index) in enumerate(skf.split(train_df, train_df
         verbose=True
     )
     earlystopping_callback = EarlyStopping(monitor="val_score", mode="max", patience=3)
-    trainer = L.Trainer(max_epochs=3, accelerator='auto', precision=32, callbacks=[checkpoint_callback, earlystopping_callback], val_check_interval=0.5)
+    trainer = L.Trainer(max_epochs= 15, accelerator='auto', precision=32, callbacks=[checkpoint_callback, earlystopping_callback], val_check_interval=0.5)
     trainer.fit(lit_model, train_dataloader, val_dataloader)
 
     model.cpu()
@@ -228,7 +228,7 @@ pred_ensemble = list(map(lambda x: np.bincount(x).argmax(),np.stack(fold_preds,a
 
 submission = pd.read_csv('/home/aia/Study/dacon/bird/sample_submission.csv')
 submission['label'] = le.inverse_transform(pred_ensemble)
-submission.to_csv('/home/aia/Study/dacon/bird/output/swinv2_2.csv',index=False)
+submission.to_csv('/home/aia/Study/dacon/bird/output/0419_1.csv',index=False)
 
 
 
