@@ -24,7 +24,7 @@ from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 scaler = MinMaxScaler()
 
 scaler.fit(x_train)
-x_train = scaler.transform(x_train)
+x_train = scaler.transform(x_train)  
 x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 

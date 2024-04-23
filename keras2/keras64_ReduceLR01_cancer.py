@@ -17,7 +17,7 @@ datasets = load_breast_cancer()
 x = datasets.data
 y = datasets.target
 
-random_state_value = 1
+random_state_value = 1  
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, test_size = 0.2, stratify=y, random_state = random_state_value )
