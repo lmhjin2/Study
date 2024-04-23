@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow import keras
-from keras import layers, models
+from keras import layers, models  
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -8,9 +8,9 @@ from sklearn.metrics import classification_report, f1_score, accuracy_score
 from keras.callbacks import EarlyStopping
 import pandas as pd
 import numpy as np
-import cv2
+import cv2  
 import os
-
+  
 # Hyperparameter Setting
 CFG = {
     'IMG_SIZE': 224,
@@ -19,8 +19,8 @@ CFG = {
     'BATCH_SIZE': 16,
     'SEED': 41
 }
-
-# Seed 고정
+  
+# Seed 고정  
 tf.random.set_seed(CFG['SEED'])
 
 # Train & Validation Split
@@ -30,7 +30,7 @@ train, val = train_test_split(df, test_size=0.3, stratify=df['label'], random_st
 # Label-Encoding
 le = LabelEncoder()
 train['label'] = le.fit_transform(train['label'])
-val['label'] = le.transform(val['label'])
+val['label'] = le.transform(val['label'])  
 
 # Image Data Generator
 train_datagen = ImageDataGenerator(

@@ -8,9 +8,9 @@ from sklearn.metrics import classification_report, f1_score, accuracy_score
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 import pandas as pd
 import numpy as np
-import cv2
-import os
-
+import cv2  
+import os  
+  
 # Hyperparameter Setting
 CFG = {
     'IMG_SIZE': 224,
@@ -18,7 +18,7 @@ CFG = {
     'LEARNING_RATE': 3e-4,
     'BATCH_SIZE': 8,
     'SEED': 41
-}
+}  
   
 # Seed 고정
 tf.random.set_seed(CFG['SEED'])
