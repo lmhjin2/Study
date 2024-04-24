@@ -44,7 +44,7 @@ model.add(Dropout(0.2))
 model.add(Dense(128, activation='relu'))
 model.add(Dense(100, activation='softmax'))
 
-model.summary()
+# model.summary()
 
 #3
 es = EarlyStopping(monitor = 'val_accuracy', mode='auto',
