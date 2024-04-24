@@ -84,4 +84,4 @@ print(f'acc_score : {accuracy_score(y_test, y_predict)}')
 # 34/34 [==============================] - 0s 545us/step - loss: 0.2478 - acc: 0.9260
 # model.score : 0.9259999990463257
 # acc_score : 0.926
-
+  
