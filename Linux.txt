@@ -1,10 +1,10 @@
-### GPU 사용중인지 확인하는법
+### GPU 사용중 인지 확인 하는법
 
 터미널
 watch -n 1 nvidia-smi
  - 나가고 싶으면 ctrl + c
 
-sudo 뜻 = Super User Do 의 약자. 최고권한으로 실행하는것.
+sudo 뜻 = Super User Do 의 약자. 최고 권한으로 실행 하는것.
 
 sudo update&upgrade 한번에 하기
  - sudo apt-get update && sudo apt-get upgrade
