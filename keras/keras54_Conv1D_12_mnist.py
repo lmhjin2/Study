@@ -40,6 +40,7 @@ model.add(Dense(80, activation='swish'))
 model.add(Dense(50, activation='swish'))
 model.add(Dense(10, activation='softmax'))
 
+model.summary()
 
 #3
 es = EarlyStopping(monitor = 'val_loss', mode = 'auto',
