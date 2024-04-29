@@ -5,7 +5,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, f1_score, accuracy_score
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping  
 import pandas as pd
 import numpy as np
 import cv2  
@@ -32,7 +32,7 @@ le = LabelEncoder()
 train['label'] = le.fit_transform(train['label'])
 val['label'] = le.transform(val['label'])  
 
-# Image Data Generator
+# Image Data Generator  
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=20,

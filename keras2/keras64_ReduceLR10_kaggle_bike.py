@@ -36,7 +36,7 @@ test_csv = test_csv.reshape(-1,8,1)
 
 #2
 model = Sequential()
-model.add(Conv1D(160, 5, input_shape = (8,1), activation = 'relu'))    # relu 는 0이하는 0으로, 양수는 그대로 뽑아내는것
+model.add(Conv1D(159, 5, input_shape = (8,1), activation = 'relu'))    # relu 는 0이하는 0으로, 양수는 그대로 뽑아내는것
 model.add(Dropout(0.2))
 model.add(Flatten())
 model.add(Dense(128, activation = 'relu'))
