@@ -23,7 +23,7 @@ conda env create -f environment.yaml
 # requirements.txt 파일로 pip install 하기
 pip install -r requirements.txt
  - txt 파일에 있는 버전 대로 install 해줌
-
+ - -r 옵션이 install 해주는 것
 
 
 # 환경 새로 만들기
