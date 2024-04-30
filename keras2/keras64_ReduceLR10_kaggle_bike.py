@@ -48,7 +48,7 @@ model.add(Dropout(0.2))
 model.add(Dense(16, activation = 'relu'))
 model.add(Dense(1, activation = 'relu'))
 
-model.summary()
+# model.summary()
 
 #3
 from keras.optimizers import *

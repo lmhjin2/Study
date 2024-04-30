@@ -43,7 +43,8 @@ model.add(Dense(25))                    # 1325
 model.add(Dense(50))                    # 1300
 model.add(Dense(13))                    # 663
 model.add(Dense(1, activation='sigmoid'))                     # 14
-# # model.summary()
+
+# model.summary()
 
 #3
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
