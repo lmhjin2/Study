@@ -1,5 +1,5 @@
 ##### "" 안의 내용은 뭐든 바꿀수 있는 내용임.
-#### cmd 에서 쌍따옴표를 쓸 일은 절대 없음 그냥 나만의 표시임
+#### cmd 에서 쌍따옴표를 쓸 일은 절대 없음 그냥 표시임
 ## https://www.tensorflow.org/install/gpu?hl=ko
     위 링크에서  테스트된 빌드 구성 클릭하면 나오는 곳에서
     검증된 조합 받으면됨
@@ -17,8 +17,14 @@ cmd 열고 conda env = 가상환경 이름들 보기. base하나 있을거임
         conda list = 현재 설치된애들 버전좀 보기
         pip list == conda list
 
-# yaml파일로 환경 세팅
+# .yaml 파일로 환경 생성
 conda env create -f environment.yaml
+
+# requirements.txt 파일로 pip install 하기
+pip install -r requirements.txt
+ - txt 파일에 있는 버전 대로 install 해줌
+
+
 
 # 환경 새로 만들기
 conda create -n "환경이름" python="3.9.18" anaconda
