@@ -18,7 +18,7 @@ cmd 열고 conda env = 가상환경 이름들 보기. base하나 있을거임
         pip list == conda list
 
 # .yaml 파일로 환경 생성
-conda env create -f environment.yaml
+conda env create -f environment.yaml  
 
 # requirements.txt 파일로 pip install 하기
 pip install -r requirements.txt
