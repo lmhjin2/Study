@@ -1,3 +1,4 @@
+# https://github.com/hyunwoongko/transformer
 import torch
 from torch import nn
 import math
@@ -161,6 +162,35 @@ class MultiHeadAttention(nn.Module):
         # To_Do : we should implement visualization
 
         return out
+
+    def split(self, tensor):
+        """
+        split tensor by number of head
+
+        :param tensor: [batch_size, length, d_model]
+        :return: [batch_size, head, length, d_tensor]
+        """
+        batch_size, length, d_model = tensor.size()
+
+        d_tensor = d_model // self.n_head
+        tensor = tensor.view(batch_size, length, self.n_head, d_tensor).transpose(1,2)
+        # it is similar with group convolution (split  by number of heads)
+
+        return tensor
+
+    def concat(self, tensor):
+        """
+        inverse function of self.split(tensor : torch.Tensor)
+
+        :param tensor: [batch_size, head, length, d_tensor]
+        :return: [batch_size, length, d_model]
+        """
+        batch_size, head, length, d_tensor = tensor.size()
+        d_model = head * d_tensor
+
+        tensor = tensor.transpose(1,2).contiguous().view(batch_size, length, d_model)
+        return tensor
+
 
 
 
