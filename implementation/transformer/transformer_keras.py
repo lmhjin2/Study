@@ -4,15 +4,16 @@ from keras_transformer import get_model, decode
 import sacrebleu
 
 # 엑셀 파일 로딩
-file_path = "C:/_data/ko-en/2002262.xlsx"
+file_path = "C:/_data/ko-en/2002261.xlsx"
 data = pd.read_excel(file_path)
-print(data.shape) # (200000, 3)
-# 소스 문장과 타겟 문장을 리스트로 추출
-source_sentences = data['원문'].tolist()[:50000]
-target_sentences = data['번역문'].tolist()[:50000]
 
-print(source_sentences[0])
-print(target_sentences[0])
+# print(data.shape) # 1.xlsx (200000, 3) // 2.xlsx (200000, 3) // 3.xlsx (100000, 7)
+# 소스 문장과 타겟 문장을 리스트로 추출
+source_sentences = data['원문'].tolist()[:10000]
+target_sentences = data['번역문'].tolist()[:10000]
+
+# print(source_sentences[0])
+# print(target_sentences[0])
 
 # 각 문장을 문자 단위로 분리
 source_tokens = [list(sentence) for sentence in source_sentences]
@@ -60,7 +61,7 @@ model = get_model(
     use_same_embed=False  # 다른 언어에 대해 다른 임베딩을 사용
 )
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
-model.summary()
+# model.summary()
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 # 모델 훈련
@@ -69,8 +70,7 @@ model.fit(
     y=np.array(target_output),
     epochs=10000,
     batch_size=32,
-    callbacks = [EarlyStopping(monitor='loss', patience=30, mode= 'min', verbose= 1, restore_best_weights=True),
-                 ModelCheckpoint(filepath="c:/_data/ko-en/tf_keras/weights_epoch_{epoch:02d}.hdf5", monitor='val_loss', mode='auto', verbose=1, save_best_only=True)]
+    callbacks = [EarlyStopping(monitor='loss', patience=30, mode= 'min', verbose= 1, restore_best_weights=True)]
 )
 
 # 번역 예측
