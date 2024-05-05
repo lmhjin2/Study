@@ -3,11 +3,13 @@ from torch import nn, optim
 import numpy as np
 import math
 from collections import Counter
-from torchtext.data import Field, BucketIterator
+from torchtext import data
+# from torchtext.data import Field, BucketIterator
+# 이거 사라져서 망했음;
 from torchtext.datasets import Multi30k
 import spacy
 from torch.optim import Adam
-import time as tm
+import time
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -28,6 +30,7 @@ adam_eps = 5e-9
 epoch = 1000
 clip = 1
 weight_decay = 5e-4
+inf = float('inf')
 
 class PositionalEncoding(nn.Module):
 
@@ -480,6 +483,64 @@ def initialize_weights(m):
     if hasattr(m, 'weight') and m.weight.dim() > 1:
         nn.init.kaiming_uniform(m.weight.data)
 
+class DataLoader:
+    source: Field = None
+    target: Field = None
+
+    def __init__(self, ext, tokenize_en, tokenize_de, init_token, eos_token):
+        self.ext = ext
+        self.tokenize_en = tokenize_en
+        self.tokenize_de = tokenize_de
+        self.init_token = init_token
+        self.eos_token = eos_token
+        print('dataset initializing start')
+
+    def make_dataset(self):
+        if self.ext == ('.de', '.en'):
+            self.source = Field(tokenize=self.tokenize_de, init_token=self.init_token, eos_token=self.eos_token,
+                                lower=True, batch_first=True)
+            self.target = Field(tokenize=self.tokenize_en, init_token=self.init_token, eos_token=self.eos_token,
+                                lower=True, batch_first=True)
+
+        elif self.ext == ('.en', '.de'):
+            self.source = Field(tokenize=self.tokenize_en, init_token=self.init_token, eos_token=self.eos_token,
+                                lower=True, batch_first=True)
+            self.target = Field(tokenize=self.tokenize_de, init_token=self.init_token, eos_token=self.eos_token,
+                                lower=True, batch_first=True)
+
+        train_data, valid_data, test_data = Multi30k.splits(exts=self.ext, fields=(self.source, self.target))
+        return train_data, valid_data, test_data
+
+    def build_vocab(self, train_data, min_freq):
+        self.source.build_vocab(train_data, min_freq=min_freq)
+        self.target.build_vocab(train_data, min_freq=min_freq)
+
+    def make_iter(self, train, validate, test, batch_size, device):
+        train_iterator, valid_iterator, test_iterator = BucketIterator.splits((train, validate, test),
+                                                                              batch_size=batch_size,
+                                                                              device=device)
+        print('dataset initializing done')
+        return train_iterator, valid_iterator, test_iterator
+
+tokenizer = Tokenizer()
+loader = DataLoader(ext=('.en', '.de'),
+                    tokenize_en=tokenizer.tokenize_en,
+                    tokenize_de=tokenizer.tokenize_de,
+                    init_token='<sos>',
+                    eos_token='<eos>')
+
+train, valid, test = loader.make_dataset()
+loader.build_vocab(train_data=train, min_freq=2)
+train_iter, valid_iter, test_iter = loader.make_iter(train, valid, test,
+                                                     batch_size=batch_size,
+                                                     device=device)
+
+src_pad_idx = loader.source.vocab.stoi['<pad>']
+trg_pad_idx = loader.target.vocab.stoi['<pad>']
+trg_sos_idx = loader.target.vocab.stoi['<sos>']
+
+enc_voc_size = len(loader.source.vocab)
+dec_voc_size = len(loader.target.vocab)
 
 model = Transformer(src_pad_idx=src_pad_idx,
                     trg_pad_idx=trg_pad_idx,
