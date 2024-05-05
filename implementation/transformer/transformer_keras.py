@@ -4,7 +4,7 @@ from keras_transformer import get_model, decode
 import sacrebleu
 
 # 엑셀 파일 로딩
-file_path = "C:/Users/AIA/Documents/ko_en_guache.xlsx"
+file_path = "C:/_data/ko-en/2002262.xlsx"
 data = pd.read_excel(file_path)
 
 # 소스 문장과 타겟 문장을 리스트로 추출
@@ -49,14 +49,14 @@ target_output = [[target_token_dict[t] for t in sentence] + [target_token_dict['
 # 모델 생성 및 컴파일
 model = get_model(
     token_num=max(len(source_token_dict), len(target_token_dict)),
-    embed_dim=256,
-    encoder_num=4,
-    decoder_num=3,
+    embed_dim=512,
+    encoder_num=6,
+    decoder_num=6,
     head_num=8,
-    hidden_dim=120,
+    hidden_dim=2048,
     attention_activation='relu',
     feed_forward_activation='relu',
-    dropout_rate=0.05,
+    dropout_rate=0.1,
     use_same_embed=False  # 다른 언어에 대해 다른 임베딩을 사용
 )
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
