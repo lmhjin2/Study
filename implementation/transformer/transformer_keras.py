@@ -6,10 +6,10 @@ import sacrebleu
 # 엑셀 파일 로딩
 file_path = "C:/_data/ko-en/2002262.xlsx"
 data = pd.read_excel(file_path)
-
+print(data.shape) # (200000, 3)
 # 소스 문장과 타겟 문장을 리스트로 추출
-source_sentences = data['원문'].tolist()[:10000]
-target_sentences = data['번역문'].tolist()[:10000]
+source_sentences = data['원문'].tolist()[:50000]
+target_sentences = data['번역문'].tolist()[:50000]
 
 print(source_sentences[0])
 print(target_sentences[0])
