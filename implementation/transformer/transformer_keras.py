@@ -62,14 +62,15 @@ model = get_model(
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
 model.summary()
 
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 # 모델 훈련
 model.fit(
     x=[np.array(source_input), np.array(target_input)],
     y=np.array(target_output),
     epochs=10000,
     batch_size=32,
-    callbacks = [EarlyStopping(monitor='loss', patience=30, mode= 'min', verbose= 1, restore_best_weights=True)]
+    callbacks = [EarlyStopping(monitor='loss', patience=30, mode= 'min', verbose= 1, restore_best_weights=True),
+                 ModelCheckpoint(filepath="c:/_data/ko-en/tf_keras/weights_epoch_{epoch:02d}.hdf5", monitor='val_loss', mode='auto', verbose=1, save_best_only=True)]
 )
 
 # 번역 예측
