@@ -1,6 +1,30 @@
 import torch
 from torch import nn
+import numpy as np
 import math
+from collections import Counter
+from torchtext.data import Field, BucketIterator
+from torchtext.datasets import Multi30k
+import spacy
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+batch_size = 128
+max_len = 256
+d_model = 512
+n_layers = 6
+n_heads = 8
+ffn_hidden = 2048
+drop_prob = 0.1
+
+init_lr = 0.1
+factor = 0.9
+patience = 10
+warmup = 100
+adam_eps = 5e-9
+epoch = 1000
+clip = 1
+weight_decay = 5e-4
 
 class PositionalEncoding(nn.Module):
 
@@ -162,13 +186,286 @@ class MultiHeadAttention(nn.Module):
 
         return out
 
+    def split(self, tensor):
+        """
+        split tensor by number of head
+
+        :param tensor: [batch_size, length, d_model]
+        :return: [batch_size, head, length, d_tensor]
+        """
+        batch_size, length, d_model = tensor.size()
+        
+        d_tensor = d_model // self.n_head
+        tensor = tensor.view(batch_size, length, self.n_head, d_tensor).transpose(1,2)
+        # it is similar with group convolution (split by number of heads)
+        
+        return tensor
+    
+    def concat(self, tensor):
+        """
+        inverse function of self.split(tensor : torch.Tensor)
+
+        :param tensor: [batch_size, head, length, d_tensor]
+        :return: [batch_size, length, d_model]
+        """
+        batch_size, head, length, d_tensor = tensor.size()
+        d_model = head * d_tensor
+
+        tensor = tensor.transpose(1, 2).contiguous().view(batch_size, length, d_model)
+        return tensor    
+
+class PositionwiseFeedForward(nn.Module):
+
+    def __init__(self, d_model, hidden, drop_prob=0.1):
+        super(PositionwiseFeedForward, self).__init__()
+        self.linear1 = nn.Linear(d_model, hidden)
+        self.linear2 = nn.Linear(hidden, d_model)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(p=drop_prob)
+
+    def forward(self, x):
+        x = self.linear1(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.linear2(x)
+        return x
+
+class EncoderLayer(nn.Module):
+
+    def __init__(self, d_model, ffn_hidden, n_head, drop_prob):
+        super(EncoderLayer, self).__init__()
+        self.attention = MultiHeadAttention(d_model=d_model, n_head=n_head)
+        self.norm1 = LayerNorm(d_model=d_model)
+        self.dropout1 = nn.Dropout(p=drop_prob)
+
+        self.ffn = PositionwiseFeedForward(d_model=d_model, hidden=ffn_hidden, drop_prob=drop_prob)
+        self.norm2 = LayerNorm(d_model=d_model)
+        self.dropout2 = nn.Dropout(p=drop_prob)
+
+    def forward(self, x, src_mask):
+        # 1. compute self attention
+        _x = x
+        x = self.attention(q=x, k=x, v=x, mask=src_mask)
+        
+        # 2. add and norm
+        x = self.dropout1(x)
+        x = self.norm1(x + _x)
+        
+        # 3. positionwise feed forward network
+        _x = x
+        x = self.ffn(x)
+      
+        # 4. add and norm
+        x = self.dropout2(x)
+        x = self.norm2(x + _x)
+        return x
+
+class DecoderLayer(nn.Module):
+
+    def __init__(self, d_model, ffn_hidden, n_head, drop_prob):
+        super(DecoderLayer, self).__init__()
+        self.self_attention = MultiHeadAttention(d_model=d_model, n_head=n_head)
+        self.norm1 = LayerNorm(d_model=d_model)
+        self.dropout1 = nn.Dropout(p=drop_prob)
+
+        self.enc_dec_attention = MultiHeadAttention(d_model=d_model, n_head=n_head)
+        self.norm2 = LayerNorm(d_model=d_model)
+        self.dropout2 = nn.Dropout(p=drop_prob)
+
+        self.ffn = PositionwiseFeedForward(d_model=d_model, hidden=ffn_hidden, drop_prob=drop_prob)
+        self.norm3 = LayerNorm(d_model=d_model)
+        self.dropout3 = nn.Dropout(p=drop_prob)
+
+    def forward(self, dec, enc, trg_mask, src_mask):
+        # 1. compute self attention
+        _x = dec
+        x = self.self_attention(q=dec, k=dec, v=dec, mask=trg_mask)
+        
+        # 2. add and norm
+        x = self.dropout1(x)
+        x = self.norm1(x + _x)
+
+        if enc is not None:
+            # 3. compute encoder - decoder attention
+            _x = x
+            x = self.enc_dec_attention(q=x, k=enc, v=enc, mask=src_mask)
+            
+            # 4. add and norm
+            x = self.dropout2(x)
+            x = self.norm2(x + _x)
+
+        # 5. positionwise feed forward network
+        _x = x
+        x = self.ffn(x)
+        
+        # 6. add and norm
+        x = self.dropout3(x)
+        x = self.norm3(x + _x)
+        return x
+
+class Encoder(nn.Module):
+
+    def __init__(self, enc_voc_size, max_len, d_model, ffn_hidden, n_head, n_layers, drop_prob, device):
+        super().__init__()
+        self.emb = TransformerEmbedding(d_model=d_model,
+                                        max_len=max_len,
+                                        vocab_size=enc_voc_size,
+                                        drop_prob=drop_prob,
+                                        device=device)
+
+        self.layers = nn.ModuleList([EncoderLayer(d_model=d_model,
+                                                  ffn_hidden=ffn_hidden,
+                                                  n_head=n_head,
+                                                  drop_prob=drop_prob)
+                                     for _ in range(n_layers)])
+
+    def forward(self, x, src_mask):
+        x = self.emb(x)
+
+        for layer in self.layers:
+            x = layer(x, src_mask)
+
+        return x
+
+class Decoder(nn.Module):
+    def __init__(self, dec_voc_size, max_len, d_model, ffn_hidden, n_head, n_layers, drop_prob, device):
+        super().__init__()
+        self.emb = TransformerEmbedding(d_model=d_model,
+                                        drop_prob=drop_prob,
+                                        max_len=max_len,
+                                        vocab_size=dec_voc_size,
+                                        device=device)
+
+        self.layers = nn.ModuleList([DecoderLayer(d_model=d_model,
+                                                  ffn_hidden=ffn_hidden,
+                                                  n_head=n_head,
+                                                  drop_prob=drop_prob)
+                                     for _ in range(n_layers)])
+
+        self.linear = nn.Linear(d_model, dec_voc_size)
+
+    def forward(self, trg, enc_src, trg_mask, src_mask):
+        trg = self.emb(trg)
+
+        for layer in self.layers:
+            trg = layer(trg, enc_src, trg_mask, src_mask)
+
+        # pass to LM head
+        output = self.linear(trg)
+        return output
+
+class Transformer(nn.Module):
+
+    def __init__(self, src_pad_idx, trg_pad_idx, trg_sos_idx, enc_voc_size, dec_voc_size, d_model, n_head, max_len,
+                 ffn_hidden, n_layers, drop_prob, device):
+        super().__init__()
+        self.src_pad_idx = src_pad_idx
+        self.trg_pad_idx = trg_pad_idx
+        self.trg_sos_idx = trg_sos_idx
+        self.device = device
+        self.encoder = Encoder(d_model=d_model,
+                               n_head=n_head,
+                               max_len=max_len,
+                               ffn_hidden=ffn_hidden,
+                               enc_voc_size=enc_voc_size,
+                               drop_prob=drop_prob,
+                               n_layers=n_layers,
+                               device=device)
+
+        self.decoder = Decoder(d_model=d_model,
+                               n_head=n_head,
+                               max_len=max_len,
+                               ffn_hidden=ffn_hidden,
+                               dec_voc_size=dec_voc_size,
+                               drop_prob=drop_prob,
+                               n_layers=n_layers,
+                               device=device)
+
+    def forward(self, src, trg):
+        src_mask = self.make_src_mask(src)
+        trg_mask = self.make_trg_mask(trg)
+        enc_src = self.encoder(src, src_mask)
+        output = self.decoder(trg, enc_src, trg_mask, src_mask)
+        return output
+
+    def make_src_mask(self, src):
+        src_mask = (src != self.src_pad_idx).unsqueeze(1).unsqueeze(2)
+        return src_mask
+
+    def make_trg_mask(self, trg):
+        trg_pad_mask = (trg != self.trg_pad_idx).unsqueeze(1).unsqueeze(3)
+        trg_len = trg.shape[1]
+        trg_sub_mask = torch.tril(torch.ones(trg_len, trg_len)).type(torch.ByteTensor).to(self.device)
+        trg_mask = trg_pad_mask & trg_sub_mask
+        return trg_mask
+
+def bleu_stats(hypothesis, reference):
+    """Compute statistics for BLEU."""
+    stats = []
+    stats.append(len(hypothesis))
+    stats.append(len(reference))
+    for n in range(1, 5):
+        s_ngrams = Counter(
+            [tuple(hypothesis[i:i + n]) for i in range(len(hypothesis) + 1 - n)]
+        )
+        r_ngrams = Counter(
+            [tuple(reference[i:i + n]) for i in range(len(reference) + 1 - n)]
+        )
+
+        stats.append(max([sum((s_ngrams & r_ngrams).values()), 0]))
+        stats.append(max([len(hypothesis) + 1 - n, 0]))
+    return stats
 
 
+def bleu(stats):
+    """Compute BLEU given n-gram statistics."""
+    if len(list(filter(lambda x: x == 0, stats))) > 0:
+        return 0
+    (c, r) = stats[:2]
+    log_bleu_prec = sum(
+        [math.log(float(x) / y) for x, y in zip(stats[2::2], stats[3::2])]
+    ) / 4.
+    return math.exp(min([0, 1 - float(r) / c]) + log_bleu_prec)
 
 
+def get_bleu(hypotheses, reference):
+    """Get validation BLEU score for dev set."""
+    stats = np.array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+    for hyp, ref in zip(hypotheses, reference):
+        stats += np.array(bleu_stats(hyp, ref))
+    return 100 * bleu(stats)
 
 
+def idx_to_word(x, vocab):
+    words = []
+    for i in x:
+        word = vocab.itos[i]
+        if '<' not in word:
+            words.append(word)
+    words = " ".join(words)
+    return words
 
+def epoch_time(start_time, end_time):
+    elapsed_time = end_time - start_time
+    elapsed_mins = int(elapsed_time / 60)
+    elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
+    return elapsed_mins, elapsed_secs
 
+class Tokenizer:
 
+    def __init__(self):
+        self.spacy_de = spacy.load('de_core_news_sm')
+        self.spacy_en = spacy.load('en_core_web_sm')
+
+    def tokenize_de(self, text):
+        """
+        Tokenizes German text from a string into a list of strings
+        """
+        return [tok.text for tok in self.spacy_de.tokenizer(text)]
+
+    def tokenize_en(self, text):
+        """
+        Tokenizes English text from a string into a list of strings
+        """
+        return [tok.text for tok in self.spacy_en.tokenizer(text)]
 
