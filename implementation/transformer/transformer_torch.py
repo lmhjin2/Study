@@ -11,7 +11,7 @@ import spacy
 from torch.optim import Adam
 import time
 
-
+  
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 batch_size = 128

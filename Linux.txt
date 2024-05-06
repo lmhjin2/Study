@@ -9,3 +9,4 @@ sudo 뜻 = Super User Do 의 약자. 최고 권한으로 실행 하는것.
 sudo update&upgrade 한번에 하기
  - sudo apt-get update && sudo apt-get upgrade
 
+  

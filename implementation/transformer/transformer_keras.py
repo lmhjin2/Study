@@ -72,7 +72,7 @@ model.fit(
     batch_size=32,
     callbacks = [EarlyStopping(monitor='loss', patience=30, mode= 'min', verbose= 1, restore_best_weights=True)]
 )
-
+  
 # 번역 예측
 decoded = decode(
     model,
