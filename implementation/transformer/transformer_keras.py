@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from keras_transformer import get_model, decode
 import sacrebleu
-
+  
 # 엑셀 파일 로딩
 file_path = "C:/_data/ko-en/2002262.xlsx"
 data = pd.read_excel(file_path)
