@@ -62,7 +62,7 @@ model = get_model(
 )
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
 # model.summary()
-  
+     
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 # 모델 훈련
 model.fit(
