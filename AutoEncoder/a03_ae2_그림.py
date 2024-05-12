@@ -74,7 +74,7 @@ for i, ax in enumerate([ax1,ax2,ax3,ax4,ax5]) :
     ax.set_xticks([])
     ax.set_yticks([])
 
-# 노이즈를 넣은 이미지
+# 노이즈를 넣은 이미지  
 for i, ax in enumerate([ax6,ax7,ax8,ax9,ax10]) :
     ax.imshow(x_test_noised[random_images[i]].reshape(28,28) , cmap='gray')
     if i ==0:
