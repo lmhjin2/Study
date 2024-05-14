@@ -50,11 +50,11 @@ target_output = [[target_token_dict[t] for t in sentence] + [target_token_dict['
 # 모델 생성 및 컴파일
 model = get_model(
     token_num=max(len(source_token_dict), len(target_token_dict)),
-    embed_dim=256,
+    embed_dim=512,
     encoder_num=6,
     decoder_num=6,
     head_num=8,
-    hidden_dim=1024,
+    hidden_dim=2048,
     attention_activation='relu',
     feed_forward_activation='relu',
     dropout_rate=0.1,
