@@ -73,3 +73,4 @@ for i in range(n) :
     ax.get_yaxis().set_visible(False)
 
 plt.show()
+
