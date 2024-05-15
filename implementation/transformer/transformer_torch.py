@@ -9,11 +9,11 @@ from torchtext import data
 from torchtext.datasets import Multi30k
 import spacy
 from torch.optim import Adam
-import time
+import time  
 
-  
+    
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+  
 batch_size = 128
 max_len = 256
 d_model = 512
