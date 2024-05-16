@@ -58,7 +58,7 @@ model = get_model(
     attention_activation='relu',
     feed_forward_activation='relu',
     dropout_rate=0.1,
-    use_same_embed=False  # 다른 언어에 대해 다른 임베딩을 사용
+    use_same_embed=False # 다른 언어에 대해 다른 임베딩을 사용
 )
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy')
 # model.summary()
@@ -70,7 +70,7 @@ model.fit(
     y=np.array(target_output),
     epochs=10000,
     batch_size=32,
-    callbacks = [EarlyStopping(monitor='loss', patience=30, mode= 'min', verbose= 1, restore_best_weights=True)]
+    callbacks = [EarlyStopping(monitor='loss', patience=50, mode= 'min', verbose= 1, restore_best_weights=True)]
 )
   
 # 번역 예측
