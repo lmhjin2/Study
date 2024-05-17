@@ -30,7 +30,7 @@ decoded = Dense(784,activation='sigmoid')(encoded)
 
 autoencoder = Model(input_img,decoded)
 
-autoencoder.summary()
+# autoencoder.summary()
 
 #3 컴파일,훈련
 # autoencoder.compile(optimizer='adam' , loss='mse' )
