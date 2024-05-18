@@ -47,7 +47,7 @@ model = autoencoder(hidden_layer_size=hidden_size)
 model.summary()
 
 #3 컴파일,훈련
-model.compile(optimizer='adam' , loss='mse' )
+model.compile(optimizer='adam', loss='mse')
 # autoencoder.compile(optimizer='adam' , loss='binary_crossentropy' )
 
 model.fit(x_train_noised , x_train,

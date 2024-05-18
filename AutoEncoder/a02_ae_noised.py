@@ -53,7 +53,7 @@ autoencoder = Model(input_img,decoded)
 
 #3 컴파일,훈련
 # autoencoder.compile(optimizer='adam' , loss='mse' )
-autoencoder.compile(optimizer='adam' , loss='binary_crossentropy' )
+autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
 
 autoencoder.fit(x_train_noised , x_train,
                 epochs = 10 , batch_size= 256 , validation_split=0.2)

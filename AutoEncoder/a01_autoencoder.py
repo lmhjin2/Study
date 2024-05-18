@@ -34,7 +34,7 @@ autoencoder = Model(input_img,decoded)
 
 #3 컴파일,훈련
 # autoencoder.compile(optimizer='adam' , loss='mse' )
-autoencoder.compile(optimizer='adam' , loss='binary_crossentropy' )
+autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
 
 autoencoder.fit(x_train , x_train,       # 지금은 같은놈을 같은걸로 하는데 원래는 train으로 노이즈 먹은 train을 훈련하게 된다
                 epochs = 10 , batch_size= 256 , validation_split=0.2)
