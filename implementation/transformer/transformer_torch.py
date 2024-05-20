@@ -11,20 +11,19 @@ import spacy
 from torch.optim import Adam
 import time  
 
-    
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  
+
 batch_size = 128
 max_len = 256
 d_model = 512
-n_layers = 6
+n_layers = 12
 n_heads = 8
 ffn_hidden = 2048
 drop_prob = 0.1
 
 init_lr = 0.1
 factor = 0.9
-patience = 10
+patience = 20
 warmup = 100
 adam_eps = 5e-9
 epoch = 1000
