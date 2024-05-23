@@ -7,7 +7,7 @@
 -n == --name
 
 원래 쓰던 조합
-Cuda = 11.8.0 / Cundd = 8.6.0 / Tensorflow = 2.9.0 / python = 3.9.18
+Cuda = 11.8.0 / Cudnn = 8.6.0 / Tensorflow = 2.9.0 / python = 3.9.18
 
 cuda_11.8.0_522.06_windows.exe
     # visual studio 체크 해제 안해도됨
