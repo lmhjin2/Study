@@ -7,24 +7,45 @@ import torch.nn.functional as F
 # print(torch.__version__)
 # 2.2.2+cu118
 
+USE_CUDA = torch.cuda.is_available()
+DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
+# print(f'torch : {torch.__version__}, 사용DEVICE : {DEVICE}')
+# torch : 1.12.1, 사용DEVICE : cuda
+
 #1. 데이터 
 x = np.array([1,2,3])
 y = np.array([1,2,3])
 
-x = torch.FloatTensor(x).unsqueeze(1)  # reshape를 unsqueeze로 해준거임.
-y = torch.FloatTensor(y).unsqueeze(1)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값으로 수렴함 (2)
+x = torch.FloatTensor(x).unsqueeze(1).to(DEVICE)  # reshape를 unsqueeze로 해준거임 / (3,) -> (3,1)
+y = torch.FloatTensor(y).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값(2)으로 수렴함 / (3,) -> (3,1)
 
-print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
-            # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
-            # unsequeeze.(1)       ,  기본
+print(f'스케일링 전 : {x}')
+x_mean = torch.mean(x)
+x_std = torch.std(x)
+x = (x - x_mean) / x_std
+# x = (x - torch.mean(x) / torch.std(x))
+print(f'스케일링 후 : {x}')
 
-print(x.shape, y.shape)  # ([3,1]) , ([3]) 
-                         # unsequeeze.(1), 기본
+# 스케일링 전 : tensor([[1.],
+#         [2.],
+#         [3.]], device='cuda:0')
+# 스케일링 후 : tensor([[-1.],
+#         [ 0.],
+#         [ 1.]], device='cuda:0')
+
+
+# print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
+#             # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
+#             # unsequeeze.(1)       ,  기본
+
+# print(x.shape, y.shape)  # ([3,1]) , ([3]) 
+#                          # unsequeeze.(1), 기본
+
 
 #2. 모델구성
 # model = Sequential()
 # model.add(Dense(1, input_dim=1))
-model = nn.Linear(1, 1) # input, output / 케라스랑 반대
+model = nn.Linear(1, 1).to(DEVICE) # input, output / 케라스랑 반대
 
 #3. 컴파일, 훈련
 # model.compile(loss = 'mse', optimizer = 'adam')
@@ -69,12 +90,14 @@ loss2 = evaluate(model, criterion, x, y)
 print("최종 loss : ", loss2)
 
 # result = model.predict([4])
-result = model(torch.Tensor([[4]]))
+input_value = torch.FloatTensor([[4]]).to(DEVICE)
+input_value = (input_value - x_mean) / x_std  # 동일한 스케일링 적용
+result = model(input_value)
+# result = model(torch.Tensor([[4]]).to(DEVICE) - torch.mean(torch.Tensor([1,2,3])) / torch.std(torch.Tensor([1,2,3])))
 print(f"4의 예측값 : {result.item()}")
+# x = (x - torch.mean(x) / torch.std(x))
 
 # ==================================================
-# 최종 loss :  5.0026969233840646e-08
-# 4의 예측값 : 4.0004496574401855
-
-
+# 최종 loss :  1.1227760041143675e-11
+# 4의 예측값 : 3.999992847442627
 

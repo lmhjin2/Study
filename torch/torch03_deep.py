@@ -7,24 +7,38 @@ import torch.nn.functional as F
 # print(torch.__version__)
 # 2.2.2+cu118
 
+USE_CUDA = torch.cuda.is_available()
+DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
+# print(f'torch : {torch.__version__}, 사용DEVICE : {DEVICE}')
+# torch : 1.12.1, 사용DEVICE : cuda
+
 #1. 데이터 
 x = np.array([1,2,3])
 y = np.array([1,2,3])
 
-x = torch.FloatTensor(x).unsqueeze(1)  # reshape를 unsqueeze로 해준거임.
-y = torch.FloatTensor(y).unsqueeze(1)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값으로 수렴함 (2)
+x = torch.FloatTensor(x).unsqueeze(1).to(DEVICE)  # reshape를 unsqueeze로 해준거임 / (3,) -> (3,1)
+y = torch.FloatTensor(y).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값(2)으로 수렴함 / (3,) -> (3,1)
 
-print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
-            # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
-            # unsequeeze.(1)       ,  기본
+# print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
+#             # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
+#             # unsequeeze.(1)       ,  기본
 
-print(x.shape, y.shape)  # ([3,1]) , ([3]) 
-                         # unsequeeze.(1), 기본
+# print(x.shape, y.shape)  # ([3,1]) , ([3]) 
+#                          # unsequeeze.(1), 기본
+
 
 #2. 모델구성
 # model = Sequential()
 # model.add(Dense(1, input_dim=1))
-model = nn.Linear(1, 1) # input, output / 케라스랑 반대
+# model = nn.Linear(1, 1).to(DEVICE) # input, output / 케라스랑 반대
+model = nn.Sequential(
+    nn.Linear(1, 5),
+    nn.Linear(5, 4),
+    nn.Linear(4, 3),
+    nn.Linear(3, 2),
+    nn.Linear(2, 1)
+).to(DEVICE)
+
 
 #3. 컴파일, 훈련
 # model.compile(loss = 'mse', optimizer = 'adam')
@@ -69,12 +83,9 @@ loss2 = evaluate(model, criterion, x, y)
 print("최종 loss : ", loss2)
 
 # result = model.predict([4])
-result = model(torch.Tensor([[4]]))
+result = model(torch.Tensor([[4]]).to(DEVICE))
 print(f"4의 예측값 : {result.item()}")
 
 # ==================================================
-# 최종 loss :  5.0026969233840646e-08
-# 4의 예측값 : 4.0004496574401855
-
-
-
+# 최종 loss :  7.958078640513122e-13
+# 4의 예측값 : 3.99999737739563
