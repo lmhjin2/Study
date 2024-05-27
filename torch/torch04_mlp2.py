@@ -41,7 +41,6 @@ model = nn.Sequential(
     nn.Linear(2, 1)
 ).to(DEVICE)
 
-
 #3. 컴파일, 훈련
 # model.compile(loss = 'mse', optimizer = 'adam')
 criterion = nn.MSELoss()                #criterion : 표준

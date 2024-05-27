@@ -41,7 +41,6 @@ model = nn.Sequential(
     nn.Linear(3, 3)
 ).to(DEVICE)
 
-
 #3. 컴파일, 훈련
 criterion = nn.MSELoss()                #criterion : 표준
 optimizer = optim.Adam(model.parameters(), lr = 0.01)
@@ -84,12 +83,14 @@ print("최종 loss : ", loss2)
 input_value = torch.FloatTensor([[10, 31, 211]]).to(DEVICE)
 input_value = (input_value - x_mean) / x_std  # 동일한 스케일링 적용
 result = model(input_value)
+
 # 1)
 result_list = result.detach().cpu().numpy().tolist()
 # print(f"[[10, 31, 211]]의 예측값 : {result_list}")
 # ==================================================
 # 최종 loss :  3.6110691260110572e-12
 # [[10, 31, 211]]의 예측값 : [[10.999998092651367, 1.9999996423721313, -0.9999979138374329]]
+
 # 2)
 for i, res in enumerate(result[0], start=1):
     print(f'{i}번째 예측값 :', res.item())
@@ -100,6 +101,7 @@ for i, res in enumerate(result[0], start=1):
 # 3번째 예측값 : -1.0000001192092896
 
 # 실제값 : [[11     2       -1]]
+
 """
 formatted_result = [float(val) for val in result_list[0]]  # 1) 랑 똑같이 나옴
 # formatted_result = [int(round(val)) for val in result_list[0]]  # 반올림
