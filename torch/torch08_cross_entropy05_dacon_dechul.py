@@ -107,13 +107,28 @@ def train(model, criterion, optimizer, x, y):
     optimizer.step() # 가중치(w) 수정(weight 갱신)
     return loss.item() # item 하면 numpy 데이터로 나옴
 
-epochs = 50000
+epochs = 2000
+best_loss = float('inf')
+best_model_weights = None
+
 for epoch in range(1, epochs + 1):
     loss = train(model, criterion, optimizer, x_train, y_train)
+    
+    if loss < best_loss : 
+        best_loss = loss
+        best_model_weights = model.state_dict().copy()
+        print(f'weights saved at {epoch}')
+    
+    if epoch % 100 == 0:
+        print(f'epoch : {epoch}, loss : {loss}')              # verbose 
     # print('epoch : {}, loss : {}'.format(epoch, loss))  # verbose
-    print(f'epoch : {epoch}, loss : {loss}')              # verbose 
+        
 
 print("="*50)
+
+if best_model_weights:
+    model.load_state_dict(best_model_weights)
+    print("Best model weights restored.")
 
 #4 평가, 예측
 def evaluate(model, criterion, x_test, y_test):
