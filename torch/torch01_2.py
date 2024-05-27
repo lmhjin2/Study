@@ -62,7 +62,7 @@ for epoch in range(1, epochs + 1):
 print("="*50)
 
 #4 평가, 예측
-# loss = model.evaluate(x,y)
+# loss = model.evaluate(x_test,y_test)
 def evaluate(model, criterion, x, y):
     model.eval()  # 평가모드
     

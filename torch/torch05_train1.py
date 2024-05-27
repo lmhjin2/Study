@@ -13,11 +13,16 @@ DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
 # torch : 1.12.1, 사용DEVICE : cuda
 
 #1. 데이터 
-x = np.array([1,2,3])
-y = np.array([1,2,3])
+x_train = np.array([1,2,3,4,5,6,7,])
+y_train = np.array([1,2,3,4,5,6,7,])
+x_test = np.array([1,2,3,4,5,6,7,])
+y_test = np.array([1,2,3,4,5,6,7,])
 
-x = torch.FloatTensor(x).unsqueeze(1).to(DEVICE)  # reshape를 unsqueeze로 해준거임 / (3,) -> (3,1)
-y = torch.FloatTensor(y).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값(2)으로 수렴함 / (3,) -> (3,1)
+##### [실습] 수정하기
+x_train = torch.FloatTensor(x_train).unsqueeze(1).to(DEVICE)  # reshape를 unsqueeze로 해준거임 / (3,) -> (3,1)
+y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값(2)으로 수렴함 / (3,) -> (3,1)
+x_test = torch.FloatTensor(x_test).unsqueeze(1).to(DEVICE)  
+y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)  
 
 # print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
 #             # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
@@ -34,6 +39,7 @@ y = torch.FloatTensor(y).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze �
 model = nn.Sequential(
     nn.Linear(1, 5),
     nn.Linear(5, 4),
+    nn.ReLU(),
     nn.Linear(4, 3),
     nn.Linear(3, 2),
     nn.Linear(2, 1)
@@ -42,8 +48,8 @@ model = nn.Sequential(
 #3. 컴파일, 훈련
 # model.compile(loss = 'mse', optimizer = 'adam')
 criterion = nn.MSELoss()                #criterion : 표준
-# optimizer = optim.Adam(model.parameters(), lr = 0.01)
-optimizer = optim.SGD(model.parameters(), lr = 0.01)
+optimizer = optim.Adam(model.parameters(), lr = 0.01)
+# optimizer = optim.SGD(model.parameters(), lr = 0.01)
 
 # model.fit(x,y, epochs = 100, batch_size=1)
 def train(model, criterion, optimizer, x, y):
@@ -62,23 +68,23 @@ def train(model, criterion, optimizer, x, y):
 
 epochs = 2200
 for epoch in range(1, epochs + 1):
-    loss = train(model, criterion, optimizer, x, y)
-    print('epoch : {}, loss : {}'.format(epoch, loss))  # verbose
-    print(f'epoch : {epoch}, loss : {loss}')
+    loss = train(model, criterion, optimizer, x_train, y_train)
+    # print('epoch : {}, loss : {}'.format(epoch, loss))  # verbose
+    print(f'epoch : {epoch}, loss : {loss}')              # verbose 
 
 print("="*50)
 
 #4 평가, 예측
 # loss = model.evaluate(x_test,y_test)
-def evaluate(model, criterion, x, y):
+def evaluate(model, criterion, x_test, y_test):
     model.eval()  # 평가모드
     
     with torch.no_grad():
-        y_predict = model(x)
-        loss2 = criterion(y, y_predict)
+        y_predict = model(x_test)
+        loss2 = criterion(y_test, y_predict)
     return loss2.item()
 
-loss2 = evaluate(model, criterion, x, y)
+loss2 = evaluate(model, criterion, x_test, y_test)
 print("최종 loss : ", loss2)
 
 # result = model.predict([4])
@@ -86,5 +92,5 @@ result = model(torch.Tensor([[4]]).to(DEVICE))
 print(f"4의 예측값 : {result.item()}")
 
 # ==================================================
-# 최종 loss :  7.958078640513122e-13
-# 4의 예측값 : 3.99999737739563
+# 최종 loss :  1.624097720458878e-13
+# 4의 예측값 : 4.0
