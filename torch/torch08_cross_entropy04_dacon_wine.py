@@ -99,7 +99,6 @@ def evaluate(model, criterion, x_test, y_test):
     model.eval()  # 평가모드
     accuracy_metric = Accuracy(task='multiclass', num_classes=7).to(DEVICE)
     f1_metric = F1Score(task='multiclass', num_classes=7).to(DEVICE)  # 둘다 됨
-    # f1_metric = BinaryF1Score().to(DEVICE)       # 둘다 됨
     
     with torch.no_grad():
         y_predict = model(x_test)
