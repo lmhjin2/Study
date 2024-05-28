@@ -1,3 +1,5 @@
+import torch
+
 """
 ## 1. GroundingDINO
 
@@ -38,6 +40,7 @@ def get_grounding_output(model, image, caption, box_threshold, text_threshold, w
     pred_phrases = []
     for logit, box in zip(logits_filt, boxes_filt):
         pred_phrase = get_phrases_from_posmap(logit > text_threshold, tokenized, tokenizer)
+        # posmap = position map
         if with_logits: # 참이면 최대값을 포함해 프레이즈를 리스트에 추가
             pred_phrases.append(pred_phrase + f" ({str(logit.max().item())[:4]})")
         else:           # 아니면 그냥 추가
@@ -68,7 +71,7 @@ for i in range(boxes_filt.size(0)):
     boxes_filt[i][2:] = boxes_filt[i][2:] / 2
     boxes_filt[i][2:] += boxes_filt[i][:2]
     # 박스 좌표값을 (x1, y1, x2, y2) 형식에서 (x, y, width, height) 형식으로 변환
-
+# filt == filtered
 # 박스 CPU로 이동 및 변환
 boxes_filt = boxes_filt.cpu()
 transformed_boxes = predictor.transform.apply_boxes_torch(boxes_filt, image.shape[:2]).to(device)  # 박스 좌표를 SAM모델에 맞게 변환 
@@ -81,7 +84,6 @@ masks, _, _ = predictor.predict_torch(
     multimask_output=False
 )
 # point_coords와 point_lables 를 None으로 설정해 박스 기반 세그멘테이션
-# 그래서 얘네가 뭔데 ㅅㅂ
 # multimask_output 을 False로 두어 하나의 마스크 출력을 반환함
 
 """
@@ -91,14 +93,15 @@ masks, _, _ = predictor.predict_torch(
 """
 if inpaint_mode == 'merge':
     masks = torch.sum(masks, dim=0).unsqueeze(0)  # masks 텐서를 합쳐 단일 마스크 생성.
-    # dim=0 기준으로 합치고, 차원을 확장해 (1, H, W) 형태로 만듦
+        # dim=0 기준으로 합치고, 차원을 확장해 (1, H, W) 형태로 만듦
     masks = torch.where(masks > 0, True, False)  # 마스크 이진화. 마스크 값이 0보다 크면 True
+        # 객체가 1, 객체가 아닌게 0인 이미지
     mask = masks[0][0].cpu().numpy()  # simply choose the first
-    # 첫번째 마스크를 선택하고 CPU로 넘긴뒤, 넘파이 배열로 변환
+        # 첫번째 마스크를 선택하고 CPU로 넘긴뒤, 넘파이 배열로 변환
     mask_pil = Image.fromarray(mask)
-    # mask 넘파이 배열을 PIL이미지로 변환해 mask_pil로 저장
+        # mask 넘파이 배열을 PIL이미지로 변환해 mask_pil로 저장
     image_pil = Image.fromarray(image)
-    # image 넘파이 배열도 PIL 이미지로 변환해서 image_pil로 저장
+        # image 넘파이 배열도 PIL 이미지로 변환해서 image_pil로 저장
 
 """
 ## 4. Stable Diffusion
@@ -110,7 +113,7 @@ if inpaint_mode == 'merge':
 # 사전 학습된 가중치를 불러와 초기화
 pipe = StableDiffusionInpaintPipeline.from_pretrained(
     "runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16, cache_dir=cache_dir
-)
+)   # cache_dir = 사전학습 모델을 다운로드하고 로드할때 자주 사용됨. 반복 다운x, 빠른 로딩
 pipe = pipe.to("cuda")
 
 # 이미지 및 마스크 크기 512x512로 조정 / Stable Diffusion의 input size로 맞추기 위함
