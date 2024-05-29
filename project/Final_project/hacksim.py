@@ -130,3 +130,4 @@ image = image.resize(size)  # 이미지를 원래 크기로 재조정
 image.save(os.path.join(output_dir, "grounded_sam_inpainting_output.jpg"))
 # 지정된 위치에 이미지 저장
 
+ 
