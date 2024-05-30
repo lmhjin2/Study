@@ -108,7 +108,7 @@ if inpaint_mode == 'merge':
 
 # 마스크와 이미지를 입력으로 받아 Inpainting 수행 후 이미지를 저장
 # Stable Diffusion에 넣기 위해 사이즈 조절 후, 원래 크기로 되돌림
-"""
+"""  
 
 # 사전 학습된 가중치를 불러와 초기화
 pipe = StableDiffusionInpaintPipeline.from_pretrained(
