@@ -7,36 +7,31 @@
 # torch.argmax()
 # acc
 import numpy as np
-import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_digits, fetch_covtype
+from sklearn.datasets import load_digits
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, f1_score
 from torchmetrics.classification import BinaryAccuracy, BinaryF1Score, F1Score, Accuracy
 from torch.utils.data import DataLoader, random_split, TensorDataset
 
+# print(torch.__version__)
+# 2.2.2+cu118
+
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
+# print(f'torch : {torch.__version__}, 사용DEVICE : {DEVICE}')
+# torch : 1.12.1, 사용DEVICE : cuda
 
-#1. 데이터
-path = "c:/_data/dacon/wine/"
-train_csv = pd.read_csv(path + "train.csv", index_col=0)
-test_csv = pd.read_csv(path + "test.csv", index_col=0)
-submission_csv = pd.read_csv(path+"sample_submission.csv")
+#1. 데이터 
+dataset = load_digits()
+x = dataset.data
+y = dataset.target
 
-
-train_csv['type'] = train_csv['type'].replace({"white":0, "red":1})
-test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
-
-x = train_csv.drop(['quality'], axis = 1).to_numpy()
-y = train_csv['quality'].to_numpy()
-y = y-3
-
-print(x.shape, y.shape)  # (5497, 12) (5497,)
+print(x.shape, y.shape)  # (1797, 64) (1797,)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y, shuffle=True) 
 
 scaler = StandardScaler()
@@ -47,28 +42,57 @@ x_train = torch.FloatTensor(x_train).to(DEVICE)
 x_test = torch.FloatTensor(x_test).to(DEVICE)
 y_train = torch.LongTensor(y_train).to(DEVICE)
 y_test = torch.LongTensor(y_test).to(DEVICE)
-# FloatTensor 에 softmax 먹이던가 LongTensor 쓰던가 둘중에 하나.
-# nn.CrossEntropyLoss 가 sparse 처럼 onehot을 자동으로 먹여줌. (LongTensor로 정수형으로 바꿔줘야함)
 
-print(x_train.shape, y_train.shape)  # (4397, 12) (4397)
-print(np.unique(y))  # 3 ~ 9
+print(x_train.shape, y_train.shape)  # (1437, 64) (1437, 1)
+# print(np.unique(y))  # 0~9
 
 #2. 모델구성
-model = nn.Sequential(
-    nn.Linear(12, 256),
-    nn.ReLU(),
-    nn.Linear(256, 128),
-    nn.Dropout(0.2),
-    nn.Linear(128, 64),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(64, 32),
-    nn.BatchNorm1d(32),
-    nn.Linear(32, 16),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(16, 7)
-).to(DEVICE)
+# model = nn.Sequential(
+#     nn.Linear(64, 256),
+#     nn.ReLU(),
+#     nn.Linear(256, 128),
+#     nn.Dropout(0.2),
+#     nn.Linear(128, 64),
+#     nn.ReLU(),
+#     nn.Dropout(0.2),//
+#     nn.Linear(64, 32),
+#     nn.BatchNorm1d(32),
+#     nn.Linear(32, 16),
+#     nn.ReLU(),
+#     nn.Dropout(0.2),
+#     nn.Linear(16, 10)
+# ).to(DEVICE)
+
+class Model(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(Model, self).__init__()
+        self.linear1 = nn.Linear(input_dim, 256)
+        self.linear2 = nn.Linear(256, 128)
+        self.linear3 = nn.Linear(128, 64)
+        self.linear4 = nn.Linear(64, 32)
+        self.linear5 = nn.Linear(32, 16)
+        self.linear6 = nn.Linear(16, output_dim)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.2)
+        self.batchnorm = nn.BatchNorm1d(32)
+    
+    def forward(self, input_size):
+        x = self.linear1(input_size)
+        x = self.relu(x)
+        x = self.linear2(x)
+        x = self.dropout(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.linear4(x)
+        x = self.batchnorm(x)
+        x = self.linear5(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.linear6(x)
+        return x
+        
+model = Model(64, 10).to(DEVICE)
 
 #3. 컴파일, 훈련
 criterion = nn.CrossEntropyLoss()                #criterion : 표준
@@ -99,8 +123,8 @@ print("="*50)
 #4 평가, 예측
 def evaluate(model, criterion, x_test, y_test):
     model.eval()  # 평가모드
-    accuracy_metric = Accuracy(task='multiclass', num_classes=7).to(DEVICE)
-    f1_metric = F1Score(task='multiclass', num_classes=7).to(DEVICE)  # 둘다 됨
+    accuracy_metric = Accuracy(task='multiclass', num_classes=10).to(DEVICE)
+    f1_metric = F1Score(task='multiclass', num_classes=10).to(DEVICE)  # 둘다 됨
     
     with torch.no_grad():
         y_predict = model(x_test)
@@ -121,6 +145,6 @@ print(f"f1 : {f1}")
 print(f"ACC : {accuracy}")  
 
 # ==================================================
-# 최종 loss : 2.896304130554199
-# f1 : 0.5936363339424133
-# ACC : 0.5936363339424133
+# 최종 loss : 0.20665188133716583
+# f1 : 0.980555534362793
+# ACC : 0.980555534362793

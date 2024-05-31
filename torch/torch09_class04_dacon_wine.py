@@ -14,7 +14,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_digits, fetch_covtype
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, f1_score
 from torchmetrics.classification import BinaryAccuracy, BinaryF1Score, F1Score, Accuracy
 from torch.utils.data import DataLoader, random_split, TensorDataset
@@ -23,51 +23,20 @@ USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
 
 #1. 데이터
-path = 'c:/_data/kaggle/Obesity_Risk/'
+path = "c:/_data/dacon/wine/"
+train_csv = pd.read_csv(path + "train.csv", index_col=0)
+test_csv = pd.read_csv(path + "test.csv", index_col=0)
+submission_csv = pd.read_csv(path+"sample_submission.csv")
 
-train_csv = pd.read_csv(path + 'train.csv', index_col=0)
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
-submission_csv = pd.read_csv(path + 'sample_submission.csv')
 
-lae_G = LabelEncoder()
-train_csv['Gender'] = lae_G.fit_transform(train_csv['Gender'])
-test_csv['Gender'] = lae_G.transform(test_csv['Gender'])
+train_csv['type'] = train_csv['type'].replace({"white":0, "red":1})
+test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
 
-lae_fhwo = LabelEncoder()
-train_csv['family_history_with_overweight'] = lae_fhwo.fit_transform(train_csv['family_history_with_overweight'])
-test_csv['family_history_with_overweight'] = lae_fhwo.transform(test_csv['family_history_with_overweight'])
+x = train_csv.drop(['quality'], axis = 1).to_numpy()
+y = train_csv['quality'].to_numpy()
+y = y-3
 
-lae_FAVC = LabelEncoder()
-train_csv['FAVC'] = lae_FAVC.fit_transform(train_csv['FAVC'])
-test_csv['FAVC'] = lae_FAVC.transform(test_csv['FAVC'])
-
-lae_CAEC = LabelEncoder()
-train_csv['CAEC'] = lae_CAEC.fit_transform(train_csv['CAEC'])
-test_csv['CAEC'] = lae_CAEC.transform(test_csv['CAEC'])
-
-lae_SMOKE = LabelEncoder()
-train_csv['SMOKE'] = lae_SMOKE.fit_transform(train_csv['SMOKE'])
-test_csv['SMOKE'] = lae_SMOKE.transform(test_csv['SMOKE'])
-
-lae_SCC = LabelEncoder()
-train_csv['SCC'] = lae_SCC.fit_transform(train_csv['SCC'])
-test_csv['SCC'] = lae_SCC.fit_transform(test_csv['SCC'])
-
-lae_CALC = LabelEncoder()
-test_csv['CALC'] = lae_CALC.fit_transform(test_csv['CALC'])
-train_csv['CALC'] = lae_CALC.transform(train_csv['CALC'])
-
-lae_MTRANS = LabelEncoder()
-train_csv['MTRANS'] = lae_MTRANS.fit_transform(train_csv['MTRANS'])
-test_csv['MTRANS'] = lae_MTRANS.transform(test_csv['MTRANS'])
-
-lae_NObeyesdad = LabelEncoder()
-train_csv['NObeyesdad'] = lae_NObeyesdad.fit_transform(train_csv['NObeyesdad'])
-
-x = train_csv.drop(['NObeyesdad'], axis = 1).to_numpy()
-y = train_csv['NObeyesdad'].to_numpy()
-
-print(x.shape, y.shape)  # (20758, 16) (20758,)
+print(x.shape, y.shape)  # (5497, 12) (5497,)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y, shuffle=True) 
 
 scaler = StandardScaler()
@@ -79,25 +48,56 @@ x_test = torch.FloatTensor(x_test).to(DEVICE)
 y_train = torch.LongTensor(y_train).to(DEVICE)
 y_test = torch.LongTensor(y_test).to(DEVICE)
 
-print(x_train.shape, y_train.shape)  # (16606, 16) (16606)
-print(np.unique(y, return_counts=True))  # 0 ~ 6
+print(x_train.shape, y_train.shape)  # (4397, 12) (4397)
+print(np.unique(y))  # 3 ~ 9
 
 #2. 모델구성
-model = nn.Sequential(
-    nn.Linear(16, 256),
-    nn.ReLU(),
-    nn.Linear(256, 128),
-    nn.Dropout(0.2),
-    nn.Linear(128, 64),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(64, 32),
-    nn.BatchNorm1d(32),
-    nn.Linear(32, 16),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(16, 7)
-).to(DEVICE)
+# model = nn.Sequential(
+#     nn.Linear(12, 256),1
+#     nn.ReLU(),
+#     nn.Linear(256, 128),2
+#     nn.Dropout(0.2),
+#     nn.Linear(128, 64),3
+#     nn.ReLU(),
+#     nn.Dropout(0.2),
+#     nn.Linear(64, 32),4
+#     nn.BatchNorm1d(32),
+#     nn.Linear(32, 16),5
+#     nn.ReLU(),
+#     nn.Dropout(0.2),
+#     nn.Linear(16, 7) 6
+# ).to(DEVICE)
+
+class Model(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(Model, self).__init__()
+        self.linear1 = nn.Linear(input_dim, 256)
+        self.linear2 = nn.Linear(256, 128)
+        self.linear3 = nn.Linear(128, 64)
+        self.linear4 = nn.Linear(64, 32)
+        self.linear5 = nn.Linear(32, 16)
+        self.linear6 = nn.Linear(16, output_dim)
+        self.relu = nn.ReLU()
+        self.drop = nn.Dropout(0.2)
+        self.bn = nn.BatchNorm1d(32)
+        
+    def forward(self, input_size):
+        x = self.linear1(input_size)
+        x = self.relu(x)
+        x = self.linear2(x)
+        x = self.drop(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.drop(x)
+        x = self.linear4(x)
+        x = self.bn(x)
+        x = self.linear5(x)
+        x = self.relu(x)
+        x = self.drop(x)
+        x = self.linear6(x)
+        return x
+
+model = Model(12, 7).to(DEVICE)
 
 #3. 컴파일, 훈련
 criterion = nn.CrossEntropyLoss()                #criterion : 표준
@@ -117,28 +117,15 @@ def train(model, criterion, optimizer, x, y):
     optimizer.step() # 가중치(w) 수정(weight 갱신)
     return loss.item() # item 하면 numpy 데이터로 나옴
 
-epochs = 5000
-best_loss = float('inf')
-best_model_weights = None
-
+epochs = 1000
 for epoch in range(1, epochs + 1):
     loss = train(model, criterion, optimizer, x_train, y_train)
-    
-    if loss < best_loss : 
-        best_loss = loss
-        best_model_weights = model.state_dict().copy()
-        print(f'epoch : {epoch}, loss : {best_loss} weights saved ')
-    
-    if epoch % 100 == 0:
-        print(f'epoch : {epoch}, loss : {loss}')              # verbose 
+    # print('epoch : {}, loss : {}'.format(epoch, loss))  # verbose
+    print(f'epoch : {epoch}, loss : {loss}')              # verbose 
 
 print("="*50)
 
-if best_model_weights:
-    model.load_state_dict(best_model_weights)
-    print("Best model weights restored.")
-
-#4. 평가, 예측
+#4 평가, 예측
 def evaluate(model, criterion, x_test, y_test):
     model.eval()  # 평가모드
     accuracy_metric = Accuracy(task='multiclass', num_classes=7).to(DEVICE)
@@ -163,6 +150,6 @@ print(f"f1 : {f1}")
 print(f"ACC : {accuracy}")  
 
 # ==================================================
-# 최종 loss : 1.354968547821045
-# f1 : 0.8530828356742859
-# ACC : 0.8530828356742859
+# 최종 loss : 2.268458127975464
+# f1 : 0.5690909028053284
+# ACC : 0.5690909028053284

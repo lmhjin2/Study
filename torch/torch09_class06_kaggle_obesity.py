@@ -83,21 +83,52 @@ print(x_train.shape, y_train.shape)  # (16606, 16) (16606)
 print(np.unique(y, return_counts=True))  # 0 ~ 6
 
 #2. 모델구성
-model = nn.Sequential(
-    nn.Linear(16, 256),
-    nn.ReLU(),
-    nn.Linear(256, 128),
-    nn.Dropout(0.2),
-    nn.Linear(128, 64),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(64, 32),
-    nn.BatchNorm1d(32),
-    nn.Linear(32, 16),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(16, 7)
-).to(DEVICE)
+# model = nn.Sequential(
+#     nn.Linear(16, 256),   1
+#     nn.ReLU(),
+#     nn.Linear(256, 128),  2
+#     nn.Dropout(0.2),
+#     nn.Linear(128, 64),   3
+#     nn.ReLU(),
+#     nn.Dropout(0.2),
+#     nn.Linear(64, 32),    4
+#     nn.BatchNorm1d(32),
+#     nn.Linear(32, 16),    5
+#     nn.ReLU(),
+#     nn.Dropout(0.2),
+#     nn.Linear(16, 7)      6
+# ).to(DEVICE)
+
+class Model(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(Model, self).__init__()
+        self.linear1 = nn.Linear(input_dim, 256)
+        self.linear2 = nn.Linear(256, 128)
+        self.linear3 = nn.Linear(128, 64)
+        self.linear4 = nn.Linear(64, 32)
+        self.linear5 = nn.Linear(32, 16)
+        self.linear6 = nn.Linear(16, output_dim)
+        self.relu = nn.ReLU()
+        self.drop = nn.Dropout(0.2)
+        self.bn = nn.BatchNorm1d(32)
+        return
+    def forward(self, input_size):
+        x = self.linear1(input_size)
+        x = self.relu(x)
+        x = self.linear2(x)
+        x = self.drop(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.drop(x)
+        x = self.linear4(x)
+        x = self.bn(x)
+        x = self.linear5(x)
+        x = self.relu(x)
+        x = self.drop(x)
+        x = self.linear6(x)
+        return x
+
+model = Model(16, 7).to(DEVICE)
 
 #3. 컴파일, 훈련
 criterion = nn.CrossEntropyLoss()                #criterion : 표준
@@ -163,6 +194,6 @@ print(f"f1 : {f1}")
 print(f"ACC : {accuracy}")  
 
 # ==================================================
-# 최종 loss : 1.354968547821045
-# f1 : 0.8530828356742859
-# ACC : 0.8530828356742859
+# 최종 loss : 2.3712196350097656
+# f1 : 0.852601170539856
+# ACC : 0.852601170539856

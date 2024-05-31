@@ -7,7 +7,6 @@
 # torch.argmax()
 # acc
 import numpy as np
-import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -22,21 +21,12 @@ from torch.utils.data import DataLoader, random_split, TensorDataset
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
 
-#1. 데이터
-path = "c:/_data/dacon/wine/"
-train_csv = pd.read_csv(path + "train.csv", index_col=0)
-test_csv = pd.read_csv(path + "test.csv", index_col=0)
-submission_csv = pd.read_csv(path+"sample_submission.csv")
+#1. 데이터 
+dataset = fetch_covtype()
+x = dataset.data
+y = dataset.target - 1
 
-
-train_csv['type'] = train_csv['type'].replace({"white":0, "red":1})
-test_csv['type'] = test_csv['type'].replace({"white":0, "red":1})
-
-x = train_csv.drop(['quality'], axis = 1).to_numpy()
-y = train_csv['quality'].to_numpy()
-y = y-3
-
-print(x.shape, y.shape)  # (5497, 12) (5497,)
+print(x.shape, y.shape)  # (581012, 54) (581012,)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42, stratify=y, shuffle=True) 
 
 scaler = StandardScaler()
@@ -47,28 +37,57 @@ x_train = torch.FloatTensor(x_train).to(DEVICE)
 x_test = torch.FloatTensor(x_test).to(DEVICE)
 y_train = torch.LongTensor(y_train).to(DEVICE)
 y_test = torch.LongTensor(y_test).to(DEVICE)
-# FloatTensor 에 softmax 먹이던가 LongTensor 쓰던가 둘중에 하나.
-# nn.CrossEntropyLoss 가 sparse 처럼 onehot을 자동으로 먹여줌. (LongTensor로 정수형으로 바꿔줘야함)
 
-print(x_train.shape, y_train.shape)  # (4397, 12) (4397)
-print(np.unique(y))  # 3 ~ 9
+print(x_train.shape, y_train.shape)  # (464809, 54) (464809)
+# print(np.unique(y))  # 1 ~ 7
 
 #2. 모델구성
-model = nn.Sequential(
-    nn.Linear(12, 256),
-    nn.ReLU(),
-    nn.Linear(256, 128),
-    nn.Dropout(0.2),
-    nn.Linear(128, 64),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(64, 32),
-    nn.BatchNorm1d(32),
-    nn.Linear(32, 16),
-    nn.ReLU(),
-    nn.Dropout(0.2),
-    nn.Linear(16, 7)
-).to(DEVICE)
+# model = nn.Sequential(
+#     nn.Linear(54, 256),   1
+#     nn.ReLU(),
+#     nn.Linear(256, 128),  2
+#     nn.Dropout(0.2),
+#     nn.Linear(128, 64),   3
+#     nn.ReLU(),
+#     nn.Dropout(0.2),
+#     nn.Linear(64, 32),    4
+#     nn.BatchNorm1d(32),
+#     nn.Linear(32, 16),    5
+#     nn.ReLU(),
+#     nn.Dropout(0.2),      
+#     nn.Linear(16, 7)      6
+# ).to(DEVICE)
+
+class Model(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(Model, self).__init__()
+        self.linear1 = nn.Linear(input_dim, 256)
+        self.linear2 = nn.Linear(256, 128)
+        self.linear3 = nn.Linear(128, 64)
+        self.linear4 = nn.Linear(64, 32)
+        self.linear5 = nn.Linear(32, 16)
+        self.linear6 = nn.Linear(16, output_dim)
+        self.relu = nn.ReLU()
+        self.drop = nn.Dropout(0.2)
+        self.batchnorm = nn.BatchNorm1d(32)
+
+    def forward(self, input_size):
+        x = self.linear1(input_size)
+        x = self.relu(x)
+        x = self.linear2(x)
+        x = self.drop(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.drop(x)
+        x = self.linear4(x)
+        x = self.batchnorm(x)
+        x = self.linear5(x)
+        x = self.relu(x)
+        x = self.drop(x)
+        x = self.linear6(x)
+        return x
+
+model = Model(54, 7).to(DEVICE)
 
 #3. 컴파일, 훈련
 criterion = nn.CrossEntropyLoss()                #criterion : 표준
@@ -121,6 +140,6 @@ print(f"f1 : {f1}")
 print(f"ACC : {accuracy}")  
 
 # ==================================================
-# 최종 loss : 2.896304130554199
-# f1 : 0.5936363339424133
-# ACC : 0.5936363339424133
+# 최종 loss : 0.3189306855201721
+# f1 : 0.8668881058692932
+# ACC : 0.8668881058692932
