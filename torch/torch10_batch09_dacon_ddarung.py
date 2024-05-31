@@ -51,8 +51,8 @@ from torch.utils.data import DataLoader, random_split, TensorDataset
 train_set = TensorDataset(x_train, y_train)
 test_set = TensorDataset(x_test, y_test)
 
-train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_set, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_set, batch_size=300, shuffle=True)
+test_loader = DataLoader(test_set, batch_size=300, shuffle=False)
 
 #2. 모델구성
 # model = nn.Sequential(
@@ -170,13 +170,13 @@ def evaluate(model, criterion, loader):
 
 # y_pred = np.round(model(x_test).cpu().detach().numpy())
 y_pred = model(x_test).cpu().detach().numpy()
-loss2 = evaluate(model, criterion, x_test, y_test)
+loss2 = evaluate(model, criterion, test_loader)
 score = r2_score(y_test.cpu().numpy(), y_pred)
 print(f"최종 loss : {loss2}")
 print(f'rmse : {np.sqrt(loss2)}')
 print(f'r2 : {score}')
 
 # ==================================================
-# 최종 loss : 1923.333740234375
-# rmse : 43.855829033714265
-# r2 : 0.6702413731403639
+# 최종 loss : 4105.35302734375
+# rmse : 64.07302886038516
+# r2 : 0.7651929603380786

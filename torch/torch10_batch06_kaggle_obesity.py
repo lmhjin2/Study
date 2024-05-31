@@ -85,8 +85,8 @@ from torch.utils.data import DataLoader, random_split, TensorDataset
 train_set = TensorDataset(x_train, y_train)
 test_set = TensorDataset(x_test, y_test)
 
-train_loader = DataLoader(train_set, batch_size = 32, shuffle=True)
-test_loader = DataLoader(test_set, batch_size = 32, shuffle=False)
+train_loader = DataLoader(train_set, batch_size = 6000, shuffle=True)
+test_loader = DataLoader(test_set, batch_size = 6000, shuffle=False)
 
 #2. 모델구성
 # model = nn.Sequential(
@@ -208,6 +208,6 @@ print(f"f1 : {f1}")
 print(f"ACC : {accuracy}")  
 
 # ==================================================
-# 최종 loss : 2.3712196350097656
-# f1 : 0.852601170539856
-# ACC : 0.852601170539856
+# 최종 loss : 2.804502487182617
+# f1 : 0.8533236980438232
+# ACC : 0.8533236980438232

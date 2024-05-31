@@ -134,11 +134,28 @@ def train(model, criterion, optimizer, loader):
     return total_loss / len(loader)
 
 epochs = 5000
+best_epoch = 0
+best_loss = float('inf')
+best_model_weights = None
+
 for epoch in range(1, epochs + 1):
-    loss = train(model, criterion, optimizer, x_train, y_train)
-    print(f'epoch : {epoch}, loss : {loss}')  # verbose 
+    loss = train(model, criterion, optimizer, train_loader)
+    
+    if loss < best_loss : 
+        best_loss = loss
+        best_epoch = epoch
+        best_model_weights = model.state_dict().copy()
+        print(f'epoch : {best_epoch}, loss : {best_loss} weights saved ')
+    
+    if epoch % 100 == 0:
+        print(f'epoch : {epoch}, loss : {loss}')              # verbose 
 
 print("="*50)
+
+if best_model_weights:
+    model.load_state_dict(best_model_weights)
+    print(f"Best model weights restored from epoch {best_epoch}")
+    
 
 #4 평가, 예측
 def evaluate(model, criterion, loader):
@@ -149,6 +166,8 @@ def evaluate(model, criterion, loader):
         for x_batch, y_batch in loader:
             y_predict = model(x_batch)
             loss2 = criterion(y_predict, y_batch)
+            total_loss += loss2.item()
+            
     return total_loss / len(loader)
 
 # y_pred = np.round(model(x_test).cpu().detach().numpy())
@@ -160,6 +179,7 @@ print(f'rmse : {np.sqrt(loss2)}')
 print(f'r2 : {score}')
 
 # ==================================================
-# 최종 loss : 23383.537109375
-# rmse : 152.9167652985604
-# r2 : 0.26143484295992236
+# Best model weights restored from epoch 4749
+# 최종 loss : 21472.591796875
+# rmse : 146.5352919841326
+# r2 : 0.29519817785116276
