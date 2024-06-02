@@ -16,7 +16,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, MinMaxScaler
 from sklearn.metrics import accuracy_score, f1_score, r2_score
 
 # print(torch.__version__)
-# 2.2.2+cu118
+# 2.2.2+cu118  
 
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
