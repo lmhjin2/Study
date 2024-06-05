@@ -38,5 +38,5 @@ train.csv
 checkpoint.pt
 ControlNet/
 ControlNet-main.zip
-project/Final_preject/Grounded-Segment-Anything-main
-project/Final_preject/IOPaint-main
+project/Final_preject/Grounded-Segment-Anything-main/
+project/Final_preject/IOPaint-main/
