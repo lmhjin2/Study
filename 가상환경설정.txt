@@ -3,7 +3,7 @@
 ## https://www.tensorflow.org/install/gpu?hl=ko
     위 링크에서  테스트된 빌드 구성 클릭하면 나오는 곳에서
     검증된 조합 받으면됨 (텐서플로우 기준)
- 
+
 -n == --name
 
 설치된(적용된) 쿠다 버전 확인
