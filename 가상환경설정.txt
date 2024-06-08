@@ -6,7 +6,7 @@
     검증된 조합 받으면됨 (텐서플로우 기준)
 
 ## https://pytorch.org/get-started/previous-versions/
-    파이토치는 위에서 버전 찾아서 하는걸 추천. (대충 받으면 GPU 안돌 확률 높음)
+    파이토치는 위에서 버전 찾아서 하는걸 추천. (대충 받으면 GPU 안돌아갈 확률 높음)
 
 
 -n == --name
