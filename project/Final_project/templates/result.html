@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>보정 결과</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .left, .right {
+            flex: 1;
+            padding: 20px;
+        }
+        .left {
+            border-right: 1px solid #ccc;
+        }
+        .right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        img {
+            width: 512px;  /* width 설정 */
+            height: 512px;  /* height 설정 */
+            object-fit: cover;  /* 이미지가 설정된 크기에 맞게 조절 */
+        }
+        .task-details {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <h1>입력이미지</h1>
+            <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="업로드된 이미지">
+            <div class="task-details">
+                <strong>task:</strong> {{ prompt }}<br>
+            </div>
+        </div>
+        <div class="right">
+            <h1>결과</h1>
+            <img src="{{ url_for('static', filename='outputs/' + output_image) }}" alt="출력 이미지">
+            <div class="task-details">
+                {% for task in tasks %}
+                    <strong>task:</strong> {{ task.label }}<br>
+                    <strong>det prompt:</strong> {{ task.det_prompt }}<br>
+                    <strong>inpaint prompt:</strong> {{ task.inpainting_prompt }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <form method="get" enctype="multipart/form-data" action="/">
+            <input type="submit" value="다른 이미지 생성">
+        </form>
+    </div>
+</body>
+</html>
