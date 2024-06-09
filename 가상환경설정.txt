@@ -1,8 +1,13 @@
 ##### "" 안의 내용은 뭐든 바꿀수 있는 내용임.
 #### cmd 에서 쌍따옴표를 쓸 일은 절대 없음 그냥 표시임
+
 ## https://www.tensorflow.org/install/gpu?hl=ko
     위 링크에서  테스트된 빌드 구성 클릭하면 나오는 곳에서
     검증된 조합 받으면됨 (텐서플로우 기준)
+
+## https://pytorch.org/get-started/previous-versions/
+    파이토치는 위에서 버전 찾아서 하는걸 추천. (대충 받으면 GPU 안돌 확률 높음)
+
 
 -n == --name
 
