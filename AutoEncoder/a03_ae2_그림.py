@@ -43,7 +43,7 @@ def autoencoder(hidden_layer_size) :
 hidden_size = 154   # PCA 0.95 일때 성능
 
 model = autoencoder(hidden_layer_size=hidden_size)
-
+ 
 model.summary()
 
 #3 컴파일,훈련
