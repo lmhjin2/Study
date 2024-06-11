@@ -30,7 +30,7 @@ print(np.max(x_test_noised),np.min(x_test_noised))    # 1.0 0.0
 #2 모델구성
 from keras.models import Sequential, Model
 from keras.layers import Dense, Input
-
+ 
 def autoencoder(hidden_layer_size) :
     model = Sequential()
     model.add(Dense(units=hidden_layer_size , input_shape=(28*28,)))
