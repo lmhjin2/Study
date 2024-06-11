@@ -55,7 +55,7 @@ deactivate    이거 쓰면 뭐 사라졌다고 경고나옴
 conda deactivate
 
 # 깔자마자 다운 받을거
-tensorflow
+tensorflow or pytorch
     xgboost, lightgbm, catboost (얘네는 조금 늦어도됨)
 
 # 가상환경 복사
