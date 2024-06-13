@@ -1,0 +1,23 @@
+원격 데스크탑 설치 (윈도우에서 접속)
+
+1) xrdp 패키지 설치
+sudo apt update
+sudo apt install xrdp
+
+2) systemctl status xrdp // 중간에 녹색으로 "active(running)" 뜨면 정상 설치 된거임
+
+3) 
+- 실행 : service xrdp start // 이거까지 하면 로그아웃 상태에서 원격 데스크탑 적솝됨.
+	버추얼박스 서버리스로는 접속 x. 껐다 켜도 이상태 유지
+- 재시작 : service xrdp restart
+- 중지 : service xrdp stop
+
+
+WinSCP 쓰는법
+
+1) 우분투에서 SSH 설치, 시작, 허용
+sudo apt install net-tools
+sudo apt-get install openssh-server
+sudo systemctl start ssh
+sudo systemctl enable ssh
+netstat -tnlp

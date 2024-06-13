@@ -1,0 +1,61 @@
+* GPT1
+
+1. 기존의 문제점
+언어 모델을 위한 Labeled Data의 양은 많지 않다. Labeling은 사람이 작업해야 하고, 확보하기가 어려운데
+Unlabeled Data는 쉽게 다량으로 확보 가능하다
+But, 다량의 Unlabeled Data를 충분히 활용할 수 있는 방법이 없다.
+Labeled Data를 사용한 Supervised Learning에 의존하고 있었음
+GPT-1은 Unlabeled Data를 사용한 Generative Pre-Training을 효과적으로 활용할 방법을 고민, 
+이에 맞춰 모델을 개발함
+Unlabeled Data로 Pre-Training이후 최소한의 추가 레이어로 전이학습이 목표
+어떤 optimization objective(=손실함수) 가 전이학습에 유용한 
+text representation을 배우는데 효과적인지 불분명함
+
+2. GPT-1의 제안 방법
+1) Architecture
+GPT-1은 다음 단어를 예측하는 방법을 사용해서 학습 -> Decoder 의 역할 
+	(정확히 반대 이유로 BERT는 인코더만을 사용)  // 트랜스포머 디코더 12 블록 + linear + softmax
+2) Unsupervised Pre-Training
+GPT는 다음단를 맞추도록 학습 (Next Word Prediction) / L1 Unsupervised Loss 사용
+
+3) Next Word Prediction의 효과 
+언어 구조를 학습함, 문맥을 이해하려 노력하게됨, 다양한 언어 패턴을 학습하게됨, 전이학습이 유용해짐
+
+4) Supervised Fine Tuning
+Pre-Training을 마친 모델은 각 task에 맞게 다시 fine tuning을 해야함
+이때는 Supervised Learning을 하게되고 아까 L1과 L2 Supervised Loss 사용
+
+5) Task Specific Input Transformations
+Classification 
+입력받은 Text를 분류  ex) 스팸 메일
+문장 전체를 모델에 입력으로 넣어주면됨
+
+Textual Entailment 
+2개의 문장을 입력받아 두 문장의 관계를 분류하는 문제.
+보통 세가지로 분류되는데 Entailment(함축), Contradiction(모순), Neutral(중립) 이다
+이 경우 문장 2개를 구분해서 받아야 하기 때문에 첫번째 문장인 Premise를 넣고
+Delim(구분)과 두번째 문장인 Hypothesis를 구성해줌
+
+Similarity 
+두개의 문장을 입력받아 두 문장이 얼마나 유사한지 측정하는 문제
+따라서 입력으로 2개의 문장을 받고, 출력으로 0~1이 나와야함.
+첫번째 입력은 Text1, Text2순서로 구성, 두번쨰 입력은 Text2, Text1순서로 구성됨
+두 문장을 각각 모델에 입력하고 나온 Representation을 Elementwise Addition하고 Linear와
+Activation을 거쳐 최종 유사도값을 구함
+
+Multiple Choice
+Question Answering and Commonsense Reasoning 문제가 있는데 
+이 문제는 Context와 Answer로 구성되어 있다
+모델은 Context를 입력받아 그에 맞는 답을 출력하도록 학습함
+예) Context = “서울은 대한민국의 수도입니다. 이 도시는 한강을 중심으로 확장되어 있습니다.  
+     대한민국의 수도는 어디입니까?” // Answer = "서울"
+
+
+* 요약
+1. 넘치는 Unlabeled Data로 다음 단어를 예측해가며 언어의 구조와 패턴을 학습 = Pre-trained Transformer)
+2. Label 데이터와 최소한의 추가 레이어로 fine-tuning -> 새로운 task 적용 가능
+
+
+
+
+

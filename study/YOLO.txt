@@ -1,0 +1,274 @@
+## YoLo
+
+# YOLO v1
+
+2 stage = Localization + Classification
+yolov1은 1 stage로 구성되어있음
+darknet 1 = backbone network, classification 모델
+그리드 기반 탐지 
+Darknet을 224x224로 pre-train, Fine-tuning 으로 448x448
+
+(논문기준)
+S = 7
+B = 2
+C = 20 / class 갯수
+
+입력 이미지를 448x448 로 resize
+SxS 크기의 특징맵 추출 // 논문 기준 7x7 
+출력은 SxSx(Bx5+C)의 크기.     # 5 == (x,y), w, h, c
+각 그리드 셀마다 B개의 바운딩박스와 confidence score, 그리고 C개의 클래스 확률을 포함함
+
+각 셀마다 B개의 바운딩 박스가 있지만, 클래스 확률 예측은 그리드 셀 단위로 진행되기 때문에 Bx(5+C)가 아니라 (Bx5+C) 가 되는거임
+같은 셀의 B개의 바운딩 박스는 동일한 클래스 확률 분포를 "공유" 함
+
+그리드 셀 : 
+    각 셀 내에 객체가 존재하는지 판단하고 바운딩 박스와 클래스 확률을 예측함
+    이미지의 크기와 관계없이 고정된 그리드 구조를 사용해서 객체를 탐지함
+
+Confidence Score : 
+    Pr(Object) x IoU(pred, truth)
+    객체가 있는지 여부 x IoU 값으로 바운딩 박스의 신뢰도를 의미함
+
+IoU (Intersection over Union) :
+    A 를 예측한 바운딩 박스 영역, B를 실제 바운딩 박스 영역이라고 했을때,
+    IoU = A와 B의 교집합 영역 // A와 B의 합집합 영역
+    완벽히 일치한다면 1, 하나도 안겹치면 0
+    
+Class Specific Confidence Score (신뢰도) : 
+    (confidence score) x (conditional class probabilities)
+    각 바운딩 박스마다 계산하며 이 Class Specific Confidence Score를 기준으로 NMS를 시행함
+    conditional class probabilities는 특정 클래스i  에대한 확률.
+    객체가 있을때 해당 객체가 i 에 속할 확률
+
+Non-Max Suppression : 
+    모든 바운딩 박스를 Class Specific Confidence Score를 기준으로 내림차순 정렬
+    가장 높은 신뢰도 점수를 가진 바운딩 박스를 선택함
+    선택된 바운딩 박스와 나머지 박스들간의 IoU를 계산.
+    IoU가 지정한 임계값(threshold) 이상인 바운딩 박스는 같은 물체를 중복 탐지했다고 판단하고 제거함.
+        (신뢰도가 가장 높은 박스와 비교한거라 첫 박스가 살아남을 수 밖에 없는 구조)
+    더이상 겹치는 박스가 없을 때까지 남은 바운딩 박스들에 대해서 위 과정을 반복
+
+손실함수 : 
+    YOLOv1의 손실 함수는 위치 오류, 신뢰도 오류, 그리고 클래스 확률 오류를 포함
+    각 그리드 셀이 예측한 바운딩 박스의 위치와 실제 객체의 위치 사이의 차이를 최소화하고, 
+    예측된 신뢰도와 실제 신뢰도의 차이, 그리고 클래스 확률의 차이를 최소화하는 것을 목표로 함
+
+훈련 : 
+    이미지 + 클래스 + 바운딩박스를 입력으로 받고 손실함수를 최소화 하는 방향으로 학습
+
+Precision : 
+    TP / TP + FP
+
+Recall : 
+    TP / TP + FN
+
+AP : 
+    다양한 threshold 별로 precision과 recall의 값을 사용해 곡선을 그려서 나타내고 하단부 영역 사이즈가 AP
+
+### P.S.
+yolov1의 장점은 속도와 단순함임
+성능은 하락. 
+PASCAL VOC 2007 데이터셋 기준 mAP
+R-CNN보다 정확도가 떨어짐
+yolov1 : 63.4% / R-CNN : 66.0%
+###
+
+# YOLO v2
+
+1. 모든 conv 레이어에 Batch Norm 추가
+    -> 학습속도, 안정성 상승
+
+2. High Resolution Classifier
+    ImageNet 데이터로 classification network를 먼저 학습시켜서 고해상도에서도 잘 동작하게 함
+    사전학습은 448x448 이미지로 진행
+
+3. FCL(Fully Connected Layer) -> FCN(Fully Convolutional Network)
+    24 Convolutional Layer  /  2 Fully-Connected Layer -->>  
+    19 Convolutional Layer  /  5 Max pooling Layer
+
+4. 각 그리드 셀 당 바운딩 박스 2개 -> 앵커박스 5개
+    k-means cluster [ 유클리안 거리(Euclidean distance) 기준] -->> 
+    d( box, centroid ) = 1 - IoU( box, centroid )  [겹치는 면적 기준]
+    
+    NMS 진행 : 
+        Class Specific Confidence Score 계산	
+	각 클래스별로 CSCS점수 기준 내림차순 정렬 ( ex..  "고양이 " 클래스에 대한 박스를 내림차순 정렬 ) 
+	신뢰도(= CSCS점수)가 가장 높은 바운딩박스 선택, IoU계산후 임계값 이상인 박스 제거. ( 보통 0.5 ) 
+	임계값 이상인 중복된 박스가 더이상 없을 때까지 반복
+
+                 (min, max, step)
+5. 입력 크기 (320, 608, 32) 아무거나 받아서 reshape -> 416x416
+    ( 사전학습 때는 448x448로 함 )
+    ( 10배치마다 모델이 랜덤사이즈 하나를 선택하게 만들었음 ) 
+    ( output feature map 의 크기가 홀수가 되도록 해서 중심cell이 존재할 수 있도록 하기 위함 )
+    ( output feature map의 shape : 13x13 )
+
+6. darknet 1 -> darknet 19 ( 네트워크 마지막 fc layer -> global average pooling )
+    ( 이미지 한장당 숫자 하나 )
+
+7. 특성맵 사이즈 : 7x7 -> 13x13 + 26x26
+    기본특성맵이 13x13, 더 작은 객체 검출을 위해 26x26 [ Pass-Through Layer (= skip connection )]
+    중간 계층의 특성맵(26x26) 을 pass-through layer를 통해 resize -> 13x13x2048
+    pass-through layer에서 2x2블록을 하나의 큰 픽셀로 취급해 채널을 결합하는 방식. ( reshape )
+    4개의 픽셀을 결합해서 채널 수를 4배 증가시킴
+    기존 13x13의 필터를 1024로 만들고 pass-through layer의 output과 concat -> 13x13x3072 생성
+
+
+
+
+# YOLO v3
+
+Darknet 53 아키텍쳐 이미지 링크 : 
+https://blog.theos.ai/articles/yolov3-object-detection
+ + 
+https://images.squarespace-cdn.com/content/v1/61768966fe59840b508e5319/bfe03d09-a2ec-48f3-aca5-d25f11a9bd00/Group+17+%281%29.jpg?format=2500w
+
+
+1. Darknet 19 -> Darknet 53
+    input_resized = 416x416 -->> 13x13, 26x26, 52x52 특성맵 추출
+
+2. 다중 스케일 ( feature pyramid by FCN ) 검출
+    13x13, 26x26, 52x52 크기의 특성맵에서 모두 예측을 수행, 바운딩 박스와 클래스 확률을 계산
+    -> 다시 NMS
+
+3. Bounding Box 예측 개선
+    각 앵커 박스마다 4개의 좌표 ( x, y, w, h ), 객체 존재확률, 클래스 확률을 에측
+    각 바운딩 박스는 클래스 확률을 따로 예측함 -> 더 정확한 클래스 분류
+
+4-1. 다중 라벨 ( class label ) 예측
+    sigmoid를 사용해서 다중 클래스 라벨을 독립적으로 예측함
+    하나의 객체가 여러 클래스에 속할 수 있는 상황에 더 적합
+
+4-2. Logistic Regression for Class Predictions ( = sigmoid) 
+    각 바운딩 박스에 대해 각 클래스의 존재 확률을 예측하기위해 softmax대신 logistic 회귀를 사용
+    다중 클래스 객체 탐지에 유리함 ( 여러 클래스에 속하는 하나의 객체 )
+
+5. Focal Loss 적용
+    dropout과 비슷하게 어려운 예측에 더 잘 집중하게 만들어서 불균형한 데이터셋에서 더 좋은 성능 발휘
+
+6. 더 많은 앵커 박스
+    각 스케일에서 3개 사이즈의 앵커박스 사용
+    각 셀당 3개의 앵커박스
+    각 특성맵에서 예측된 모든 바운딩 박스를 하나의 리스트로 결합
+    -> 총 10,647 개의 박스를 한데 모아서 NMS 진행
+
+  박스 사이즈 (input shape 기준) : 
+    52x52 : (10x13), (16x30), (33x23)
+    26x26 : (30×61), (62×45), (59×119)
+    13x13 : (116×90), (156×198), (373×326)
+
+  박스 갯수 ( 각 cell당 3개씩 ) : 
+    52x52 : 52x52x3 = 8112
+    26x26 : 26x26x3 = 2028
+    13x13 : 13x13x3 = 507
+
+
+## YOLO v4
+
+v4 에서 사용한 모델 : 
+    Backbone : CSPDarknet53
+    Neck : SPP + PAN
+    Head : 개선된 YOLOv3
+
+v4 에서 사용한 BoS : 
+    Mosaic Data Augmentation : 네개의 이미지를 하나로 결합해서 다양한 객체 배치를 학습할 수 있게 도와줌
+    Self-Adversarial Training (SAT) : 자체적으로 적대적인 예제를 생성해서 학습함
+    CmBN (Cross mini-Batch Normalization) : 미니 배치간 정보를 교환하게 해서 안정적인 학습을 하게 만듦
+    DropBlock Regularization ( 드롭아웃 레이어 버전 ) : dropout은 뉴런을 학습에서 배제하는거고, dropblock은 이미지특성맵중 일부를 학습에서 제외
+    Mish Activation : 활성화 함수 Mish 사용
+    SPP (Spatial Ptramid Pooling) : 다양한 스케일의 특징을 통합
+    SAM (Spatial Attention Module) : 공간적 주의 모듈로 중요한 부분에 집중
+    CIoU (Complete Intersection over Union Loss) : 더 정확한 boundingbox regression을 위해 사용
+
+v4 에서 사용한 BoF :
+    CutMix and Mosaic Data Augmentation : 훈련 데이터를 다양하게 변형시켜 사용  
+    Class Label Smoothing : 원핫 인코딩 된 값에서 ε (엡실론) 만큼을 빼고 나머지 class에 균등 분배.  ε = 에플실론, 엡실론
+				보통 레이블 스무딩에는  ε 를 0.1로 줌. 논문에서는 수치 명시 안돼있음
+    Cross-Stage Partial Connections (CSP) : 주로 객체 검출 작업 (Backbone) 에서 사용. 
+		특정 레이어에서 입력 특징 맵을 두 부분으로 나누고 
+		각각 다른 경로를 통해 처리를 진행한후 다시 합치는 구조. 
+    DropBlock Regularization 
+    Mish Activation 
+    CIoU Loss 
+    CmBN
+    SAT = Self-Adversarial Training
+
+BoS 와 BoF 목록에 겹치는 것들이 있는 이유 : 
+    특정 기법들이 추가 계산없이 적용 될 수 있지만 적용 방식에 따라 약간의 비용이 발생할 수 있기 때문
+
+논문 저자가 말한 본인들의 기여? 업적? 요약
+
+1) 누구나 1080ti 나 2080ti 로도  학습시킬수 있게 만들었음
+2) SoTA의 BoS와 BoF 방법들이 객체 탐지 훈련 과정에 미치는 영향 검증
+3) CBN, PAN, SAM 같은 SoTA 모델을 단일 GPU 훈련에 더 효율적이고 적합하게 수정함
+
+Backbone = ImageNet으로 사전 학습시킨 특징 추출 부분
+Neck = backbone과 head 사이에 서로 다른 단계의 특징맵을 수집하는 부분
+	일반적으로 넥은 여러 개의 상향식 경로(bottom-up) 와 하향식 경로(top-down)로 구성됨
+	이 메커니즘을 갖춘 네트워크에는 FPN, PAN, BiFPN, NAS-FPN 등이 있음 (PANet계열?)
+Head = class와 boundingbox를 예측하는 부분
+
+일반적으로 하나의 Backbone, 하나 이상의 Neck, 하나의 헤드로 모델을 만듦
+Neck은 없어도 돌아가는데 문제는 없는데 있으면 성능이 많이 좋은가봄.
+
+1. Backbone 으로 CSPDarknet53 사용
+    Darknet53에 CSP (Cross Stage Partial) 네트워크를 도입.
+    표현력 상승, 연산량 하락
+
+2. Head : 
+    SPP ( Spartial Pyramid Pooling ) :
+        다양한 스케일의 객체를 더 잘 인식하기 위해 SPP 모듈 사용
+	여러 크기의 풀링을 통해 다양한 스케일의 정보 결함
+    PANet ( Path Aggregation Network ) : 
+	특징 피라미드를 활용해 상위 계층의 정보와 하위 계층의 정보 결합
+	FPN ( Feature Pyramid Network ) 를 강화하고 객체 탐지 성늘을 개선
+	작은 객체와 큰 객체 모두 더 잘 검출할 수 있게 함
+
+3. 학습 기법
+    Mosaic 데이터 증강 : 
+	여러 이미지를 하나로 합쳐서 학습하는방식. 다양한 상황에 적응할 수 있게 함
+    Self-Adversarial Training (SAT) :
+	자신이 예측한 바운딩 박스를 교란시켜서 더 강건한 예측하도록 훈련
+    CIoU ( Complete IoU ) 손실함수 : 
+	Boundingbox Regression에서 더 나은 성능을 제공하는 CIoU 손실 함수 사용
+
+4. 최적화
+    DropBlock 정규화 : 
+	랜덤으로 네트워크 일부 블록을 dropout
+    Batch Normalization :
+	모든 계층에 배치 정규화 진행.
+	-> 안정성, 수렴속도 up
+    Mish 활성화 함수 : 
+	표현력을 높이기 위해 ReLU 대신 사용
+    SAM ( Spatial Attention Module ) : 
+	공간적 주의 모듈을 통해 중요한 공간적 특징에 더 집중
+    Data Augmentation : 
+	데이터 증강
+
+5. BoF(Bag-of-Freebies) , BoS(Bag-of-Specials) :
+    BoF : "무료 증정품 가방" 을 뜻함.
+	    추가 연산이 없거나 거의 없는 기술이나 방법
+	    
+    BoS : "특가 상품 가방", 특별 할인된 제품이 있는 가방 을 뜻함.
+	    성능 향상을 위해 추가적인 연산 자원이나 비용이 필요한 기법
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

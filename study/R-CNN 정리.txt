@@ -1,0 +1,84 @@
+https://herbwood.tistory.com/5
+https://velog.io/@skhim520/R-CNN-%EB%85%BC%EB%AC%B8-%EB%A6%AC%EB%B7%B0
+https://velog.io/@skhim520/R-CNN-논문-리뷰    (위에거랑 같은링크) 
+
+R-CNN = Region proposals + CNN
+	     (Selective search) + AlexNet
+# R-CNN에서 CNN구조의 목표 = 4096차원의 feature vector 추출
+
+
+region proposals 방식 중에 selective search를 사용함
+selective search 알고리즘을 통해 객체가 있을법한 후보영역 2000개를 추출,
+227x227 사이즈로 warp(=resize) -> AlexNet으로 벡터 추출 -> linear SVM으로 label 분류
+
+selective search :
+1. 색상, 질감, 영역크기 등을 이용해 non-objective segmentation 수행, small segmented ares 추출
+2. Bottom-up 방식으로 small segmented areas를 합쳐 더 큰 segmented areas를 만듦
+3. (2)를 반복해서 최종 2000개의 region proposal 생성 -> 227x227로 warp
+
+( 4096 == 64^2 ?????)
+
+AlexNet :
+227x227 image -> AlexNet -> 4096차원의 vector == 2000x4096 sized feature vector
+
+linear SVM(Support Vector Machine) :
+2000x4096 feature vector를 입력받아 class 예측 + confidence score 반환 (2000개)
+linear SVM은 특정 class인지 확인하는 이진 분류기 (binary classifier) 
+N개의 class를 예측하려면 배경을 포함한 (N+1)개의 독립적인 linear SVM모델을 학습시켜야함
+
+
+# linear SVM 학습시키는법
+ground truth box만 positive sample로, IOU 0.3 미만인 bounding box를 negative sample로 저장
+IOU 0.3이상의 bounding box는 무시
+positive sample = 32, negative sample =  96이 되게 mini batch(=128)을 구성하고
+fine tuned AlexNet에 입력 -> feature vector 추출 -> linear SVM에 입력해서 학습.
+linear SVM은 특정 class에 해당하는지 여부를 학습하기 때문에 output unit=2
+hard negative mining 기법으로 재학습
+
+# Hard Negative Mining
+모델이 예측에 실패하는 어려운 (hard) sample들을 모으는 방법
+ex) 사람 안면을 탐지하는 모델
+   실제: 배경 + 예측: 배경 == True Negative
+   실제: 안면 + 예측: 배경 == False Positive
+모델은 False Positive라고 예측하는 오류를 주로 범함
+객체 위치에 해당하는 positive sample보다 배경에 해당하는 negative sample의 수가 많기 때문.
+따라서 모델이 잘못 판단한 False Positive sample을 추가해서 재학습
+
+# 분류에 다중 분류 모델 대신 linear SVM을 사용하는 이유? (논문 저자 피셜)
+SVM을 사용했을때의 성능이 더 좋았음.
+Softmax 사용시 mAP 54.2% -> 50.9% 로 하락.
+AlexNet을 fine tune할때 상대적으로 정확하지 않은 예측 (IOU 0.5~1사이) 를 positive sample에 포함시킴.
+AlexNet을 적절하게 fine tune하면 linear SVM을 사용할 때와 비슷한 성능을 보일것으로 예측
+positive sample을 정의할 때 더 엄밀하게 정의함 + hard negative를 이용해 학습하기 때문
+
+
+Bounding box Regressor :
+Selective search로 얻은 객체의 위치는 부정확할 수 있음, 그래서 박스 위치를 조절해주는 모델임
+IoU 0.6 이상 -> positive sample
+output unit = 4
+
+2000x4096 feature vector -> 2000 bounding box 좌표
+
+Non maximum Suppression :
+Bouding box가 2000개나 되기 때문에 너무 많이 겹치게 되고 성능 하락의 여지까지 있음.
+비슷한 위치에 있는 box를 제거하고 가장 적합한 box를 선택하는 알고리즘
+
+1. confidence score threshold 이하의 box 제거, 
+2. 가장 높은 점수를 가진 박스를 선택, 이 박스와 겹치는 박스 제거. # IoU threshold = 0.3~0.5 ( 겹치는부분 0.3~0.5 이상)
+3. 반복
+
+
+정리 : 
+Object detection을 위해 딥러닝을 최초로 적용함.
+하지만 Selective search를 사용해서 2000개의 후보 영역(region proposal) 을 추출해서 학습 및 추론 속도가 매우 느림.
++ Fine tuned AlexNet, linear SVM, Bounding box regressor 3가지 모델을 사용해서 전체 구조와 학습 과정이 복잡함.
+(각각 독립적으로 학습시켜야함) 
+
+
+
+
+
+
+
+
+

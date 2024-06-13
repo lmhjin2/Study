@@ -1,0 +1,63 @@
+Generative Adversarial Nets
+
+2개의 모델 Generator, Discriminator 간의 minimax game
+1) generative model, G : training data의 분포를 모사 -> discriminative model이 구별하지 못하게
+   임의의 노이즈를 입력받아 데이터의 분포 학습, 새로운 데이터 생성 -> D가 구별못할 가짜데이터 생성.
+
+2) discriminative model, D : sample 데이터가 G의 데이터인지 실제 training data인지 확률 추정
+
+두 네트워크간의 minimax game
+
+Adversarial nets : 
+adversarial modeling 프레임워크는 간단하게 multi-layer perceptrons 사용
+Adversarial modeling framework는 모델이 모두 mulitlayer perceptron일때 가장 적용하기 쉽다.
+
+#
+G = generative model
+D = discriminative model
+real data = x
+fake data = z
+p_g = p from G
+p_z = x에 더해질 노이즈 변수 Z
+
+minG maxD V(D,G)=Ex∼pdata​(x)[logD(x)] + Ez∼pz(z)[log(1−D(G(z)))]
+
+첫번째 항 : real data x 를 D에 넣었을때 나오는 결과를 log를 취했을 때 얻는 기댓값
+두번째 항 : fake data z 를 G에 넣었을때 나오는 결과를 D에 넣었을때 그 결과를 log(1-결과) 했을 때 얻는 기댓값
+
+
+각각 이상적인 상황
+G 입장 : 첫째 항은 G의 개입이 불가하므로 패스.
+	두번째 항에서 G가 생성한 데이터가 D를 속여서 진짜라고 판별받음.
+	D(G(z)) = 1, log0 = -무한대
+	G의 입장에서 가장 이상적인 결과, 최솟값은 -무한대 임
+
+D 입장 : 데이터가 실제 데이터라면 D(x) = 1, 첫째항은 0이되어 사라짐 
+	G(z)가 생성해낸 가짜 이미지를 구별해서 D(G(z)) = 0, 두번째 항은 log(1-0) = log1 = 0
+	D의 입장에서 가장 이상적인 결과, 최댓값은 0
+
+D 는 최대화, G 는 최소화를 목표로함
+
+Noise -> G -> fake data z -> Input D (Feed Forward)
+G의 output이 D로 들어가서 D의 output까지가 G의 Feed Forward
+
+D의 에러에서부터 G 까지 weight 역전파.
+이때 D의 가중치는 갱신 x. (동결)
+이 과정을 무한히 반복하면 진짜와 가짜를 구분할 확률이 0.5에 수렴함
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

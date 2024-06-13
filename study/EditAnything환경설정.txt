@@ -1,0 +1,62 @@
+EditAnything 깃허브에서 폴더 째로 다운로드
+(안돼있으면) Git 설치
+
+environment.yaml 이랑 requirements.txt 는 내가 보내준걸로 덮어쓰기 ㄱㄱ
+
+# 터미널
+cd EditAnything폴더
+
+conda env create -f environment.yaml
+conda activate edit
+
+pip install -r requirements.txt
+
+pip install git+https://github.com/huggingface/transformers.git
+
+pip install git+https://github.com/facebookresearch/segment-anything.git
+
+****************************************************************************************************
+
+# For text-guided editing ( cuda 12.1, cudnn 8.8.1 설치 가능 )
+pip install git+https://github.com/openai/CLIP.git
+
+pip install git+https://github.com/facebookresearch/detectron2.git
+
+pip install git+https://github.com/IDEA-Research/GroundingDINO.git
+
+****************************************************************************************************
+
+## 가중치 다운로드 후에 model 폴더에 넣기
+
+# Grounding Swin-Base Model 다운로드
+wget https://github.com/Cheems-Seminar/segment-anything-and-name-it/releases/download/v1.0/swinbase_part_0a0000.pth
+
+# Grounding DINO Model 다운로드
+wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha2/groundingdino_swinb_cogcoor.pth
+
+* 필수
+pip install scikit-image==0.21.0
+
+* 옵션
+pip install imageio==2.9.0
+pip install omegaconf==2.1.1
+pip install transformers==4.27.4
+pip install accelerate
+
+
+# Run Demo
+
+python app.py
+# or
+python editany.py
+# or
+python sam2image.py
+# or
+python sam2vlpart_edit.py
+# or
+python sam2groundingdino_edit.py
+
+
+파이썬 파일은 실행 해보고 누가 무슨 차이인지 알려주라
+
+

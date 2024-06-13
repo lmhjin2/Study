@@ -1,0 +1,73 @@
+* Swin Transformer
+
+#1 https://kimjy99.github.io/%EB%85%BC%EB%AC%B8%EB%A6%AC%EB%B7%B0/swin-transformer/
+#2 https://lcyking.tistory.com/entry/%EB%85%BC%EB%AC%B8%EB%A6%AC%EB%B7%B0-Swin-Transformer-Hierarchical-Vision-Transformer-using-Shifted-Windows
+#3 https://mr-waguwagu.tistory.com/32
+
+이 논문에서는 Transformer가 NLP에서 그러하듯이 컴퓨터 비전에서도 
+범용 백본으로 사용할 수 있도록 그 적용 범위를 확장하고자 함
+이는 CNN이 비전 분야에서 수행하는 역할과 유사함
+계층적 feature map을 구성하고
+이미지 크기에 대한 선형 계산 복잡도를 가짐
+
+
+Swin Transformer 구조
+1. 입력 이미지를 작은 패치로 나누고, 패치임베딩. 작은 윈도우 내에서 self-attention
+2. 패치 병합을 통해 해상도를 줄이고, 새로운 패치로 윈도우를 구성해서 self-attention
+3. 다시 패치를 병합해 해상도를 줄이고, 더 큰 패치로 윈도우를 구성해서 self-attention
+4. 최종 패치 병합을 통해 가장 낮은 해상도로 줄이고, 이미지의 문맥을 반영한 특징 학습
+== 이런 계층적 구조는 이미지의 지역적, 전역적 특성을 효과적으로 학습할 수 있게 함.
+
+Swin Transformer 특징
+1. 패치 분할 및 패치 임베딩 (Patch Splitting and Patch Embedding ) :
+ - 입력 이미지를 고정된 크기의 패치로 분할하고, 각 패치를 고차원 벡터로 변환함. ViT와 유사한 단계임
+2. 단계적 축소 ( Hierarchical Reduction ) :
+ - Swin Transformer는 계층적으로 특징맵의 크기를 줄여 나감.
+   Pooling 레이어와 유사한 역할을 하며 해상도를 단계적으로 줄여 더 큰 문맥정보를 학습할 수 있게 함
+3. Self-Attention within Local Windows :
+ - 각 단계에서 특징 맵을 고정된 크기의 윈도우로 분할하고, 윈도우 내에서 self-attention을 수행.
+   계산 복잡성을 줄이면서 국소적 특성을 효과적으로 학습
+ - 윈도우의 크기는 고정되어 있지만, 특징맵의 크기가 줄어들기 때문에 실제로 더 넓은 영역을 커버하게됨
+4. 이동 윈도우 Shifted Window : 
+ - 각 단계마다 윈도우를 이동시켜(overlapping) 다음 단계에서 새로운 패치들을 포함하도록 함
+   덕분에 윈도우 경계에 있는 정보도 잘 학습하게됨
+5. 단계적 병합 ( Patch Merging ) :
+ - 단계가 진행됨에 따라 패치들을 병합하여 차원 수를 늘리고, 해상도를 줄이는 과정을 반복
+   CNN의 Pooling 레이어와 비슷한 역할을 하고, 더 높은 수준의 추상적 특징 학습 가능
+
+
+W-MSA = Window Multi-Head-Self-Attention
+SW-MSA = Shifted Window Multi-Head-Self-Attention
+
+M = 윈도우 크기. 논문에서 7
+기본 패치 크기 : 4x4 픽셀
+기본 윈도우 크기 : 7x7 패치 = 28x28 픽셀
+달라질 수 있음.
+
+swin-T 기준
+
+224 x 224 x 3 = 150,528
+
+56 x 56 x 48 = 150,528
+
+56 x 56 x C(96) = 301,056
+
+28 x 28 x 192 = 150,528
+
+14 x 14 x 4C(384) = 75,264
+
+7 x 7 x 768 = 37,632
+
+
+
+
+
+
+
+
+
+
+
+
+
+

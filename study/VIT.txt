@@ -1,0 +1,127 @@
+* VIT
+
+#1 https://hipgyung.tistory.com/entry/%EC%89%BD%EA%B2%8C-%EC%9D%B4%ED%95%B4%ED%95%98%EB%8A%94-ViTVision-Transformer-%EB%85%BC%EB%AC%B8-%EB%A6%AC%EB%B7%B0-An-Image-is-Worth-16x16-Words-Transformers-for-Image-Recognition-at-Scale
+#2 https://daebaq27.tistory.com/108
+
+1. Vit ??
+트랜스포머를 이용해서 가장 효율적이고 좋은 성능을 보여준 이미지 분류 모델
+이미지 패치를 단어(토큰) 취급
+기존 CNN기반 SOTA보다 성능이 좋다
+Fine-Tuning 과정에서 적은 리소스로도 더 좋은 성능을 보여준다
+cifar-10 이미지 분류에서는 아직도 Vit가 1, 4위를 하고 있다 (2024-06-03 기준)
+많은 데이터로 학습해야함(1400만 ~ 3억장) 아니면 ResNets 대비 썩 좋지는 않음
+Transformer 구조가 CNN 구조에 비해 inductive bias가 부족해서
+많은양의 데이터 없이는 일반화가 제대로 이루어지지 않았을 것으로 추정
+# CNN, RNN과 다르게 공간에 대한 bias가 없다.
+많은 데이터 ( 1400만 ~ 3억장 ) 로 학습을 시키면, lack of inductive bias 극복 가능
+# JFT-300M == 3억장
+많은 데이터로 사전학습을 하고 난 후, 전이 학습 시에는 적은 데이터셋을 사용해도 성능이 좋았음
+
+2. Vit 구조
+이미지를 텍스트 sequence처럼 사용하는 구조 = 기존 transformer 구조
+이미지를 고정된 크기의 patch로 나누고 
+각 patch를 linearly embedding 하고 position embedding을 해서
+Transformer 인코더에 Input으로 넣음 ( 토큰화 )
+( 이미지를 나눈후, 일반적인 트랜스포머의 input값 처럼  바꿈. )
+이미지 classification을 위해서 어떤 이미지인지 알려주는 classification token을 더해줌.
+classification token으로 class 예측
+= 이미지를 고정된 크기로 잘라서 Transformer의 Input으로 넣어서 Transformer를 학습시킴
+
+3. Linear Projection of Flattened Patches
+Transformer의 Input값은 1차원 시퀀스.
+그래서 고정된 크기의 patch로 나눠준 이미지를 1차원 시퀀스로 flatten 해줌.
+
+# [ H * W * C ] or [ C * H * W ] -->> [ N * ( P * P * C ) ] 
+# N = 패치 (시퀀스) 수
+# P * P = 이미지를 나누는 고정된 크기의 patch size
+N = HW / P^2 로 계산되며 P 는 하이퍼 파라미터
+
+Linear Projection (선형 투영) -> y = Wx +b
+Linear Projection of Flattened Patches를 직역하면 -> 평탄화된 패치 선형 투영
+
+가장 첫번째 패치 임베딩 앞에 학습 가능한 임베딩 벡터를 붙여줌. 추후 이미지 전체에 대한 표현을 나타냄
+N+1개의 학습 가능한 1D포지션 임베딩 벡터를 만들어준후, 각 이미지 패치 벡터와 더해줌. ( 두 Matrix의 합 ) 
+만들어진 임베딩 패치를 transformer enncoder에 입력으로 넣어줌
+
+개별 (single head) self attention 유닛
+linear layer ( q,k,v matrix를 만들어주기 위한 차원 변경 )
+Dh는 보통 D/k로 설정. # k = 헤드의 갯수
+## 더 자세한 설명은 #2 링크를 가서 보기
+
+4. MLP ( FFN )
+2개의 hidden layer 와 gelu (Gaussian Error Linear Unit) 활성화 함수로 구성되어있음
+hidden layer의 차원은 하이퍼 파라미터로 논문에서는 모델 크기별로 3072, 4096, 5120 를 사용함.
+
+5. Classification Head
+이 과정을 L 번 반복한 후 마지막으로 classification(분류) 를 수행하기 위해 
+encoder 최종 아웃풋의 가장 첫번째 벡터인 y 를 하나의 hidden layer (D*C)로 구성된 MLP Head에 통과
+fine-tuning 시에는 MLP Head가 아닌, single linear layer를 통과함.
+
+6. Inductive Bias / 귀납적 편향
+귀납적 편향: 학습 알고리즘이 특정 종류의 문제에 대해 일반화할 수 있도록 하는 사전 지식 또는 가정
+CNN은 다음과 같은 image-specific한 (이미지 특유의) inductive bias가 있음
+# Locality / 지역성 // 작은 영역에서 큰 영역으로 특징 통합
+# Two-Dimensional neighborhood structure / 2차원적으로 이웃하는 구조 // 인접 픽셀간의 관계 파악
+# Translation equivariance / 변환 등가성 // 이미지 내의 물체 위치가 바뀌어도 동일한 물체로 인식
+위의 가정이 ViT에서는 훨씬 약하게 작용함.
+## ViT는 이미지 패치를 독립적으로 처리해서 국소(local)적인 특징을 자동 파악하는 CNN과 다름
+## 각 패치를 독립적으로 처리해서 인접 픽셀간의 직접적인 관계 파악이 힘듦
+## 위치에 관계없이 동일한 특징을 감지하는 능력이 약함
+
+# 국소적인 = local
+# 전역적인 = global
+
+ViT 에서 Inductive bias가 작동하는 방식
+MLP layers : locality and translation equivariance
+2D neighborhood structure : 입력 패치로 자르는 과정 (학습), position embedding 조정 (fine-tuning)
+
+Locality (=Locality of Pixel Dependencies) : 
+이미지를 구성하는 특징들은 이미지 전체가 아닌 
+일부 지역들에 근접한 픽셀들로만 구성되고 
+근접한 픽셀들끼리만 종속성을 갖는다는 가정.
+
+Translation Equivariance : 
+입력의 위치 변화에 따라 출력 또한 입력과 동일하게 변화하는것.
+Convolution 연산은 Translation equivariant한 특성을 가짐 (<-> Translation Invariance)
+
+
+7. Hybrid Architecture
+그냥 이미지를 패치로 나눈게 아닌 CNN을 통과한 feature map을 input sequence로 넣어줌.
+이 경우에는 patch의 크기 (=P) 를 1로 설정해, patch 단위로 crop할 필요 없이
+바로 flatten 해서 Transformer의 차원(D)로 projection함.
+
+비용이 한정되어 있다면 가장 효과적임
+그게 아니라면 차이가 거의 없어짐
+
+
+
+
+* 논문 하이퍼 파라미터 : 
+ Model    Layers	    Embed_dim   MLP size   Heads        Params    	P
+ViT-Base	12		 768	       	  3072	12		 86M	     16/32
+ViT-Large	24		1024		  4096	16		307M     16/32
+ViT-Huge	32		1280		  5120	16		632M        14
+
+
+8. Model Architecture
+Transformer의 인코더 부분과 동일함( BERT )
+각 패치에 위치 임베딩
+입력 시퀀스는 패치 + CLS 토큰 이라서 총 N+1개
+
+CLS 토큰 = classification token
+입력 시퀀스, 이미지 패치 시퀀스의 맨 앞에 추가
+전체 입력의 요약 정보로 사용되어 최종적으로 분류 작업에 사용됨
+초기 값은 랜덤임
+Self-Attention 과정에서 모든 이미지 패치와 Attention을 하며 학습함
+
+8-1. 차이점
+ReLU 에서 GELU로 바뀜 / (Gaussian Error Linear Unit)
+맨 처음 CLS 토큰이 들어감
+layer norm이 멀티헤드 어텐션과 MLP 전으로 바뀜
+- residual Connection 이전에 적용 하면, gradient 소실과 폭발 문제를 줄이는데 도움이 됨
+- 입력에 직접 적용되므로, 각 레이어의 입력이 정규화됨
+- 해보니까 훨씬 더 좋았다고 함. 관련 지표는 없음
+
+
+
+

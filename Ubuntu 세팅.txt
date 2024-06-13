@@ -1,0 +1,14 @@
+# 우분투 환경 세팅
+https://aeong-dev.tistory.com/1
+
+# 우분투 한글
+https://staraube.tistory.com/105
+
+# 아나콘다
+https://jongsky.tistory.com/21
+
+# Cuda
+https://developer.nvidia.com/cuda-toolkit-archive
+
+# cudnn
+https://developer.nvidia.com/rdp/cudnn-archive

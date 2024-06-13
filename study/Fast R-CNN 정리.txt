@@ -1,0 +1,17 @@
+https://herbwood.tistory.com/8
+
+Fast R-CNN = (R-CNN + RoI pooling) - Selective search
+
+변경점 : 
+2000개의 region proposals 대신 1장의 이미지를 RoI pooling으로 fc layer에 전달
+SVM -> softmax
+multi-task loss를 사용해서 한번에 학습 가능. (개별학습 x / single stage, end-to-end)
+그래서 빨라졌음.
+
+RoI Pooling : 
+feature map에서 region proposals에 해당하는 관심영역(Region of Interest)를 지정한 크기의 grid로 나눈후 max pooling을 수행하는 방법
+channel별로 독립적으로 수행함. == 고정된 크기의 feature map을 추출하는게 가능함.
+
+
+
+
