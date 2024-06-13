@@ -4,10 +4,11 @@
 sudo apt update
 sudo apt install xrdp
 
-2. systemctl status xrdp // 중간에 녹색으로 "active(running)" 뜨면 정상 설치 된거임
+2. 설치 확인
+systemctl status xrdp // 중간에 녹색으로 "active(running)" 뜨면 정상 설치 된거임
 
 3. 
-- 실행 : service xrdp start // 이거까지 하면 로그아웃 상태에서 원격 데스크탑 적솝됨.
+- 실행 : service xrdp start // 이거까지 하면 로그아웃 상태에서 원격 데스크탑 적용됨.
 	버추얼박스 서버리스로는 접속 x. 껐다 켜도 이상태 유지
 - 재시작 : service xrdp restart
 - 중지 : service xrdp stop
