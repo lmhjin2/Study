@@ -1,0 +1,50 @@
+GPT2 - Language Models are Unsupervised Multitask Learners
+
+참고 링크:
+https://paperswithcode.com/paper/language-models-are-unsupervised-multitask
+https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf
+https://learn-ai.tistory.com/entry/Paper-Review-GPT-2-Language-Models-are-Unsupervised-Multitask-Learners
+
+다양한 task에 적용시킬 수 있는 범용적인 모델을 구축하기 위해 연구가 진행됨
+pre-training과 transfer learning을 연결하고 좀더 일반적인 전이학습에 대한 연구를 진행하고,
+언어 모델이 zero-shot setting으로 최종 task에 적용될 수 있음을 보여줌
+
+Reddit에서 3이상의 점수(karma, 좋아요)를 가진 모든 외부 링크를 타고 들어가서 크롤링
+최종 수집된 데이터를 WebText라고 부르고 45M개의 링크수를 포함, 40GB의 8M개의 문서.
+Wikipedia와 중복글은 제거함.
+
+모든 string에 대한 확률 분포를 계산할 수 있어야 하기 때문에 BPE(Byte Pair Encoding) 사용
+(글자(byte, character)와 단어의 중간 단위 사용 가능)
+하나의 단어는 더 작은 단위의 의미있는 서브 워드로 이루어져 있다는 가정.
+BPE는 character와 word의 중간지점. word-level입력과 character-level입력에 대해 서로 보간 가능
+해당 단어나 문자의 유니코드기반으로 구현되어 base vocab이 130,000이 넘어감. 
+ - (원래 BPE vocab 크기 32,000/64,000)
+
+Architecture 변경점은 layer normalization의 위치가 한칸씩 아래로 이동한것 뿐(= ViT)
+모델 자체의 차이점은 크게 없음.
+
+WebText 만으로 학습시킨 모델에 여러 벤치마크 데이터셋을 Zero-shot 환경에서 성능비교
+-> fine-tuning없는 zero-shot임에도 8개 데이터셋중 7개에서 SOTA 달성
+
+품사에 따른 성능 비교를 위한 Children's Book Test(CBT), 
+long-term dependency를 측정할 수 있는 LAMBADA,
+Text의 모호성(ambiguity)를 푸는 작업을 통해 추론 능력을 평가하는 Winograd Schema Challenge, 등등
+각종 테스트 데이터셋에서도 SOTA 달성
+
+문서 이해 능력과 QA능력을 동시에 평가 가능한 Conversation Question Answering dataset(CoQA)에서는
+기존 SOTA인 BERT에 미치지 못했지만 fine-tune 없이 f1 55점을 받아 고무적이라고 판단함
+(fine-tuned BERT = f1 score: 89)
+
+결론 : WebText를 써도 되고 추가적인 fine-tuning없이 다양한 task에 활용 가능
+
+
+모델 사이즈 4개
+Parameters    Layers     d_model
+117M             12           768
+345M		     24          1024
+762M		     36          1280
+1542M            48          1600
+
+
+
+

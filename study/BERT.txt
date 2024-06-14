@@ -1,0 +1,58 @@
+BERT
+트랜스포머 인코더만을 사용
+Bert는 항상 문장 쌍으로 input을 받음
+ - [cls] 문장1 [sep] 문장2 [sep] 형태
+단어보다 작은 단위의 서브워드 토크나이저(=WordPiece) 사용
+단어 임베딩 + 포지션 임베딩 + segment 임베딩(어느 문장의 단어인지 / 0,1로 구분)
+Base모델은 같은 파라미터로 GPT와 비교하기 위해 만듦.
+SOTA 갱신은 전부 Large 모델로 했음
+Base: (L = 12, H =768, A =12) Large: (L =24, H = 1024, A =16)
+L : transformer block 수, A : self-attention의 수, H : hidden size (벡터의 차원수)
+
+# 사전학습 with Unlabeled Data
+0. 하이퍼 파라미터 세팅
+batch size : 256 sequences ( 256 seq * 512 token = 128,000 tokens per batch) for 1,000,000 steps
+-> 3.3 billion word corpus의 40epochs
+Adam optimizer, learning rate : 1e-4, B1 = 0.9, B2 = 0.999, L2 weight decay of 0.01, 
+                       learning rate warmup 첫 10,000 steps, linear dacay of the learning rate
+Dropout : 모두 0.1
+Activation : GeLU사용
+BERT_base = 4 TPUs, BERT_large = 16TPUs 사용해서 4일동안 학습
+
+1. Task1 : MLM (Masked Languatge Model)
+Unidirectional 한 모델과 달리 Bidirectional 하게 학습하기 때문에
+입력의 15%의 단어를 랜덤하게 마스킹함
+그 15%중에서 80%는 MASK, 10%는 랜덤 단어로, 10% 단어는 그대로 둔다
+ - (전체 12%가 MASK, 랜덤과 유지가 각각 1.5%)
+전체 단어의 85%는 MLM모델의 학습에 사용되지 않음
+그 85%를 보고 15%를 맞추며 학습하기 때문
+
+MASK만 사용할 경우 파인튜닝 단계에 MASK 토큰이 없어서
+사전 학습 단계와 불일치가 발생하는 문제가 있음
+위처럼 바꾸면 문제가 완화된다고함
+
+이때도 서로 다른 문장 두개를 입력으로 받음
+
+2. Task2 : NSP (Next Sentence Prediction)
+두 문장이 주어졌을때 두번째 문장이 첫번째 문장의 다음 문장인지 예측하는 작업
+CLS토큰에 담긴 정보로 판별
+ - isnext, notnext / 0,1로 구분
+
+
+# Fine-tuning with Labeled Data
+pre-training과 거의 동일한 파라미터를 가짐
+dropout은 항상 0.1, task 마다 다르지만 기본적으로 아래 수치를 추천한다고 한다
+
+[batch : 16,32
+learning rate : 5e-5, 3e-5, 2e-5
+epoch: 2,3,4]
+
+다양한 특정 task에 fine-tuning진행, 11개 task 에서 SOTA달성
+
+
+
+
+
+
+
+
