@@ -13,7 +13,7 @@
 
 설치된(적용된) 쿠다 버전 확인  
 nvcc --version
-
+  
 원래 쓰던 조합
 Cuda = 11.8.0 / Cudnn = 8.6.0 / Tensorflow = 2.9.0 / python = 3.9.18
 
