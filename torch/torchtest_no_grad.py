@@ -17,7 +17,7 @@ model = SimpleModel()
 # 손실 함수 및 옵티마이저 정의
 criterion = nn.MSELoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01)
-
+  
 # 학습 데이터 예시
 data1 = torch.randn(5, 10)  # 첫 번째 배치 입력 데이터
 target1 = torch.randn(5, 1)  # 첫 번째 배치 타겟 데이터
