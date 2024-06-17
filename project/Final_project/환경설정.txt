@@ -1,8 +1,21 @@
 GroundedSAM 환경설정 (2024.05)
-
+세부 버전은 ver.txt 참고
 Ubunto 22.04
 CUDA 11.8
 CUDnn 9.0.0
+
+GroundingDINO
+https://github.com/IDEA-Research/GroundingDINO
+
+Segment-Anything
+https://github.com/facebookresearch/segment-anything
+
+Grounded-Segment-Anything
+https://github.com/IDEA-Research/Grounded-Segment-Anything
+
+IOPaint
+https://github.com/Sanster/IOPaint
+
 
 환경설정
 groundingdino 환경설정 clone
