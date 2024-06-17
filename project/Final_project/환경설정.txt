@@ -1,0 +1,52 @@
+GroundedSAM 환경설정 (2024.05)
+
+Ubunto 22.04
+CUDA 11.8
+CUDnn 9.0.0
+
+환경설정
+groundingdino 환경설정 clone
+conda create -n gsam --clone dino
+cd git 받아올 상위 레퍼토리
+git clone https://github.com/IDEA-Research/Grounded-Segment-Anything.git
+export AM_I_DOCKER=False
+export BUILD_WITH_CUDA=True
+echo $CUDA_HOME 경로 확인 - 안되어있으면
+	sudo nano ~/.bashrc
+export PATH="/usr/local/cuda-11.8/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-11.8/lib64:$LD_LIBRARY_PATH"
+export CUDA_HOME="/usr/local/cuda-11.8"
+맨 아래에 입력(CUDA 11.8기준)
+cd ./Grounded-Segment-Anything'
+python -m pip install -e segment_anything
+pip install --no-build-isolation -e GroundingDINO
+pip install --upgrade diffusers[torch]
+git submodule update --init --recursive
+cd grounded-sam-osx && bash install.sh
+git clone https://github.com/xinyu1205/recognize-anything.git
+pip install -r ./recognize-anything/requirements.txt
+pip install -e ./recognize-anything/ <-설치 오류났지만 일단 다음 단계 진행
+pip install opencv-python pycocotools matplotlib onnxruntime onnx ipykernel
+cd grounded-sam-osx && bash install.sh
+sam + stable diffunsion 가중치 download
+	wget https://dl.fbaipublicfiles.com/segment_anything/sam_vit_h_4b8939.pth
+	wget https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+
+
+
+실행
+
+CUDA_VISIBLE_DEVICES=0
+python grounded_sam_inpainting_demo.py \
+  --config GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py \
+  --grounded_checkpoint groundingdino_swint_ogc.pth \
+  --sam_checkpoint sam_vit_h_4b8939.pth \
+  --input_image assets/inpaint_demo.jpg \
+  --output_dir "outputs" \
+  --box_threshold 0.3 \
+  --text_threshold 0.25 \
+  --det_prompt "bench" \
+  --inpaint_prompt "A sofa, high quality, detailed" \
+  --device "cuda"
+
+./output 폴더 확인
