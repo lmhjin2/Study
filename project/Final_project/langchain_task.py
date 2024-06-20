@@ -28,7 +28,7 @@ class LangChain:
             {"input": "번개치는 하늘로 변경해주고 사람들을 제거 해줘.", "tasks": [{"label": "날씨 변경", "det_prompt": "sky", "inpainting_prompt": "a lightning sky"}, {"label": "객체 제거", "det_prompt": "person", "inpainting_prompt": "remove person"}]},
             {"input": "비오는 하늘로 변경해주고 사람들을 제거 해줘.", "tasks": [{"label": "날씨 변경", "det_prompt": "sky", "inpainting_prompt": "a rainy sky"}, {"label": "객체 제거", "det_prompt": "person", "inpainting_prompt": "remove person"}]},
             {"input": "지나가는 사람을 없애고, 맑은 하늘로 변경.", "tasks": [{"label": "객체 제거", "det_prompt": "person", "inpainting_prompt": "remove person"}, {"label": "날씨 변경", "det_prompt": "sky", "inpainting_prompt": "clear sky"}]},
-            {"input": "매우 맑고 화창한 하늘로 변경해주고, 사람들을 제거 해줘.", "tasks": [{"label": "날씨 변경", "det_prompt": "sky", "inpainting_prompt": "a clear sky"}, {"label": "객체 제거", "det_prompt": "person", "inpainting_prompt": "remove person"}]}
+            {"input": "매우 맑고 화창한 하늘로 변경해주고, 사람들을 제거 해줘.", "tasks": [{"label": "날씨 변경", "det_prompt": "sky", "inpainting_prompt": "a clear sky"}, {"label": "객체 제거", "det_prompt": "person", "inpainting_prompt": "remove person"}]} 
         ]
 
         self.prompt_template = """

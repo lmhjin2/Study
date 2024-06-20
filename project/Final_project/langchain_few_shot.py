@@ -18,7 +18,7 @@ llm = openai.ChatCompletion
 examples = [
     {"input": "오늘 날씨가 좋다.", "label": "None", "task": "None"},
     {"input": "오늘 날씨가 좋고 사람들이 많네.", "label": "None", "task": "None"},
-    {"input": "날씨가 왜이래? 사람들이 왜 이렇게 많아?.", "label": "None", "task": "None"},
+    {"input": "날씨가 왜이래? 사람들이 왜 이렇게 많아?.", "label": "None", "task": "None"}, 
     {"input": "나는 사과를 먹었다.", "label": "None", "task": "None"},
     {"input": "비가 오는 날씨로 바꿔야 한다.", "label": "날씨 변경", "det_prompt": "sky", "inpainting_prompt": "rainy sky", "task": "remove"},
     {"input": "이 사진에서 자동차를 제거해야 한다.", "label": "객체 제거", "det_prompt": "car", "inpainting_prompt": "remove car", "task": "remove"},
