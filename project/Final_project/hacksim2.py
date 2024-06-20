@@ -108,8 +108,9 @@ def process_user_input(self, user_input):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt_with_examples}
         ],
-        temperature=0.0, # 모델의 창의성 정도. 보통 0~1
+        temperature=0.0, # 모델의 창의성/무작위성 정도. 보통 0~1 
         max_tokens=150, 
         n=1, # 생성할 응답의 수
         stop=None # 특정 토큰을 생성하면 텍스트 생성 중지 / 기능 사용 안하는중
     )
+    
