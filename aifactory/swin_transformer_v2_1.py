@@ -142,7 +142,7 @@ PRETRAINED_DICT = {
 }
 
 
-# @backend.register_keras_serializable(package="kecam")
+@backend.register_keras_serializable(package="kecam")
 class ExpLogitScale(layers.Layer):
     def __init__(self, axis=-1, init_value=math.log(10.0), max_value=math.log(100.0), **kwargs):
         super().__init__(**kwargs)
@@ -301,7 +301,7 @@ class MlpPairwisePositionalEmbedding(layers.Layer):
         self.is_deploy_mode = True
 
 
-# @backend.register_keras_serializable(package="kecam")
+@backend.register_keras_serializable(package="kecam")
 class WindowAttentionMask(layers.Layer):
     def __init__(self, height, width, window_height, window_width, shift_height=0, shift_width=0, **kwargs):
         # No weight, just need to wrapper a layer, or will meet some error in model saving or loading...
