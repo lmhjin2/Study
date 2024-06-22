@@ -20,7 +20,7 @@ def main_workflow(prompt, image_path, bbox):
     for task in tasks['tasks']:
         command = generate_command(task, image_paths[-1], output_dir, bbox)
         # 날씨 변경인지 객체 제거인지 확인. 날씨는 bbox를 받지 않음
-        run_command(command)
+        run_command(command) 
         if task['label'] == "날씨 변경":
            image_path = "inpainted_image.jpg" # 날씨 변경은 jpg로 설정
         elif task['label'] == "객체 제거":
