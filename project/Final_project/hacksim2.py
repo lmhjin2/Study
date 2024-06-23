@@ -27,7 +27,7 @@ def main_workflow(prompt, image_path, bbox):
            image_path = "inpainted_image.png" # 객체 제거는 png로 설정
 
     return image_path, tasks['tasks'] 
-  
+
 @app.route('/upload', methods=['POST']) # 파일 업로드
 # route는 Flask에서 특정 URL요청을 처리하기위해 사용됨
 def upload_file():
