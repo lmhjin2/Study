@@ -98,7 +98,7 @@ def process_user_input(self, user_input):
         f'{{"input": "{ex["input"]}", "tasks": {json.dumps(ex["tasks"], ensure_ascii=False)}}}' 
         for ex in self.examples
     ]) # 각 예제를 JSON형태로 변환 후, 하나의 문자열로 만듦
-    
+
     prompt_with_examples = self.prompt_template.format(examples=examples, input=user_input)
     # 완성된 프롬프트 문자열 새로 저장
 
