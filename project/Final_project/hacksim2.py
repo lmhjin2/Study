@@ -12,7 +12,7 @@ def main_workflow(prompt, image_path, bbox):
     tasks = analyze_prompt(prompt) # 프롬프트 분석, tasks 생성
     tasks = json.loads(tasks)   # JSON 형식 문자열을 Python 데이터 구조로 변경
     print(tasks)
-
+    
     tasks['tasks'].sort(key=lambda x: x['label'] != '날씨 변경') # tasks 리스트를 날씨 변경인 항목이 리스트의 앞으로 오게 정렬
 
     image_paths = [image_path] # image_paths 초기화, image_path 추가 
