@@ -16,7 +16,7 @@ def main_workflow(prompt, image_path, bbox):
     tasks['tasks'].sort(key=lambda x: x['label'] != '날씨 변경') # tasks 리스트를 날씨 변경인 항목이 리스트의 앞으로 오게 정렬
 
     image_paths = [image_path] # image_paths 초기화, image_path 추가 
-
+    
     for task in tasks['tasks']:
         command = generate_command(task, image_paths[-1], output_dir, bbox)
         # 날씨 변경인지 객체 제거인지 확인. 날씨는 bbox를 받지 않음
