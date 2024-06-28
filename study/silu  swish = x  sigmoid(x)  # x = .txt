@@ -1,0 +1,31 @@
+silu / swish = x * sigmoid(x)  # x = input
+silu / swish = sigmoid + relu
+silu / swish 의 범위 = relu의 범위 == [0, inf] ??
+
+gradient vanishing 현상을 막아줌
+
+relu는 작은 변화에도 민감하게 반응해서 학습하기 힘듦
+silu / swish = 작은변화엔 작게, 큰 변화엔 크게 반응.
+
+conv_nd = 개발자 취향. 개발자 마음
+
+normalization, standardization, regularization
+
+
+
+t == timestep
+Classifier Free Guidance
+t = positional encoding 해서 condition으로 입력됨
+원하는 class의 정보도 condition
+
+condition = t, class, promt, style, 등등 뭐든 추가적인 조건 
+
+encoder, decoder는 4x3개의 블록으로 이루어져있음
+middle블록 포함 총 25개
+8개의 블록은 downsampling, upsampling conv layer
+17개의 블록은 4개의 resnet layer와 2개의 ViT를 포함하는 basic block으로 구성됨
+각 ViT는 cross-attention과 self-attention 포함
+text는 OpenAI CLIP으로 인코딩, diffusion timestep은 location encoding
+512x512 -> 64x64 latnet 이미지로 변환 ( Tlqkf 왜? )
+- 512x512이미지를 더 안정적으로 학습 할수 있게끔 4x4 커널과 2x2 스트라이드를 가진 네트워크를 사용해 latent이미지로 변환함
+
