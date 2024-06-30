@@ -25,7 +25,7 @@ data2 = torch.randn(5, 10)  # 두 번째 배치 입력 데이터
 target2 = torch.randn(5, 1)  # 두 번째 배치 타겟 데이터
 
 # 그래디언트 초기화하지 않은 경우
-model.train()
+model.train() 
 
 # 첫 번째 배치 처리
 optimizer.zero_grad()
