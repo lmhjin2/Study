@@ -17,3 +17,4 @@ def print_bert_architecture():
 
 # Display the architecture
 print_bert_architecture()
+
