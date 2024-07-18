@@ -1,22 +1,11 @@
-# 07 load_diabetes
-# 08 california
-# 09 dacon ddarung
-# 10 kaggle bike
-# 평가 rmse, r2
 import numpy as np
-import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torchmetrics.classification import BinaryAccuracy, BinaryF1Score, F1Score
-from sklearn.model_selection import train_test_split
-from sklearn.datasets import load_breast_cancer, load_diabetes, fetch_california_housing
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, MinMaxScaler
-from sklearn.metrics import accuracy_score, f1_score, r2_score
 
 # print(torch.__version__)
-# 2.2.2+cu118  
+# 2.2.2+cu118
 
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
@@ -24,162 +13,91 @@ DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
 # torch : 1.12.1, 사용DEVICE : cuda
 
 #1. 데이터 
-path = "c:/_data/kaggle/bike/"
-train_csv = pd.read_csv(path +"train.csv", index_col=0)
-test_csv = pd.read_csv(path+"test.csv", index_col=0)
-submission_csv = pd.read_csv(path+"sampleSubmission.csv")
+x = np.array([1,2,3])
+y = np.array([1,2,3])
 
-x = train_csv.drop(['casual', 'registered', 'count'], axis=1).to_numpy()
-y = train_csv['count'].to_numpy()
+x = torch.FloatTensor(x).unsqueeze(1).to(DEVICE)  # reshape를 unsqueeze로 해준거임 / (3,) -> (3,1)
+y = torch.FloatTensor(y).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값(2)으로 수렴함 / (3,) -> (3,1)
 
-print(x.shape, y.shape)  # (10886, 8) (10886,) // torchTensor 는 .shape가 파란색, numpy는 하얀색
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15, random_state=42, shuffle=True) 
+print(f'스케일링 전 : {x}')
+x_mean = torch.mean(x)
+x_std = torch.std(x)
+x = (x - x_mean) / x_std
+# x = (x - torch.mean(x) / torch.std(x))
+print(f'스케일링 후 : {x}')
 
-scaler = MinMaxScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
-# 'Series' 계열 못알아 들어서 .to_numpy() 해줘야함
-x_train = torch.FloatTensor(x_train).to(DEVICE)
-x_test = torch.FloatTensor(x_test).to(DEVICE)
-y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
-y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)
+# 스케일링 전 : tensor([[1.],
+#         [2.],
+#         [3.]], device='cuda:0')
+# 스케일링 후 : tensor([[-1.],
+#         [ 0.],
+#         [ 1.]], device='cuda:0')
 
-print(x_train.shape, y_train.shape)  # (9253, 8) (9253, 1) // torchTensor 는 .shape가 파란색, numpy는 하얀색
-from torch.utils.data import DataLoader, random_split, TensorDataset
-train_set = TensorDataset(x_train, y_train)
-test_set = TensorDataset(x_test, y_test)
 
-train_loader = DataLoader(train_set, batch_size=2000, shuffle=True)
-test_loader = DataLoader(test_set, batch_size=2000, shuffle=False)
+# print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
+#             # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
+#             # unsequeeze.(1)       ,  기본
+
+# print(x.shape, y.shape)  # ([3,1]) , ([3]) 
+#                          # unsequeeze.(1), 기본
+
 
 #2. 모델구성
-# model = nn.Sequential(
-#     nn.Linear(8, 256),
-#     nn.ReLU(),
-#     nn.Linear(256, 128),
-#     nn.Dropout(0.2),
-#     nn.Linear(128, 64),
-#     nn.ReLU(),
-#     nn.Dropout(0.2),
-#     nn.Linear(64, 32),
-#     nn.BatchNorm1d(32),
-#     nn.Linear(32, 16),
-#     nn.ReLU(),
-#     nn.Dropout(0.2),
-#     nn.Linear(16, 8),
-#     nn.Dropout(0.2),
-#     nn.Linear(8, 4),
-#     nn.ReLU(),
-#     nn.Linear(4, 1)
-# ).to(DEVICE)
-
-class Model(nn.Module):
-    def __init__(self, input_dim, output_dim):
-        super(Model, self).__init__()
-        self.linear1 = nn.Linear(input_dim, 256)
-        self.linear2 = nn.Linear(256, 128)
-        self.linear3 = nn.Linear(128, 64)
-        self.linear4 = nn.Linear(64, 32)
-        self.linear5 = nn.Linear(32, 16)
-        self.linear6 = nn.Linear(16, 8)
-        self.linear7 = nn.Linear(8, 4)
-        self.linear8 = nn.Linear(4, output_dim)
-        self.relu = nn.ReLU()
-        self.drop = nn.Dropout(0.2)
-        self.bn = nn.BatchNorm1d(32)
-        return
-    def forward(self, input_size):
-        x = self.linear1(input_size)
-        x = self.relu(x)
-        x = self.linear2(x)
-        x = self.drop(x)
-        x = self.linear3(x)
-        x = self.relu(x)
-        x = self.drop(x)
-        x = self.linear4(x)
-        x = self.bn(x)
-        x = self.linear5(x)
-        x = self.relu(x)
-        x = self.drop(x)
-        x = self.linear6(x)
-        x = self.drop(x)
-        x = self.linear7(x)
-        x = self.relu(x)
-        x = self.linear8(x)
-        return x
-
-model = Model(8, 1).to(DEVICE)
+# model = Sequential()
+# model.add(Dense(1, input_dim=1))
+model = nn.Linear(1, 1).to(DEVICE) # input, output / 케라스랑 반대
 
 #3. 컴파일, 훈련
 # model.compile(loss = 'mse', optimizer = 'adam')
 criterion = nn.MSELoss()                #criterion : 표준
-optimizer = optim.Adam(model.parameters(), lr = 0.05)
-# optimizer = optim.SGD(model.parameters(), lr = 0.01)
+# optimizer = optim.Adam(model.parameters(), lr = 0.01)
+optimizer = optim.SGD(model.parameters(), lr = 0.01)
 
-def train(model, criterion, optimizer, loader):
-    model.train()   # 훈련모드 default / (dropout, normalization 등) O
+# model.fit(x,y, epochs = 100, batch_size=1)
+def train(model, criterion, optimizer, x, y):
+    # model.train()   # 훈련모드 default / (dropout, normalization 등) O
     # model.eval()    # 평가모드 / (dropout, normalization 등) X
-    total_loss = 0
     
-    for x_batch, y_batch in loader:
-        optimizer.zero_grad()
-        # w = w - lr * (loss를 weight로 미분한 값)
-        hypothesis = model(x_batch) #예상치 값 (순전파)
-        loss = criterion(hypothesis, y_batch) #예상값과 실제값 loss
-        
-        #역전파
-        loss.backward() #기울기(gradient) 계산 (loss를 weight로 미분한 값)
-        optimizer.step() # 가중치(w) 수정(weight 갱신)
-        total_loss += loss.item()
-    return total_loss / len(loader)
+    optimizer.zero_grad()
+    # w = w - lr * (loss를 weight로 미분한 값)
+    hypothesis = model(x) #예상치 값 (순전파)
+    loss = criterion(hypothesis, y) #예상값과 실제값 loss
+    
+    #역전파
+    loss.backward() #기울기(gradient) 계산 (loss를 weight로 미분한 값)
+    optimizer.step() # 가중치(w) 수정(weight 갱신)
+    return loss.item() #item 하면 numpy 데이터로 나옴
 
-epochs = 5000
-best_epoch = 0
-best_loss = float('inf')
-best_model_weights = None
-
+epochs = 2200
 for epoch in range(1, epochs + 1):
-    loss = train(model, criterion, optimizer, train_loader)
-    
-    if loss < best_loss : 
-        best_loss = loss
-        best_epoch = epoch
-        best_model_weights = model.state_dict().copy()
-        print(f'epoch : {best_epoch}, loss : {best_loss} weights saved ')
-    
-    if epoch % 100 == 0:
-        print(f'epoch : {epoch}, loss : {loss}')              # verbose 
+    loss = train(model, criterion, optimizer, x, y)
+    print('epoch : {}, loss : {}'.format(epoch, loss))  # verbose
+    print(f'epoch : {epoch}, loss : {loss}')
 
 print("="*50)
 
-if best_model_weights:
-    model.load_state_dict(best_model_weights)
-    print(f"Best model weights restored from epoch {best_epoch}")
-    
-
 #4 평가, 예측
-def evaluate(model, criterion, loader):
+# loss = model.evaluate(x_test,y_test)
+def evaluate(model, criterion, x, y):
     model.eval()  # 평가모드
-    total_loss = 0
     
     with torch.no_grad():
-        for x_batch, y_batch in loader:
-            y_predict = model(x_batch)
-            loss2 = criterion(y_predict, y_batch)
-            total_loss += loss2.item()
-            
-    return total_loss / len(loader)
+        y_predict = model(x)
+        loss2 = criterion(y, y_predict)
+    return loss2.item()
 
-# y_pred = np.round(model(x_test).cpu().detach().numpy())
-y_pred = model(x_test).cpu().detach().numpy()
-loss2 = evaluate(model, criterion, test_loader)
-score = r2_score(y_test.cpu().numpy(), y_pred)
-print(f"최종 loss : {loss2}")
-print(f'rmse : {np.sqrt(loss2)}')
-print(f'r2 : {score}')
+loss2 = evaluate(model, criterion, x, y)
+print("최종 loss : ", loss2)
+
+# result = model.predict([4])
+input_value = torch.FloatTensor([[4]]).to(DEVICE)
+input_value = (input_value - x_mean) / x_std  # 동일한 스케일링 적용
+result = model(input_value)
+# result = model(torch.Tensor([[4]]).to(DEVICE) - torch.mean(torch.Tensor([1,2,3])) / torch.std(torch.Tensor([1,2,3])))
+print(f"4의 예측값 : {result.item()}")
+# x = (x - torch.mean(x) / torch.std(x))
 
 # ==================================================
-# Best model weights restored from epoch 4749
-# 최종 loss : 21472.591796875
-# rmse : 146.5352919841326
-# r2 : 0.29519817785116276
+# 최종 loss :  1.1227760041143675e-11
+# 4의 예측값 : 3.999992847442627
+
