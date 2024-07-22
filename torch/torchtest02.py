@@ -18,7 +18,6 @@ y_train = np.array([1,2,3,4,5,6,7,])
 x_test = np.array([1,2,3,4,5,6,7,])
 y_test = np.array([1,2,3,4,5,6,7,])
 
-##### [실습] 수정하기
 x_train = torch.FloatTensor(x_train).unsqueeze(1).to(DEVICE)  # reshape를 unsqueeze로 해준거임 / (3,) -> (3,1)
 y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)  # x만 하고 y를 unsqueeze 안해주면 y의 평균값(2)으로 수렴함 / (3,) -> (3,1)
 x_test = torch.FloatTensor(x_test).unsqueeze(1).to(DEVICE)  
