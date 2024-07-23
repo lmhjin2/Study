@@ -8,6 +8,7 @@ from sklearn.datasets import load_breast_cancer
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, f1_score
 from torchmetrics.classification import BinaryAccuracy, BinaryF1Score, F1Score
+# x와 y 를 합친다
 from torch.utils.data import DataLoader, random_split, TensorDataset
 # print(torch.__version__)
 # 2.2.2+cu118
@@ -33,21 +34,20 @@ x_test = torch.FloatTensor(x_test).to(DEVICE)
 y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
 y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)
 
+train_set = TensorDataset(x_train, y_train)
+test_set = TensorDataset(x_test, y_test)
+print(train_set)
+print(type(train_set))
+print(len(train_set))
+
+# <torch.utils.data.dataset.TensorDataset object at 0x0000027137F7AAF0>
+# <class 'torch.utils.data.dataset.TensorDataset'>
+
+train_loader = DataLoader(train_set, batch_size = 32, shuffle = True)
+test_loader = DataLoader(test_set, batch_size = 32 , shuffle=False)
+
 # print(x_train.shape, y_train.shape)  # (445, 30) (445, 1) // torchTensor 는 .shape가 파란색, numpy는 하얀색
 #2. 모델구성
-# model = nn.Sequential(
-#     nn.Linear(30, 64),
-#     nn.ReLU(),
-#     nn.Linear(64, 32),
-#     nn.ReLU(),
-#     nn.Linear(32, 16),
-#     nn.ReLU(),
-#     nn.Linear(16, 7),
-#     nn.ReLU(),
-#     nn.Linear(7, 1),
-#     nn.Sigmoid()
-# ).to(DEVICE)
-
 class Model(nn.Module):
     def __init__(self, input_dim, output_dim):  # init은 호출 됐을때 실행됨. 레이어의 정의가 들어감
         # super().__init__()
@@ -85,55 +85,70 @@ criterion = nn.BCELoss()                #criterion : 표준
 optimizer = optim.Adam(model.parameters(), lr = 0.01)
 # optimizer = optim.SGD(model.parameters(), lr = 0.01)
 
-def train(model, criterion, optimizer, x, y):
-    # model.train()   # 훈련모드 default / (dropout, normalization 등) O
+def train(model, criterion, optimizer, loader):
+    model.train()   # 훈련모드 default / (dropout, normalization 등) O
     # model.eval()    # 평가모드 / (dropout, normalization 등) X
+    total_loss = 0
     
-    optimizer.zero_grad()
-    # w = w - lr * (loss를 weight로 미분한 값)
-    hypothesis = model(x) #예상치 값 (순전파)
-    loss = criterion(hypothesis, y) #예상값과 실제값 loss
+    for x_batch, y_batch in loader:
+        optimizer.zero_grad()
+        # w = w - lr * (loss를 weight로 미분한 값)
+        hypothesis = model(x_batch) #예상치 값 (순전파)
+        loss = criterion(hypothesis, y_batch) #예상값과 실제값 loss
     
-    #역전파
-    loss.backward() #기울기(gradient) 계산 (loss를 weight로 미분한 값)
-    optimizer.step() # 가중치(w) 수정(weight 갱신)
-    return loss.item() #item 하면 numpy 데이터로 나옴
+        #역전파
+        loss.backward() # 기울기(gradient) 계산 (loss를 weight로 미분한 값)   # 역전파 시작
+        optimizer.step() # 가중치(w) 수정(weight 갱신)                        # 역전파 끝
+        # total_loss = total_loss + loss.item()
+        total_loss += loss.item()
+        
+    return total_loss / len(loader) # item 하면 numpy 데이터로 나옴
 
-epochs = 7000
+epochs = 2000
+best_loss = float('inf')
+best_model_weights = None
+
 for epoch in range(1, epochs + 1):
-    loss = train(model, criterion, optimizer, x_train, y_train)
-    # print('epoch : {}, loss : {}'.format(epoch, loss))  # verbose
-    print(f'epoch : {epoch}, loss : {loss}')              # verbose 
+    loss = train(model, criterion, optimizer, train_loader)
+    
+    if loss < best_loss : 
+        best_loss = loss
+        best_model_weights = model.state_dict().copy()
+        print(f'epoch : {epoch}, loss : {best_loss} weights saved ')
+    
+    if epoch % 100 == 0:
+        print(f'epoch : {epoch}, loss : {loss}')              # verbose 
 
 print("="*50)
 
+if best_model_weights:
+    model.load_state_dict(best_model_weights)
+    print("Best model weights restored.")
+
 #4 평가, 예측
-def evaluate(model, criterion, x_test, y_test):
+def evaluate(model, criterion, loader):
     model.eval()  # 평가모드
+    total_loss = 0
     accuracy_metric = BinaryAccuracy().to(DEVICE)
     f1_metric = F1Score(task='binary').to(DEVICE)  # 둘다 됨
     # f1_metric = BinaryF1Score().to(DEVICE)       # 둘다 됨
     
     with torch.no_grad():
-        y_predict = model(x_test)
-        loss2 = criterion(y_test, y_predict)
-        
-        y_pred_class = (y_predict >= 0.5).float()  # 0.5 이상이면 1, 아니면 0 / 반올림 // torchmetric쓰면 안써도 되긴함
-        
-        ## ACC 1
-        # accuracy = (y_pred_class == y_test).float().mean()
-        
-        ## ACC 2
-        # accuracy = accuracy_metric(y_pred_class, y_test)
-        accuracy = accuracy_metric(y_predict, y_test)
-        
-        ## F1
-        # f1 = f1_metric(y_pred_class, y_test)  
-        f1 = f1_metric(y_predict, y_test)
+        for x_batch, y_batch in loader:
+            y_predict = model(x_batch)
+            loss2 = criterion(y_predict, y_batch)
+            total_loss += loss2.item()
 
-    return loss2.item(), accuracy.item(), f1.item()
+            y_pred_class = (y_predict >= 0.5).float()
+            accuracy_metric.update(y_pred_class, y_batch)
+            f1_metric.update(y_pred_class, y_batch)
+    
+    accuracy = accuracy_metric.compute()
+    f1 = f1_metric.compute()
+    
+    return total_loss / len(loader), accuracy.item(), f1.item()
 
-loss2, accuracy, f1 = evaluate(model, criterion, x_test, y_test)
+loss2, accuracy, f1 = evaluate(model, criterion, test_loader)
 print(f"최종 loss : {loss2}")
 print(f"f1 : {f1}")         # % 는 그냥 출력되라고 쓰는거임. 기능 x
 print(f"ACC : {accuracy}")  # :.2f = 소수점 아래 두자리 까지 표시.
@@ -143,12 +158,12 @@ y_pred = np.round(model(x_test).cpu().detach().numpy())
 score = accuracy_score(y_test.cpu().numpy(), y_pred)
 print(f'accuracy : {score:}')
 
-result = model(x_test[0])
-print(f"x_test[0] 예측값 : {result.item()}")
+# result = model(x_test[0])
+# print(f"x_test[0] 예측값 : {result.item()}")
 
 # ==================================================
-# 최종 loss : 3.5120105743408203
-# f1 : 0.9718309640884399
-# ACC : 0.9649122953414917
-# accuracy : 0.9649122807017544
+# 최종 loss : 0.4313337159110233
+# f1 : 1.0
+# ACC : 1.0
+# accuracy : 0.956140350877193
 # x_test[0] 예측값 : 0.0
