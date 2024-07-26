@@ -1,8 +1,3 @@
-# 07 load_diabetes
-# 08 california
-# 09 dacon ddarung
-# 10 kaggle bike
-# 평가 rmse, r2
 import numpy as np
 import pandas as pd
 import torch
@@ -53,25 +48,6 @@ train_loader = DataLoader(train_set, batch_size=2000, shuffle=True)
 test_loader = DataLoader(test_set, batch_size=2000, shuffle=False)
 
 #2. 모델구성
-# model = nn.Sequential(
-#     nn.Linear(8, 256),
-#     nn.ReLU(),
-#     nn.Linear(256, 128),
-#     nn.Dropout(0.2),
-#     nn.Linear(128, 64),
-#     nn.ReLU(),
-#     nn.Dropout(0.2),
-#     nn.Linear(64, 32),
-#     nn.BatchNorm1d(32),
-#     nn.Linear(32, 16),
-#     nn.ReLU(),
-#     nn.Dropout(0.2),
-#     nn.Linear(16, 8),
-#     nn.Dropout(0.2),
-#     nn.Linear(8, 4),
-#     nn.ReLU(),
-#     nn.Linear(4, 1)
-# ).to(DEVICE)
 
 class Model(nn.Module):
     def __init__(self, input_dim, output_dim):
@@ -111,10 +87,8 @@ class Model(nn.Module):
 model = Model(8, 1).to(DEVICE)
 
 #3. 컴파일, 훈련
-# model.compile(loss = 'mse', optimizer = 'adam')
 criterion = nn.MSELoss()                #criterion : 표준
 optimizer = optim.Adam(model.parameters(), lr = 0.05)
-# optimizer = optim.SGD(model.parameters(), lr = 0.01)
 
 def train(model, criterion, optimizer, loader):
     model.train()   # 훈련모드 default / (dropout, normalization 등) O
