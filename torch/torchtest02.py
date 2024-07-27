@@ -23,18 +23,7 @@ y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)  # x만 하고 y를
 x_test = torch.FloatTensor(x_test).unsqueeze(1).to(DEVICE)  
 y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)  
 
-# print(x, y) # tensor([1., 2., 3.]) tensor([1., 2., 3.])
-#             # ([[1.], [2.], [3.]]) , ([1., 2., 3.])
-#             # unsequeeze.(1)       ,  기본
-
-# print(x.shape, y.shape)  # ([3,1]) , ([3]) 
-#                          # unsequeeze.(1), 기본
-
-
 #2. 모델구성
-# model = Sequential()
-# model.add(Dense(1, input_dim=1))
-# model = nn.Linear(1, 1).to(DEVICE) # input, output / 케라스랑 반대
 model = nn.Sequential(
     nn.Linear(1, 5),
     nn.Linear(5, 4),
@@ -45,12 +34,9 @@ model = nn.Sequential(
 ).to(DEVICE)
 
 #3. 컴파일, 훈련
-# model.compile(loss = 'mse', optimizer = 'adam')
 criterion = nn.MSELoss()                #criterion : 표준
 optimizer = optim.Adam(model.parameters(), lr = 0.01)
-# optimizer = optim.SGD(model.parameters(), lr = 0.01)
 
-# model.fit(x,y, epochs = 100, batch_size=1)
 def train(model, criterion, optimizer, x, y):
     # model.train()   # 훈련모드 default / (dropout, normalization 등) O
     # model.eval()    # 평가모드 / (dropout, normalization 등) X
@@ -91,5 +77,5 @@ result = model(torch.Tensor([[4]]).to(DEVICE))
 print(f"4의 예측값 : {result.item()}")
 
 # ==================================================
-# 최종 loss :  1.624097720458878e-13
+# 최종 loss :  1.654561891578e-13
 # 4의 예측값 : 4.0
