@@ -54,7 +54,6 @@ model = nn.Sequential(
 ).to(DEVICE)
 
 #3. 컴파일, 훈련
-# model.compile(loss = 'mse', optimizer = 'adam')
 criterion = nn.BCELoss()                #criterion : 표준
 optimizer = optim.Adam(model.parameters(), lr = 0.01)
 # optimizer = optim.SGD(model.parameters(), lr = 0.01)
@@ -85,8 +84,8 @@ print("="*50)
 def evaluate(model, criterion, x_test, y_test):
     model.eval()  # 평가모드
     accuracy_metric = BinaryAccuracy().to(DEVICE)
-    f1_metric = F1Score(task='binary').to(DEVICE)  # 둘다 됨
-    # f1_metric = BinaryF1Score().to(DEVICE)       # 둘다 됨
+    f1_metric = F1Score(task='binary').to(DEVICE) 
+    # f1_metric = BinaryF1Score().to(DEVICE)      
     
     with torch.no_grad():
         y_predict = model(x_test)
@@ -119,9 +118,3 @@ print(f'accuracy : {score:}')
 
 result = model(x_test[0])
 print(f"x_test[0] 예측값 : {result.item()}")
-
-# ==================================================
-# 최종 loss : 3.3293569087982178
-# ACC : 0.9649122953414917
-# f1 : 0.9718309640884399
-# x_test[0] 예측값 : 0.0
