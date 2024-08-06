@@ -75,7 +75,3 @@ print("최종 loss : ", loss2)
 # result = model.predict([4])
 result = model(torch.Tensor([[4]]).to(DEVICE))
 print(f"4의 예측값 : {result.item()}")
-
-# ==================================================
-# 최종 loss :  1.654561891578e-13
-# 4의 예측값 : 4.0
