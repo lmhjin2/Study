@@ -72,6 +72,6 @@ def evaluate(model, criterion, x_test, y_test):
 loss2 = evaluate(model, criterion, x_test, y_test)
 print("최종 loss : ", loss2)
 
-# result = model.predict([4])
 result = model(torch.Tensor([[4]]).to(DEVICE))
 print(f"4의 예측값 : {result.item()}")
+
