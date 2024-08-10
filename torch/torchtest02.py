@@ -74,4 +74,3 @@ print("최종 loss : ", loss2)
 
 result = model(torch.Tensor([[4]]).to(DEVICE))
 print(f"4의 예측값 : {result.item()}")
-
