@@ -118,4 +118,3 @@ print(f'accuracy : {score:}')
 
 result = model(x_test[0])
 print(f"x_test[0] 예측값 : {result.item()}")
-
