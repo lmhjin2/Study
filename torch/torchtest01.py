@@ -152,8 +152,3 @@ print(f"최종 loss : {loss2}")
 print(f'rmse : {np.sqrt(loss2)}')
 print(f'r2 : {score}')
 
-# ==================================================
-# Best model weights restored from epoch 4749
-# 최종 loss : 21472.591796875
-# rmse : 146.5352919841326
-# r2 : 0.29519817785116276
