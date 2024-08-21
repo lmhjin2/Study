@@ -4,9 +4,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-# print(torch.__version__)
-# 2.2.2+cu118
-
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
 # print(f'torch : {torch.__version__}, 사용DEVICE : {DEVICE}')
