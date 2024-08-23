@@ -151,4 +151,3 @@ score = r2_score(y_test.cpu().numpy(), y_pred)
 print(f"최종 loss : {loss2}")
 print(f'rmse : {np.sqrt(loss2)}')
 print(f'r2 : {score}')
-
