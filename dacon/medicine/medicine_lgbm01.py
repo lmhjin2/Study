@@ -10,6 +10,7 @@ from rdkit.Chem import rdFingerprintGenerator  # MorganGenerator를 사용하기
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
+import lightgbm as lgbm
 
 CFG = {
     'NBITS': 2048,
@@ -50,7 +51,13 @@ train_y = train['pIC50'].values
 train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.2, random_state=42)
 
 # 랜덤 포레스트 모델 학습
-model = RandomForestRegressor(random_state=CFG['SEED'])
+model = lgbm.LGBMRegressor(
+    n_estimators=1001,
+    learning_rate=0.1,
+    early_stopping_round = 50,
+    random_state=CFG['SEED']
+)
+
 model.fit(train_x, train_y)
 
 def pIC50_to_IC50(pic50_values):
@@ -63,6 +70,7 @@ mse = mean_squared_error(pIC50_to_IC50(val_y), pIC50_to_IC50(val_y_pred))
 rmse = np.sqrt(mse)
 
 print(f'RMSE: {rmse}')
+print(f'model.score : {model.score(val_x, val_y)}')
 
 test = pd.read_csv('c:/data/dacon/medicine/test.csv')
 test.loc[:, 'Fingerprint'] = test['Smiles'].apply(smiles_to_fingerprint)
@@ -75,4 +83,4 @@ submit = pd.read_csv('c:/data/dacon/medicine/sample_submission.csv')
 submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
-submit.to_csv('c:/data/dacon/medicine/use_MG.csv', index=False)
+submit.to_csv('c:/data/dacon/medicine/lgbm01.csv', index=False)
