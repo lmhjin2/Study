@@ -1,3 +1,5 @@
+# https://dacon.io/competitions/official/236336/mysubmission
+
 import pandas as pd
 import numpy as np
 import os
@@ -84,4 +86,4 @@ submit = pd.read_csv('c:/data/dacon/medicine/sample_submission.csv')
 submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
-submit.to_csv('c:/data/dacon/medicine/use_MG.csv', index=False)
+submit.to_csv('c:/data/dacon/medicine/submission/cbt01.csv', index=False)

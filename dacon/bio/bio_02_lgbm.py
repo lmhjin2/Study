@@ -1,3 +1,5 @@
+# https://dacon.io/competitions/official/236355/mysubmission
+
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from sklearn.model_selection import train_test_split
@@ -76,7 +78,7 @@ original_labels = le_subclass.inverse_transform(predictions)
 # 제출 파일 생성
 submission = pd.read_csv("c:/data/dacon/bio/sample_submission.csv")
 submission["SUBCLASS"] = original_labels
-submission.to_csv('c:/data/dacon/bio/bio_02_lgbm.csv', encoding='UTF-8-sig', index=False)
+submission.to_csv('c:/data/dacon/bio/submission/bio_02_lgbm.csv', encoding='UTF-8-sig', index=False)
 
 # [15]    training's multi_logloss: 0.971804      valid_1's multi_logloss: 2.24667
 # model.score 0.32473811442385175

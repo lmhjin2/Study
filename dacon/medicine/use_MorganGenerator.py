@@ -75,4 +75,4 @@ submit = pd.read_csv('c:/data/dacon/medicine/sample_submission.csv')
 submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
-submit.to_csv('c:/data/dacon/medicine/use_MG.csv', index=False)
+submit.to_csv('c:/data/dacon/medicine/submission/use_MG.csv', index=False)
