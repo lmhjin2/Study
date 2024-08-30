@@ -87,3 +87,4 @@ submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
 submit.to_csv('c:/data/dacon/medicine/submission/cbt01.csv', index=False)
+# https://dacon.io/competitions/official/236336/mysubmission

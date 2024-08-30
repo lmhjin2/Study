@@ -56,7 +56,7 @@ train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.
 model = lgbm.LGBMRegressor(
     n_estimators=1001,
     learning_rate=0.1,
-    early_stopping_round = 50,
+    # early_stopping_round = 50,
     random_state=CFG['SEED']
 )
 
@@ -86,3 +86,4 @@ submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
 submit.to_csv('c:/data/dacon/medicine/submission/lgbm01.csv', index=False)
+# https://dacon.io/competitions/official/236336/mysubmission

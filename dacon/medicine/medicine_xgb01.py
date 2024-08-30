@@ -87,7 +87,8 @@ submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
 submit.to_csv('c:/data/dacon/medicine/submission/xgb01.csv', index=False)
+# https://dacon.io/competitions/official/236336/mysubmission
 
-# RMSE: 1839.378946571025
-# score : 0.6977520869865825
+# RMSE: 1600.7436078480696
+# model.score : 0.7055930843563184
 # leader_board : 
