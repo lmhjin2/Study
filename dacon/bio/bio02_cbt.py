@@ -1,5 +1,3 @@
-# https://dacon.io/competitions/official/236355/mysubmission
-
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from sklearn.model_selection import train_test_split
@@ -33,7 +31,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_encoded, y_subclass, test_si
 
 # XGBoost 모델 정의
 model = CatBoostClassifier(
-    n_estimators=1001,
+    n_estimators=100,
     learning_rate=0.1,
     max_depth=6,
     random_state=42
@@ -60,4 +58,5 @@ original_labels = le_subclass.inverse_transform(predictions)
 submission = pd.read_csv("c:/data/dacon/bio/sample_submission.csv")
 submission["SUBCLASS"] = original_labels
 submission.to_csv('c:/data/dacon/bio/submission/bio_02_cbt.csv', encoding='UTF-8-sig', index=False)
+# https://dacon.io/competitions/official/236355/mysubmission
 

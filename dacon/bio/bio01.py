@@ -1,5 +1,3 @@
-# https://dacon.io/competitions/official/236355/mysubmission
-
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import xgboost as xgb
@@ -42,3 +40,4 @@ original_labels = le_subclass.inverse_transform(predictions)
 submission = pd.read_csv("c:/data/dacon/bio/sample_submission.csv")
 submission["SUBCLASS"] = original_labels
 submission.to_csv('c:/data/dacon/bio/submission/bio_01.csv', encoding='UTF-8-sig', index=False)
+# https://dacon.io/competitions/official/236355/mysubmission

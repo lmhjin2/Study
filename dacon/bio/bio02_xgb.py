@@ -1,5 +1,3 @@
-# https://dacon.io/competitions/official/236355/mysubmission
-
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from sklearn.model_selection import train_test_split
@@ -32,7 +30,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_encoded, y_subclass, test_si
 
 # XGBoost 모델 정의
 model = xgb.XGBClassifier(
-    n_estimators=1001,
+    n_estimators=100,
     learning_rate=0.1,
     max_depth=6,
     random_state=42,
@@ -46,7 +44,9 @@ model.fit(X_train, y_train, eval_set=eval_set, verbose=True)
 
 # 테스트 데이터 처리 및 예측
 results = model.score(X_val, y_val)
-print("model.score", results)
+
+print(f'bio_02_xgb')
+print("model.score : ", results)
 
 test_X = test.drop(columns=['ID'])
 test_X_encoded = test_X.copy()
@@ -59,5 +59,6 @@ original_labels = le_subclass.inverse_transform(predictions)
 # 제출 파일 생성
 submission = pd.read_csv("c:/data/dacon/bio/sample_submission.csv")
 submission["SUBCLASS"] = original_labels
-submission.to_csv('c:/data/dacon/bio/submission/bio_03.csv', encoding='UTF-8-sig', index=False)
+submission.to_csv('c:/data/dacon/bio/submission/bio_02_xgb.csv', encoding='UTF-8-sig', index=False)
+# https://dacon.io/competitions/official/236355/mysubmission
 
