@@ -1,5 +1,3 @@
-# https://dacon.io/competitions/official/236336/mysubmission
-
 import pandas as pd
 import numpy as np
 import os
@@ -54,8 +52,8 @@ train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.
 
 # 모델 학습
 model = xgb.XGBRegressor(
-    n_estimators=1001,
-    learning_rate = 0.1,
+    n_estimators = 5001 ,
+    learning_rate = 0.2,
     eval_metric='rmse',
     random_state=CFG['SEED']
 )
@@ -92,4 +90,5 @@ submit.to_csv('c:/data/dacon/medicine/submission/xgb01.csv', index=False)
 
 # RMSE: 1600.7436078480696
 # model.score : 0.7055930843563184
-# leader_board : 
+# leader_board : 0.5235553557
+

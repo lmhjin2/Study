@@ -50,7 +50,13 @@ train_y = train['pIC50'].values
 train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.2, random_state=42)
 
 # 랜덤 포레스트 모델 학습
-model = RandomForestRegressor(random_state=CFG['SEED'])
+model = RandomForestRegressor(
+    n_estimators = 1001,
+    n_jobs=-1,
+    # verbose = 1,
+    random_state=CFG['SEED']
+)
+
 model.fit(train_x, train_y)
 
 def pIC50_to_IC50(pic50_values):
@@ -76,3 +82,4 @@ submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
 submit.to_csv('c:/data/dacon/medicine/submission/use_MG.csv', index=False)
+# https://dacon.io/competitions/official/236336/mysubmission
