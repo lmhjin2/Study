@@ -52,8 +52,8 @@ train_y = train['pIC50'].values
 
 train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.2, random_state=42)
 
-# print(train_x.shape, train_y.shape)   # (1561, 2048) / (1561,)
-# print(val_x.shape, val_y.shape)       # (391, 2048)  / (391,)
+print(train_x.shape, train_y.shape)   # (1561, 2048) / (1561,)
+print(val_x.shape, val_y.shape)       # (391, 2048)  / (391,)
 
 #2
 model = Sequential()
@@ -74,14 +74,15 @@ model.add(BatchNormalization())
 model.add(Dense(1))
 
 #3
-model.compile(loss='mse', optimizer=Adam(learning_rate=0.001))
+model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005))
 
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=100,
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience = 200 ,
                    restore_best_weights=True)
+rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=50, verbose=1, mode='min')
 
 hist = model.fit(train_x, train_y, epochs = 2000,
-                 batch_size=352, callbacks=[es],
-                 validation_split=0.12, verbose=1)
+                 batch_size=128, callbacks=[es, rlr],
+                 validation_split=0.15, verbose=1)
 
 #4
 def pIC50_to_IC50(pic50_values):
