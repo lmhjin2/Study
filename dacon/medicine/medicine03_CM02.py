@@ -59,13 +59,16 @@ print(val_x.shape, val_y.shape)       # (391, 2048)  / (391,)
 model = Sequential()
 model.add(Dense(256, input_shape=(2048,)))
 model.add(Dropout(0.2))
+model.add(BatchNormalization())
 model.add(Dense(512))
 model.add(Dropout(0.2))
 model.add(Dense(1024, activation='relu'))
+model.add(Dropout(0.2))
 model.add(BatchNormalization())
 model.add(Dense(512))
 model.add(Dropout(0.2))
 model.add(Dense(256, activation='relu'))
+model.add(Dropout(0.2))
 model.add(BatchNormalization())
 model.add(Dense(128))
 model.add(Dropout(0.2))
@@ -74,11 +77,12 @@ model.add(BatchNormalization())
 model.add(Dense(1))
 
 #3
-model.compile(loss='mse', optimizer=Adam(learning_rate=0.0005))
+model.compile(loss='mse', optimizer=Adam(learning_rate=0.0001))
 
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience = 200 ,
+es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience = 500 ,
                    restore_best_weights=True)
-rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=50, verbose=1, mode='min')
+rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience = 100,
+                    verbose=1, mode='min')
 
 hist = model.fit(train_x, train_y, epochs = 2000,
                  batch_size=128, callbacks=[es, rlr],
