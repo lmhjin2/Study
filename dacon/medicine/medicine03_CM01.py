@@ -107,5 +107,6 @@ submit = pd.read_csv('c:/data/dacon/medicine/sample_submission.csv')
 submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
-submit.to_csv('c:/data/dacon/medicine/submission/03_CM.csv', index=False)
+submit.to_csv('c:/data/dacon/medicine/submission/03_CM01.csv', index=False)
 # https://dacon.io/competitions/official/236336/mysubmission
+# leader board : 0.4979429799

@@ -77,7 +77,7 @@ model.add(BatchNormalization())
 model.add(Dense(1))
 
 #3
-model.compile(loss='mse', optimizer=Adam(learning_rate=0.0001))
+model.compile(loss='mse', optimizer=Adam(learning_rate=0.001))
 
 es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience = 500 ,
                    restore_best_weights=True)
@@ -85,8 +85,8 @@ rlr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience = 100,
                     verbose=1, mode='min')
 
 hist = model.fit(train_x, train_y, epochs = 2000,
-                 batch_size=128, callbacks=[es, rlr],
-                 validation_split=0.15, verbose=1)
+                 batch_size=352, callbacks=[es, rlr],
+                 validation_split=0.12, verbose=1)
 
 #4
 def pIC50_to_IC50(pic50_values):
@@ -112,5 +112,6 @@ submit = pd.read_csv('c:/data/dacon/medicine/sample_submission.csv')
 submit['IC50_nM'] = pIC50_to_IC50(test_y_pred)
 submit.head()
 
-submit.to_csv('c:/data/dacon/medicine/submission/03_CM.csv', index=False)
+submit.to_csv('c:/data/dacon/medicine/submission/03_CM02.csv', index=False)
 # https://dacon.io/competitions/official/236336/mysubmission
+# leader board : 0.1111111111
