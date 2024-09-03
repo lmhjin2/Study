@@ -36,7 +36,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_encoded, y_subclass, test_si
 # XGBoost 모델 정의
 def objective(trial):
     # StratifiedKFold 설정
-    n_splits = 5
+    n_splits = 2
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
     
     # 하이퍼파라미터 제안
