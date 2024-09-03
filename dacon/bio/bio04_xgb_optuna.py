@@ -44,7 +44,7 @@ def objective(trial):
         'objective': 'multi:softmax',
         'num_class': len(le_subclass.classes_),  # multi-class classification을 위해 추가
         'eval_metric': 'mlogloss',  # XGBoost에서의 metric 지정
-        'n_estimators': 100,
+        # 'n_estimators': 100,
         'learning_rate': trial.suggest_float('learning_rate', 0.0001, 0.01),
         'max_depth': trial.suggest_int('max_depth', 1, 100),
         'min_child_weight': trial.suggest_int('min_child_weight', 1, 50),
@@ -72,7 +72,7 @@ def objective(trial):
     return min_rmse
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=100) # 100회의 시도로 최적화
+study.optimize(objective, n_trials=10) # 10회의 시도로 최적화
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
