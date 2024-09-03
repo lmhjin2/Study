@@ -62,6 +62,18 @@ def objective(trial):
     
     # 하이퍼파라미터 제안
     param = {
+        'objective': 'regression',
+        'metric': 'rmse',
+        'learning_rate' : trial.suggest_float('learning_rate', 0.05, 0.1),
+        'max_depth' : trial.suggest_int('max_depth', 16, 50),
+        'subsample' : trial.suggest_float('subsample',0.7, 1.0),
+        'max_bin' : trial.suggest_int('max_bin', 80, 90),
+        'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.67, 1.0),
+        'num_leaves': trial.suggest_int('num_leaves', 8, 32),
+        'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),  # 추가된 부분
+    }
+    """    
+    param = {
         'objective': 'binary',
         'metric': 'rmse',
         # 'verbosity': -1,
@@ -79,7 +91,7 @@ def objective(trial):
         # 'bagging_fraction': trial.suggest_float('bagging_fraction', 0.4, 1.0),
         # 'bagging_freq': trial.suggest_int('bagging_freq', 1, 7),
         # 'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),
-    }
+    }"""
     # Best trial: {'learning_rate': 0.08846768641300025, 'max_depth': 34, 'subsample': 0.846460214896239, 'max_bin': 85, 'colsample_bytree': 0.6740335217266229, 'num_leaves': 10}
     # Best RMSE Score: 6.591825940569823
     
@@ -100,7 +112,7 @@ def objective(trial):
     return min_rmse
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=100) # 3000회의 시도로 최적화
+study.optimize(objective, n_trials = 100) # 10회의 시도로 최적화
 
 print('Number of finished trials:', len(study.trials))
 print('Best trial:', study.best_trial.params)
