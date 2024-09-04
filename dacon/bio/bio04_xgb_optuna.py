@@ -116,4 +116,3 @@ submission = pd.read_csv("c:/data/dacon/bio/sample_submission.csv")
 submission["SUBCLASS"] = original_labels
 submission.to_csv('c:/data/dacon/bio/submission/xgb_optuna.csv', encoding='UTF-8-sig', index=False)
 # https://dacon.io/competitions/official/236355/mysubmission
-
