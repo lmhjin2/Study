@@ -62,32 +62,23 @@ def objective(trial):
     
     # 하이퍼파라미터 제안
     param = {
-        'objective': 'regression', # 기본값 regression
-        # 'boosting_type' : ['gbdt', 'dart', 'goss', 'rf'],
+        'objective': 'regression',
         'metric': 'rmse',
-        # 'n_estimators' : '100', # 기본 100
-        'learning_rate' : trial.suggest_float('learning_rate', 0.1, 0.2),
-        'min_child_weight' : trial.suggest_float('min_child_weight', 0.001, 0.1), # 기본 0.001
-        'max_depth' : trial.suggest_int('max_depth', 16, 255), # 기본 -1 / 제한 x
-        'subsample' : trial.suggest_float('subsample', 0.7, 1.0), # 기본 1.0
-        'max_bin' : trial.suggest_int('max_bin', 25, 500), # 기본 255
-        'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.7, 1.0), # 기본 1
-        'num_leaves': trial.suggest_int('num_leaves', 8, 64), # 기본 31
-        'min_child_samples': trial.suggest_int('min_child_samples', 10, 30), # 기본 20
-        # 'importance_type' : ['split', 'gain'],
-        # 'boost_from_average' : True,
-        # 'early_stopping_rounds' : None,
-        # 'feature_fraction' : trial.suggest_float('feature_fraction', 0.9, 1.0),
-        # 'bagging_fraction' : trial.suggest_float('bagging_fraction', 0.9, 1.0),
-        
+        'learning_rate' : trial.suggest_float('learning_rate', 0.05, 0.1),
+        'max_depth' : trial.suggest_int('max_depth', 16, 50),
+        'subsample' : trial.suggest_float('subsample',0.7, 1.0),
+        'max_bin' : trial.suggest_int('max_bin', 80, 90),
+        'colsample_bytree' : trial.suggest_float('colsample_bytree', 0.67, 1.0),
+        'num_leaves': trial.suggest_int('num_leaves', 8, 32),
+        'min_child_samples': trial.suggest_int('min_child_samples', 5, 100),  # 추가된 부분
     }
-
+    
     rmses = []
     for train_idx, valid_idx in kfold.split(train_x, train_y):
         x_train_fold, x_valid_fold = train_x[train_idx], train_x[valid_idx]
         y_train_fold, y_valid_fold = train_y[train_idx], train_y[valid_idx]
         
-        model = lgbm.LGBMRegressor(**param, seed=42)
+        model = RandomForestRegressor(**param, seed=42)
         model.fit(x_train_fold, y_train_fold, eval_set=[(x_valid_fold, y_valid_fold)])
         
         preds = model.predict(x_valid_fold)
@@ -108,18 +99,11 @@ print(f'Best RMSE Score: {study.best_trial.value}')
 trial = study.best_trial
 best_params = study.best_trial.params
 
-best_model = lgbm.LGBMRegressor(**best_params, seed=42)
+best_model = RandomForestRegressor(**best_params, seed=42)
 best_model.fit(train_x, train_y)
 
-import optuna.visualization as vis
-
-# 파라미터 중요도 확인 그래프
-fig_param_importances = vis.plot_param_importances(study)
-fig_param_importances.show()  # 그래프 출력
-
-# 최적화 과정 시각화
-fig_optimization_history = vis.plot_optimization_history(study)
-fig_optimization_history.show()  # 그래프 출력
+optuna.visualization.plot_param_importances(study)      # 파라미터 중요도 확인 그래프
+optuna.visualization.plot_optimization_history(study)   # 최적화 과정 시각화
 
 test = pd.read_csv('c:/data/dacon/medicine/test.csv')
 test.loc[:, 'Fingerprint'] = test['Smiles'].apply(smiles_to_fingerprint)
@@ -155,18 +139,3 @@ print("  Value: ", trial.value)
 print("  Params: ")
 for key, value in trial.params.items():
     print("    {}: {}".format(key, value))
-
-# 학습 후 Feature Importance 확인
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Feature importance 출력
-feature_importances = best_model.feature_importances_
-
-# 중요도 시각화
-plt.figure(figsize=(12, 6))
-sns.barplot(x=np.arange(len(feature_importances)), y=feature_importances)
-plt.title('Feature Importances from LightGBM')
-plt.xlabel('Feature Index')
-plt.ylabel('Importance')
-plt.show()
