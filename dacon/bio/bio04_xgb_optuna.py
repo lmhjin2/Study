@@ -45,13 +45,15 @@ def objective(trial):
         'num_class': len(le_subclass.classes_),  # multi-class classification을 위해 추가
         'eval_metric': 'mlogloss',  # XGBoost에서의 metric 지정
         # 'n_estimators': 100,
-        'learning_rate': trial.suggest_float('learning_rate', 0.0001, 0.01),
-        'max_depth': trial.suggest_int('max_depth', 1, 100),
-        'min_child_weight': trial.suggest_int('min_child_weight', 1, 50),
-        'subsample': trial.suggest_float('subsample', 0.1, 1.0),
-        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
-        'reg_lambda': trial.suggest_float('reg_lambda', 0, 10),
-        'reg_alpha': trial.suggest_float('reg_alpha', 0, 50),
+        'learning_rate': trial.suggest_float('learning_rate', 0.001, 0.3), # 기본 0.3
+        'max_depth': trial.suggest_int('max_depth', 1, 100), # 기본 6
+        'max_bin': trial.suggest_int('max_bin', 128, 512), # 기본 256
+        'min_child_weight': trial.suggest_int('min_child_weight', 1, 50), # 기본 1
+        'subsample': trial.suggest_float('subsample', 0.7, 1.0), # 기본 1.0
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.7, 1.0), # 기본 1.0
+        # 'gamma': trial.suggest_float('gamma', 0, 1), # 기본 0
+        'reg_alpha': trial.suggest_float('reg_alpha', 0, 50), # 기본 0
+        'reg_lambda': trial.suggest_float('reg_lambda', 0, 10), # 기본 1
         # 'early_stopping_rounds': 10
     }
     
@@ -92,9 +94,9 @@ import optuna.visualization as vis
 fig_param_importances = vis.plot_param_importances(study)
 fig_param_importances.show()  # 그래프 출력
 
-# 최적화 과정 시각화
-fig_optimization_history = vis.plot_optimization_history(study)
-fig_optimization_history.show()  # 그래프 출력
+# # 최적화 과정 시각화
+# fig_optimization_history = vis.plot_optimization_history(study)
+# fig_optimization_history.show()  # 그래프 출력
 
 # 테스트 데이터 처리 및 예측
 results = best_model.score(X_val, y_val)
@@ -116,3 +118,18 @@ submission = pd.read_csv("c:/data/dacon/bio/sample_submission.csv")
 submission["SUBCLASS"] = original_labels
 submission.to_csv('c:/data/dacon/bio/submission/xgb_optuna.csv', encoding='UTF-8-sig', index=False)
 # https://dacon.io/competitions/official/236355/mysubmission
+
+# 학습 후 Feature Importance 확인
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Feature importance 출력
+feature_importances = best_model.feature_importances_
+
+# 중요도 시각화
+plt.figure(figsize=(12, 6))
+sns.barplot(x=np.arange(len(feature_importances)), y=feature_importances)
+plt.title('Feature Importances from LightGBM')
+plt.xlabel('Feature Index')
+plt.ylabel('Importance')
+plt.show()
