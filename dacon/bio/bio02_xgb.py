@@ -31,7 +31,7 @@ X_train, X_val, y_train, y_val = train_test_split(X_encoded, y_subclass, test_si
 # XGBoost 모델 정의
 model = xgb.XGBClassifier(
     n_estimators=100,
-    learning_rate = 0.14, # best : 0.15
+    learning_rate = 0.15, # best : 0.15
     # max_depth=6,
     random_state=42,
     use_label_encoder=False,
