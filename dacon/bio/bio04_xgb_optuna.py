@@ -83,7 +83,7 @@ print(f'Best RMSE Score: {study.best_trial.value}')
 trial = study.best_trial
 best_params = study.best_trial.params
 
-best_model = xgb.XGBClassifier(**best_params, seed=9)
+best_model = xgb.XGBClassifier(**best_params, seed=42)
 best_model.fit(X_train, y_train)
 
 # optuna.visualization.plot_param_importances(study)      # 파라미터 중요도 확인 그래프
