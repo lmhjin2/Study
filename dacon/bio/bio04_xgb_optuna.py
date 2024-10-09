@@ -41,19 +41,19 @@ def objective(trial):
     
     # 하이퍼파라미터 제안
     param = {
-        'objective': 'multi:softmax',
-        'num_class': len(le_subclass.classes_),  # multi-class classification을 위해 추가
+        # 'objective': 'multi:softmax',
+        # 'num_class': len(le_subclass.classes_),  # multi-class classification을 위해 추가
         'eval_metric': 'mlogloss',  # XGBoost에서의 metric 지정
-        # 'n_estimators': 100,
-        'learning_rate': trial.suggest_float('learning_rate', 0.001, 0.3), # 기본 0.3
-        'max_depth': trial.suggest_int('max_depth', 1, 100), # 기본 6
-        'max_bin': trial.suggest_int('max_bin', 128, 512), # 기본 256
-        'min_child_weight': trial.suggest_int('min_child_weight', 1, 50), # 기본 1
-        'subsample': trial.suggest_float('subsample', 0.7, 1.0), # 기본 1.0
-        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.7, 1.0), # 기본 1.0
+        'n_estimators': 100,
+        'learning_rate': trial.suggest_float('learning_rate', 0.14, 0.16), # 기본 0.3
+        # 'max_depth': trial.suggest_int('max_depth', 1, 100), # 기본 6
+        # 'max_bin': trial.suggest_int('max_bin', 128, 512), # 기본 256
+        # 'min_child_weight': trial.suggest_int('min_child_weight', 1, 50), # 기본 1
+        # 'subsample': trial.suggest_float('subsample', 0.7, 1.0), # 기본 1.0
+        # 'colsample_bytree': trial.suggest_float('colsample_bytree', 0.7, 1.0), # 기본 1.0
         # 'gamma': trial.suggest_float('gamma', 0, 1), # 기본 0
-        'reg_alpha': trial.suggest_float('reg_alpha', 0, 50), # 기본 0
-        'reg_lambda': trial.suggest_float('reg_lambda', 0, 10), # 기본 1
+        # 'reg_alpha': trial.suggest_float('reg_alpha', 0, 50), # 기본 0
+        # 'reg_lambda': trial.suggest_float('reg_lambda', 0, 10), # 기본 1
         # 'early_stopping_rounds': 10
     }
     
