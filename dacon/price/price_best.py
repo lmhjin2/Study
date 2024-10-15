@@ -289,3 +289,4 @@ for 품목명, predictions in 품목별_predictions.items():
 # 결과 저장
 sample_submission.to_csv('c:/data/dacon/price/submission/price_best.csv', index=False)
 # https://dacon.io/competitions/official/236381/mysubmission
+
