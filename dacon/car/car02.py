@@ -12,4 +12,3 @@ submission.at[0, "system"] = "당신은 자동차 데이터 전문가입니다. 
 submission.at[0, "user"] = user
 
 submission.to_csv("c:/data/dacon/car/submission/car02.csv", index=False)
-
