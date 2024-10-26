@@ -65,5 +65,3 @@ submission.to_csv('c:/data/dacon/bio/submission/bio_02_xgb.csv', encoding='UTF-8
 # best score : 
 # [99]    validation_0-mlogloss:1.02093   validation_1-mlogloss:2.12321
 
-# lr 0.151 : [val0, val1 중에 뭐가 더 중요한지 판단 가능]
-# [99]    validation_0-mlogloss:1.01922   validation_1-mlogloss:2.12502
