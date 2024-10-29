@@ -64,4 +64,3 @@ submission.to_csv('c:/data/dacon/bio/submission/bio_02_xgb.csv', encoding='UTF-8
 
 # best score : 
 # [99]    validation_0-mlogloss:1.02093   validation_1-mlogloss:2.12321
-
