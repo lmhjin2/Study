@@ -192,4 +192,7 @@ for epoch in range(epochs):
     }, checkpoint_path)
 
 generator.train()  
-discriminator.train()  
+discriminator.train()
+
+# https://dacon.io/competitions/official/236420/mysubmission
+
