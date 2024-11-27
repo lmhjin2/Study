@@ -322,3 +322,4 @@ with zipfile.ZipFile(zip_filename, 'w') as submission_zip:
 print(f"All images saved in {zip_filename}")
 
 # https://dacon.io/competitions/official/236420/mysubmission
+
