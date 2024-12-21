@@ -357,4 +357,3 @@ with zipfile.ZipFile(submission_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
         zipf.write(file_path, arcname)
 
 # https://dacon.io/competitions/official/236420/mysubmission
-
