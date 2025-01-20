@@ -85,4 +85,3 @@ test_df['image'] = [os.path.basename(image_path) for image_path in test_image_pa
 test_df.to_csv('./preproc/test_preproc.csv', index=False)
 
 # https://dacon.io/competitions/official/236420/mysubmission
-
