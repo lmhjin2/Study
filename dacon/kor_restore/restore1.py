@@ -11,4 +11,13 @@ for input_text, output_text in zip(train['input'], train['output']):
     for iw, ow in zip(input_words, output_words):
         match_dict[iw] = ow  
         
-match_dict
+def replace_words(input_text, match_dict):
+    words = input_text.split() 
+    replaced_words = [match_dict.get(word, word) for word in words] 
+    return " ".join(replaced_words)
+
+converted_reviews = test['input'].apply(lambda x: replace_words(x, match_dict)).tolist()
+
+submission = pd.read_csv('./sample_submission.csv', encoding = 'utf-8-sig')
+submission['output'] = converted_reviews
+submission.to_csv('./baseline_submission.csv', index = False, encoding = 'utf-8-sig')
