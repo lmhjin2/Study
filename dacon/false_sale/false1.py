@@ -79,3 +79,4 @@ submit = pd.read_csv('./sample_submission.csv')
 submit['허위매물여부'] = pred
 print(submit.head())
 submit.to_csv('./baseline_submission.csv',index=False)
+# https://dacon.io/competitions/official/236439/mysubmission

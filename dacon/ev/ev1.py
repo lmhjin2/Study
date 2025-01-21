@@ -13,21 +13,21 @@ plt.rc('font', family='MaruBuri')
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
-# train, test 데이터를 불러옵니다.
+# 데이터
 train = pd.read_csv('./train.csv')
 test = pd.read_csv('./test.csv')
 
 def plot_histogram(data, columns_to_plot, cols=2, figsize=(10, 5)):
-    # 해당 열이 데이터 내 존재하는 지 확인합니다.
+    # 해당 열이 데이터 내 존재하는 지 확인
     valid_columns = [col for col in columns_to_plot if col in data.columns]
     if not valid_columns:
         raise ValueError("해당 열이 존재하지 않습니다.")
     
-    # 서브플롯을 생성하기 위해 행과 열의 수를 확인합니다.
+    # 행과 열의 수를 확인
     num_vars = len(valid_columns)
     rows = math.ceil(num_vars / cols)
     
-    # 서브플롯을 생성합니다.
+    # 서브플롯을 생성
     fig, axes = plt.subplots(rows, cols, figsize=figsize)
     axes = axes.flatten()  
     
@@ -35,26 +35,25 @@ def plot_histogram(data, columns_to_plot, cols=2, figsize=(10, 5)):
         sns.histplot(x=data[col], ax=axes[i])
         axes[i].set_title(col)
     
-    # 빈 서브플롯을 삭제합니다.
+    # 빈 서브플롯을 삭제
     for j in range(i + 1, len(axes)):
         fig.delaxes(axes[j])
     
     plt.tight_layout()
     plt.show()
 
-# 그래프를 생성할 열을 담은 리스트 입니다.
 columns_to_plot = ['배터리용량']
 
-# 선언한 함수를 사용하여 그래프를 생성합니다.
+# 그래프 생성
 plot_histogram(data=train, columns_to_plot=columns_to_plot, cols=2, figsize=(10, 5))
 
 def plot_categorical(data, columns_to_plot, cols=3, figsize=(10, 5)): 
-    # 해당열이 데이터 내 존재하는지 확인합니다.
+    # 해당열이 데이터 내 존재하는지 확인
     valid_columns = [col for col in columns_to_plot if col in data.columns]
     if not valid_columns:
         raise ValueError("해당 열이 존재하지 않습니다.")
     
-    # 서브플롯을 생성하기 위해 행과 열의 수를 확인합니다.
+    # 서브플롯을 생성하기 위해 행과 열의 수를 확인
     num_vars = len(valid_columns)
     rows = math.ceil(num_vars / cols)
     
@@ -66,33 +65,31 @@ def plot_categorical(data, columns_to_plot, cols=3, figsize=(10, 5)):
         axes[i].set_title(f'Distribution of {col}')
         axes[i].tick_params(axis='x', rotation=45)
     
-    # 빈 서비플롯을 삭제합니다.
+    # 빈 서브플롯을 삭제
     for j in range(i + 1, len(axes)):
         fig.delaxes(axes[j])
     
     plt.tight_layout()
     plt.show()
     
-# 그래프를 생성할 열을 담은 리스트 입니다.
 columns_to_plot = ['차량상태']
 
-# 선언한 함수를 사용하여 그래프를 생성합니다.
+# 그래프 생성
 plot_categorical(data=train, columns_to_plot=columns_to_plot)
 
-# 제조사의 모델별 가격의 평균으로 그룹화 합니다.
+# 제조사의 모델별 가격의 평균으로 그룹화
 grouped_data = train.groupby(['제조사', '모델'])['가격(백만원)'].mean().reset_index()
 
-# 더 나은 그래프를 그리기 위해 제조사별로 정렬합니다.
+# 제조사별 정렬
 grouped_data = grouped_data.sort_values(by=['제조사', '가격(백만원)'], ascending=[True, False])
 
-# 그래프 전체의 크기를 나타냅니다.
 plt.figure(figsize=(15, 8))
 
 # 유니크한 제조사 명을 정의합니다.
 brands = grouped_data['제조사'].unique()
 colors = plt.cm.tab20.colors[:len(brands)]
 
-# 제조사별로 모델의 가격을 바 그래프 형태로 나타냅니다.
+# 제조사별 모델의 가격을 그래프로
 for i, brand in enumerate(brands):
     brand_data = grouped_data[grouped_data['제조사'] == brand]
     plt.bar(
@@ -102,7 +99,7 @@ for i, brand in enumerate(brands):
         color=colors[i % len(colors)]
     )
 
-# 그래프의 형태를 정의합니다.
+# 시각화
 plt.title('제조사 별 모델 가격 분포', fontsize=16)
 plt.xlabel('모델', fontsize=12)
 plt.ylabel('가격(백만원)', fontsize=12)
@@ -111,20 +108,20 @@ plt.legend(title='제조사', fontsize=10, loc='upper right')
 plt.tight_layout()
 plt.show()
 
-# 데이터 내 결측치를 확인합니다.
+# 결측치 확인
 train.isna().sum()
 
-# 데이터 내 결측치를 train데이터의 평균값을 사용하여 대체합니다.
+# 평균값으로 결측치 대체
 train['배터리용량'].fillna(train['배터리용량'].mean(),inplace=True)
 test['배터리용량'].fillna(train['배터리용량'].mean(),inplace=True)
 
-# 학습과 예측을 위해 데이터를 분리합니다.
+# 학습 데이터
 x_train = train.drop(['ID', '가격(백만원)'], axis = 1)
 y_train = train['가격(백만원)']
 
 x_test = test.drop('ID', axis = 1)
 
-# 범주형 변수에 대해 레이블 인코딩을 적용합니다.
+# 라벨인코딩
 categorical_features = [col for col in x_train.columns if x_train[col].dtype == 'object']
 
 for i in categorical_features:
@@ -139,20 +136,17 @@ for i in categorical_features:
     
 print(x_train.head(3))
 
-# 모델을 선언하고, 학습을 진행합니다.
+# 학습
 model = DecisionTreeRegressor()
 model.fit(x_train, y_train)
 
-# 예측을 수행합니다.
+# 예측
 pred = model.predict(x_test)
 
-# sample_submission 파일을 불러옵니다.
 submit = pd.read_csv('./sample_submission.csv')
-
-# 예측한 결과를 submit에 저장합니다.
 submit['가격(백만원)'] = pred
 submit.head()
 
-# 제출을 위해 baseline_submission.csv란 이름으로 CSV 파일을 저장합니다.
+# CSV 저장
 submit.to_csv('./baseline_submission.csv',index=False)
-
+# https://dacon.io/competitions/official/236424/mysubmission
