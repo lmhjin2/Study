@@ -76,3 +76,4 @@ submission = pd.read_csv('./sample_submission.csv', encoding = 'utf-8-sig')
 submission['output'] = restored_reviews
 submission.to_csv('./baseline_submission.csv', index = False, encoding = 'utf-8-sig')
 # https://dacon.io/competitions/official/236446/mysubmission
+
