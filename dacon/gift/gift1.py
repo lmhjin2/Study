@@ -69,5 +69,5 @@ output_file = './santa_route.csv'
 route_df = pd.DataFrame(route, columns=['point_id'])
 route_df.to_csv(output_file, index=False)
 
-print(f"최종 경로 제출 Submission 파일 저장 완료: {output_file}")
+print(f"최종 경로 제출 Submission 파 저장 완료: {output_file}")
 # https://dacon.io/competitions/official/236437/mysubmission
