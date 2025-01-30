@@ -150,4 +150,3 @@ submit.head()
 # CSV 저장
 submit.to_csv('./baseline_submission.csv',index=False)
 # https://dacon.io/competitions/official/236424/mysubmission
-
