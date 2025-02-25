@@ -2,8 +2,8 @@ import pandas as pd
 import torch 
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
 
-train = pd.read_csv('./train.csv', encoding = 'utf-8-sig')
-test = pd.read_csv('./test.csv', encoding = 'utf-8-sig')
+train = pd.read_csv('c:/data/dacon/kor_restore/train.csv', encoding = 'utf-8-sig')
+test = pd.read_csv('c:/data/dacon/kor_restore/test.csv', encoding = 'utf-8-sig')
 
 samples = []
 
@@ -72,7 +72,7 @@ for index, row in test.iterrows():
 
     restored_reviews.append(result)
     
-submission = pd.read_csv('./sample_submission.csv', encoding = 'utf-8-sig')
+submission = pd.read_csv('c:/data/dacon/kor_restore/sample_submission.csv', encoding = 'utf-8-sig')
 submission['output'] = restored_reviews
-submission.to_csv('./baseline_submission.csv', index = False, encoding = 'utf-8-sig')
+submission.to_csv('c:/data/dacon/kor_restore/output/submission2.csv', index = False, encoding = 'utf-8-sig')
 # https://dacon.io/competitions/official/236446/mysubmission

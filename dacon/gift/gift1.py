@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.distance import squareform, pdist
 
 # 데이터 파일 경로
-data_path = './data.csv'  # 참가자가 제공받은 경로로 설정
+data_path = 'c:/data/dacon/gift/data.csv'  
 data = pd.read_csv(data_path)
 
 print("데이터 로드 완료!")
@@ -65,7 +65,7 @@ print("탐욕 알고리즘 실행 완료!")
 print(f"총 이동 거리: {total_distance}")
 
 # 경로를 CSV 파일로 저장
-output_file = './santa_route.csv'
+output_file = 'c:/data/dacon/gift/output/santa_route.csv'
 route_df = pd.DataFrame(route, columns=['point_id'])
 route_df.to_csv(output_file, index=False)
 

@@ -5,7 +5,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.ensemble import RandomForestClassifier
 
-train = pd.read_csv('./train.csv')
+train = pd.read_csv('c:/data/dacon/false_sale/train.csv')
 
 train.head()
 train.info()
@@ -35,7 +35,7 @@ for col in label_encode_cols:
 one_hot_cols = ['매물확인방식', '주차가능여부']
 
 # One-Hot Encoding 적용
-one_hot_encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
+one_hot_encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
 
 # Train 데이터 변환
 x_encoded = one_hot_encoder.fit_transform(x[one_hot_cols])
@@ -51,7 +51,7 @@ model = RandomForestClassifier(n_estimators=100,
 model.fit(x, y)
 
 # Test 데이터 로드
-test = pd.read_csv('./test.csv')
+test = pd.read_csv('c:/data/dacon/false_sale/test.csv')
 
 # Test 결측값 대체
 test[columns_fill_mean] = mean_imputer.transform(test[columns_fill_mean])
@@ -75,8 +75,8 @@ test = pd.concat([test.drop(columns=one_hot_cols), test_encoded_df], axis=1)
 test.drop(columns=['ID'],inplace=True)
 pred = pd.Series(model.predict(test))
 
-submit = pd.read_csv('./sample_submission.csv')
+submit = pd.read_csv('c:/data/dacon/false_sale/sample_submission.csv')
 submit['허위매물여부'] = pred
 print(submit.head())
-submit.to_csv('./baseline_submission.csv',index=False)
+submit.to_csv('c:/data/dacon/false_sale/output/submission.csv',index=False)
 # https://dacon.io/competitions/official/236439/mysubmission

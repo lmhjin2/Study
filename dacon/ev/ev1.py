@@ -14,8 +14,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
 # 데이터
-train = pd.read_csv('./train.csv')
-test = pd.read_csv('./test.csv')
+train = pd.read_csv('c:/data/dacon/ev/train.csv')
+test = pd.read_csv('c:/data/dacon/ev/test.csv')
 
 def plot_histogram(data, columns_to_plot, cols=2, figsize=(10, 5)):
     # 해당 열이 데이터 내 존재하는 지 확인
@@ -143,10 +143,10 @@ model.fit(x_train, y_train)
 # 예측
 pred = model.predict(x_test)
 
-submit = pd.read_csv('./sample_submission.csv')
+submit = pd.read_csv('c:/data/dacon/ev/sample_submission.csv')
 submit['가격(백만원)'] = pred
 submit.head()
 
 # CSV 저장
-submit.to_csv('./baseline_submission.csv',index=False)
+submit.to_csv('c:/data/dacon/ev/output/submission.csv',index=False)
 # https://dacon.io/competitions/official/236424/mysubmission
