@@ -50,8 +50,10 @@ y = train['허위매물여부']
 X.columns = X.columns.astype(str)
 
 # SMOTE로 데이터 증강
-smote = SMOTE(random_state=42)
+smote = SMOTE(random_state=21)
 X_sm, y_sm = smote.fit_resample(X, y)
+
+# OOF F1 Score: 0.9786440879617695
 
 # 확인
 print("After SMOTE, X_sm shape:", X_sm.shape)
@@ -69,7 +71,7 @@ params = {
     'objective': 'binary',
     'boosting_type': 'gbdt',
     'num_leaves': 32,
-    'learning_rate': 0.055,
+    'learning_rate': 0.05,
     'class_weight': 'balanced',
     'seed': 42
 }
@@ -119,7 +121,7 @@ plt.ylabel("Actual")
 # === 테스트 데이터 예측 및 저장 ===
 test_preds_binary = (test_preds > 0.5).astype(int)
 submission = pd.DataFrame({'ID': test_id, '허위매물여부': test_preds_binary})
-submission.to_csv('c:/data/dacon/false_sale/output/lgbm1_4.csv', index=False)
+submission.to_csv('c:/data/dacon/false_sale/output/lgbm1_5.csv', index=False)
 print("Submission file saved")
 # https://dacon.io/competitions/official/236439/mysubmission
 
