@@ -69,7 +69,7 @@ params = {
     'objective': 'binary',
     'boosting_type': 'gbdt',
     'num_leaves': 32,
-    'learning_rate': 0.055,
+    'learning_rate': 0.05,
     'class_weight': 'balanced',
     'seed': 42
 }
@@ -119,7 +119,7 @@ plt.ylabel("Actual")
 # === 테스트 데이터 예측 및 저장 ===
 test_preds_binary = (test_preds > 0.5).astype(int)
 submission = pd.DataFrame({'ID': test_id, '허위매물여부': test_preds_binary})
-submission.to_csv('c:/data/dacon/false_sale/output/lgbm1_4.csv', index=False)
+submission.to_csv('c:/data/dacon/false_sale/output/lgbm1_2.csv', index=False)
 print("Submission file saved")
 # https://dacon.io/competitions/official/236439/mysubmission
 
