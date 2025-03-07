@@ -52,6 +52,6 @@ for i in range(len(test)):
 
 print(sample.info())
 
-sample.to_csv("c:/data/dacon/construction_accident/output/submission01.csv", index=False, encoding='utf-8-sig')
-
+sample.to_csv("c:/data/dacon/construction_accident/output/submission_01.csv", index=False, encoding='utf-8-sig')
+print('ca_no_llm1.py Done.')
 # https://dacon.io/competitions/official/236455/mysubmission

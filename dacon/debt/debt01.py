@@ -19,7 +19,7 @@ categorical_col = [
 ]
 
 # OneHotEncoder 초기화
-encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
+encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
 
 # 훈련 데이터에 대해 인코더 학습
 encoder.fit(train_df[categorical_col])
@@ -45,12 +45,12 @@ X_train, X_val, y_train, y_val = train_test_split(
 
 # XGBoost 모델 학습
 model = XGBClassifier(
-    n_estimators=100,  # 트리 개수
-    max_depth=5,       # 최대 깊이
-    learning_rate=0.15, # 학습률
+    n_estimators=100,  
+    max_depth=5,       
+    learning_rate=0.15,
     random_state=42,
-    use_label_encoder=False,  # 경고 방지
-    eval_metric="auc",        # 평가 지표 설정
+    use_label_encoder=False,
+    eval_metric="auc",      
 )
 
 # 학습 및 Validation 성능 모니터링
@@ -58,8 +58,8 @@ eval_set = [(X_train, y_train), (X_val, y_val)]
 model.fit(
     X_train, y_train,
     eval_set=eval_set,
-    verbose=True,  # 학습 로그 출력
-    early_stopping_rounds=10  # 5번의 학습 동안 성능 개선 없을 시 조기 종료
+    verbose=True,
+    # early_stopping_rounds=10
 )
 
 # 채무 불이행 '확률'을 예측합니다.
@@ -69,6 +69,6 @@ submit = pd.read_csv('c:/data/dacon/debt/sample_submission.csv')
 
 # 결과 저장
 submit['채무 불이행 확률'] = preds
-submit.to_csv('c:/data/dacon/debt/output/submission01.csv', encoding='UTF-8-sig', index=False)
-
+submit.to_csv('c:/data/dacon/debt/output/submission_01.csv', encoding='UTF-8-sig', index=False)
+print('debt01.py Done.')
 # https://dacon.io/competitions/official/236450/mysubmission

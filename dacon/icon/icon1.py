@@ -70,6 +70,6 @@ y_pred_labels = label_encoder.inverse_transform(y_pred)
 submission = pd.read_csv('c:/data/dacon/icon/sample_submission.csv')
 
 submission['label'] = y_pred_labels
-submission.to_csv('c:/data/dacon/icon/output/submission2.csv', index = False, encoding = 'utf-8-sig')
-
+submission.to_csv('c:/data/dacon/icon/output/submission_02.csv', index = False, encoding = 'utf-8-sig')
+print('icon1.py Done.')
 # https://dacon.io/competitions/official/236459/mysubmission

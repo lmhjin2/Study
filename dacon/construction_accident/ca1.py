@@ -172,6 +172,6 @@ submission.iloc[:,2:] = pred_embeddings
 submission.head()
 
 # 최종 결과를 CSV로 저장
-submission.to_csv('c:/data/dacon/construction_accident/output/submission001.csv', index=False, encoding='utf-8-sig')
-
+submission.to_csv('c:/data/dacon/construction_accident/output/submission_001.csv', index=False, encoding='utf-8-sig')
+print('ca1.py Done.')
 # https://dacon.io/competitions/official/236455/mysubmission

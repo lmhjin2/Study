@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.metrics import roc_auc_score
 from xgboost import XGBClassifier
-
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -34,6 +33,7 @@ test_df['special_char_count'] = test_df['URL'].apply(lambda x: sum(1 for c in x 
 # 변수 목록
 variables = ['length', 'subdomain_count', 'special_char_count']
 
+"""
 # 박스플롯
 for var in variables:
     plt.figure(figsize=(8, 5))
@@ -43,15 +43,18 @@ for var in variables:
     plt.ylabel(var)
     plt.xticks([0, 1], ['Non-Malicious', 'Malicious'])
     plt.show()
-    
+"""
+
 # 상관계수 계산
 correlation_matrix = train_df[['length', 'subdomain_count', 'special_char_count', 'label']].corr()
 
+"""
 # 히트맵 시각화
 plt.figure(figsize=(8, 6))
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f")
 plt.title("Correlation Matrix")
 plt.show()
+"""
 
 # 학습을 위한 학습 데이터의 피처와 라벨 준비
 X = train_df[['length', 'subdomain_count', 'special_char_count']]
@@ -89,7 +92,7 @@ for idx, (train_idx, val_idx) in enumerate(kf.split(X)):
         X_train, y_train,
         eval_set=eval_set,
         verbose=True,  
-        early_stopping_rounds=5  
+        # early_stopping_rounds=5
     )
     
     models.append(model)  # 모델 저장
@@ -112,10 +115,10 @@ for model in models:
 
 # Soft-Voting 앙상블 (Fold 별 모델들의 예측 확률 평균)
 test_probabilities /= len(models)
-print('Inference Done.')
+print('url01.py Done.')
 
 # 결과 저장
 test_df['probability'] = test_probabilities
-test_df[['ID', 'probability']].to_csv('c:/data/dacon/url/output/submission.csv', index=False)
+test_df[['ID', 'probability']].to_csv('c:/data/dacon/url/output/submission_01.csv', index=False)
 
 # https://dacon.io/competitions/official/236451/mysubmission
