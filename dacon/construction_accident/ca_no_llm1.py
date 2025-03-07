@@ -42,16 +42,16 @@ res_v = {}
 for k,v in res.items():
     res_v[k] = model.encode(v)
 
-print(sample.head(3))
-print(sample.info())
+# print(sample.head(3))
+# print(sample.info())
 
 for i in range(len(test)):
     accident = test.loc[i, "인적사고"]
     sample.loc[i, "재발방지대책 및 향후조치계획"] = res[accident]
     sample.iloc[i, 2:] = res_v[accident]
 
-print(sample.info())
+# print(sample.info())
 
-sample.to_csv("c:/data/dacon/construction_accident/output/submission_01.csv", index=False, encoding='utf-8-sig')
+sample.to_csv("c:/data/dacon/construction_accident/output/nl_submission_01.csv", index=False, encoding='utf-8-sig')
 print('ca_no_llm1.py Done.')
 # https://dacon.io/competitions/official/236455/mysubmission
