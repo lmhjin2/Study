@@ -26,7 +26,7 @@ for i, (idx, sample) in enumerate(samples.iterrows()):
     axes[i].axis("off")
 
 plt.tight_layout()
-plt.show()
+# plt.show()
 
 # Feature(X)와 Target(y) 분리
 X = train.iloc[:, 2:].values  # 이미지 데이터 (32x32 = 1024 픽셀)
@@ -71,6 +71,7 @@ submission = pd.read_csv('c:/data/dacon/icon/sample_submission.csv')
 
 submission['label'] = y_pred_labels
 
-submission.to_csv('c:/data/dacon/icon/output/submission_02.csv', index = False, encoding = 'utf-8-sig')
+submission.to_csv('c:/data/dacon/icon/output/submission_03.csv', index = False, encoding = 'utf-8-sig')
 print('icon1.py Done.')
+
 # https://dacon.io/competitions/official/236459/mysubmission
