@@ -43,8 +43,8 @@ model = CatBoostClassifier(
     learning_rate=0.1,
     max_depth=10,
     random_state=42,
-    eval_metric="MultiClass",  # 또는 "MultiClass" 등 사용 가능
-    verbose=1,  # 학습 진행 상황 출력 (옵션)
+    eval_metric="MultiClass",
+    verbose=1, 
 )
 
 # 모델 학습 (fit()에서는 eval_metric을 전달하지 않음)
