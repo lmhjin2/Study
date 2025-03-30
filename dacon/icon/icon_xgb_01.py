@@ -77,9 +77,17 @@ y_test_labels = label_encoder.inverse_transform(y_test_pred)
 # 제출 파일 생성
 submission = pd.read_csv("c:/data/dacon/icon/sample_submission.csv")
 submission["label"] = y_test_labels
-submission.to_csv(
-    "c:/data/dacon/icon/output/xgb_01_fixed.csv", index=False, encoding="utf-8-sig"
-)
-print("Submission saved to xgb_01_fixed.csv")
+
+import datetime
+
+# 현재 날짜와 시간을 문자열로 변환 (예: 20250330_153045)
+timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+
+# 파일 이름 생성 (예: submission_20250330_153045.csv)
+output_filename = f"c:/data/dacon/icon/output/xgb_01_{timestamp}.csv"
+
+# CSV 파일 저장
+submission.to_csv(output_filename, index=False, encoding="utf-8-sig")
+print(f"Submission saved to {output_filename}")
 
 # https://dacon.io/competitions/official/236459/mysubmission

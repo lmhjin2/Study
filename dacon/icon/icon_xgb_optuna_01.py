@@ -34,7 +34,7 @@ def objective(trial):
         "eval_metric": "mlogloss",
         "num_class": len(np.unique(y)),
         "max_depth": trial.suggest_int("max_depth", 3, 12),
-        "eta": trial.suggest_float("eta", 0.01, 0.3),
+        "eta": trial.suggest_float("eta", 0.01, 0.3),  # learning_reate
         "subsample": trial.suggest_float("subsample", 0.6, 1.0),
         "colsample_bytree": trial.suggest_float("colsample_bytree", 0.6, 1.0),
         "lambda": trial.suggest_float("lambda", 1e-3, 10.0, log=True),
@@ -93,8 +93,17 @@ test_labels_decoded = le.inverse_transform(test_labels)
 # 제출 파일 저장
 submission = pd.read_csv("c:/data/dacon/icon/sample_submission.csv")
 submission["label"] = test_labels_decoded
-submission.to_csv(
-    "c:/data/dacon/icon/output/xgb_optuna.csv", index=False, encoding="utf-8-sig"
-)
+
+import datetime
+
+# 현재 날짜와 시간을 문자열로 변환 (예: 20250330_153045)
+timestamp = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+
+# 파일 이름 생성 (예: submission_20250330_153045.csv)
+output_filename = f"c:/data/dacon/icon/output/xgb_optuna_{timestamp}.csv"
+
+# CSV 파일 저장
+submission.to_csv(output_filename, index=False, encoding="utf-8-sig")
+print(f"Submission saved to {output_filename}")
 
 # https://dacon.io/competitions/official/236459/mysubmission
