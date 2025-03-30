@@ -1,11 +1,10 @@
 import numpy as np
-import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
-from sklearn.model_selection import train_test_split, StratifiedKFold, KFold
-import xgboost as xgb
-from sklearn.metrics import mean_squared_error
-from sklearn.metrics import f1_score
 import optuna
+import pandas as pd
+import xgboost as xgb
+from sklearn.metrics import f1_score, mean_squared_error
+from sklearn.model_selection import KFold, StratifiedKFold, train_test_split
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 # 데이터 로드
 train = pd.read_csv("c:/data/dacon/bio/train.csv")
@@ -90,6 +89,7 @@ best_model.fit(X_train, y_train)
 # optuna.visualization.plot_optimization_history(study)   # 최적화 과정 시각화
 
 import optuna.visualization as vis
+
 # 파라미터 중요도 확인 그래프
 fig_param_importances = vis.plot_param_importances(study)
 fig_param_importances.show()  # 그래프 출력

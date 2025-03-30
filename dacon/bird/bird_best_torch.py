@@ -1,29 +1,26 @@
 # 120번째 줄에 모델 있음
-import random
-import pandas as pd
-import numpy as np
-import os
-import re
 import glob
-import cv2
-  
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F  
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+import os
+import random
+import re
+import warnings
 
 import albumentations as A
+import cv2
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+import torchvision.models as models
 from albumentations.pytorch.transforms import ToTensorV2
-import torchvision.models as models  
-
-from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
-from sklearn.metrics import f1_score
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, f1_score
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 from tqdm import tqdm
 
-import warnings
 warnings.filterwarnings(action='ignore') 
 
 df = pd.read_csv('/home/aia/Study/dacon/bird/train.csv')

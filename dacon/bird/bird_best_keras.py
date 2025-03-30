@@ -1,15 +1,16 @@
-import tensorflow as tf  
-from tensorflow import keras
+import os
+
+import cv2
+import numpy as np
+import pandas as pd
+import tensorflow as tf
 from keras import layers, models
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import accuracy_score, classification_report, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import classification_report, f1_score, accuracy_score
-import pandas as pd
-import numpy as np
-import cv2  
-import os    
-    
+from tensorflow import keras
+
 # Hyperparameter Setting
 CFG = {
     'IMG_SIZE': 224,
@@ -61,7 +62,9 @@ def get_data_generator(df, datagen, batch_size=32):
 train_generator = get_data_generator(train, train_datagen, CFG['BATCH_SIZE'])
 val_generator = get_data_generator(val, val_datagen, CFG['BATCH_SIZE'])
 
-from keras.applications import EfficientNetV2L, EfficientNetB7, InceptionResNetV2, InceptionV3
+from keras.applications import (EfficientNetB7, EfficientNetV2L,
+                                InceptionResNetV2, InceptionV3)
+
 
 # Model Define
 def create_model(num_classes):

@@ -1,6 +1,6 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 import xgboost as xgb
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 #1
 train = pd.read_csv("c:/data/dacon/bio/train.csv")

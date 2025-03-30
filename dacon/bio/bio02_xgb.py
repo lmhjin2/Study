@@ -1,8 +1,8 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
-from sklearn.model_selection import train_test_split
 import xgboost as xgb
 from sklearn.metrics import f1_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 
 # 데이터 로드
 train = pd.read_csv("c:/data/dacon/bio/train.csv")
