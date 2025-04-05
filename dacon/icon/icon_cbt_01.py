@@ -44,7 +44,7 @@ model = CatBoostClassifier(
     max_depth=10,
     random_state=42,
     eval_metric="MultiClass",
-    verbose=1, 
+    verbose=1,
 )
 
 # 모델 학습 (fit()에서는 eval_metric을 전달하지 않음)

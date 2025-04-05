@@ -1,9 +1,9 @@
+import datetime
+
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import datetime
 import optuna
-
+import pandas as pd
 from catboost import CatBoostClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -27,8 +27,8 @@ plt.tight_layout()
 # plt.show()
 
 # Feature와 Target 분리
-X = train.iloc[:, 2:].values    # 이미지 데이터 (32x32 = 1024 픽셀)
-y = train["label"].values         # 분류 대상
+X = train.iloc[:, 2:].values  # 이미지 데이터 (32x32 = 1024 픽셀)
+y = train["label"].values  # 분류 대상
 X_test = test.iloc[:, 1:].values  # 테스트 데이터
 
 # 라벨 인코딩
@@ -39,6 +39,7 @@ y_encoded = label_encoder.fit_transform(y.reavel())
 X_train, X_valid, y_train, y_valid = train_test_split(
     X, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
 )
+
 
 # ================================
 # 1. Optuna Objective 함수 정의
@@ -54,22 +55,19 @@ def objective(trial):
         "eval_metric": "MultiClass",
         "verbose": 0,
     }
-    
+
     # CatBoostClassifier 생성 (verbose=0로 설정하여 내부 로그 최소화)
     model = CatBoostClassifier(**params)
-    
+
     # 조기 종료를 위해 early_stopping_rounds 지정 (fit()에선 eval_metric은 전달하지 않음)
-    model.fit(
-        X_train, y_train,
-        eval_set=[(X_valid, y_valid)],
-        early_stopping_rounds=10
-    )
-    
+    model.fit(X_train, y_train, eval_set=[(X_valid, y_valid)], early_stopping_rounds=10)
+
     # 검증 데이터 예측 및 정확도 산출
     y_valid_pred = model.predict(X_valid)
     acc = accuracy_score(y_valid, y_valid_pred)
-    
+
     return acc
+
 
 # ================================
 # 2. Optuna 스터디 수행
@@ -91,11 +89,13 @@ y_full = np.concatenate([y_train, y_valid], axis=0)
 
 # 최적 파라미터에 추가 고정 파라미터를 업데이트
 best_params = study.best_trial.params
-best_params.update({
-    "random_state": 42,
-    "eval_metric": "MultiClass",
-    "verbose": 100  # 진행률 출력 빈도 (원하는 대로 조정)
-})
+best_params.update(
+    {
+        "random_state": 42,
+        "eval_metric": "MultiClass",
+        "verbose": 100,  # 진행률 출력 빈도 (원하는 대로 조정)
+    }
+)
 
 final_model = CatBoostClassifier(**best_params)
 final_model.fit(X_full, y_full)

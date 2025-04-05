@@ -27,10 +27,13 @@ plt.tight_layout()
 # plt.show()
 
 # Feature(X)와 Target(y) 분리
-X = train.iloc[:, 2:].values  # 이미지 데이터 (32x32 = 1024 픽셀)
+X = train.iloc[:, 2:].values # 이미지 데이터 (32x32 = 1024 픽셀)
 y = train["label"].values  # 분류할 대상 라벨
 
-X_test = test.iloc[:, 1:].values  # 테스트 데이터
+X_test = test.iloc[:, 1:].values # 테스트 데이터
+
+X = X / 255.0
+X_test = X_test / 255.0
 
 # 라벨을 숫자로 변환 (Label Encoding)
 label_encoder = LabelEncoder()
@@ -38,11 +41,17 @@ y = label_encoder.fit_transform(y)
 
 # 데이터 분할
 X_train, X_valid, y_train, y_valid = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
+    X, y, test_size=0.15, random_state=42, stratify=y
 )
 
 model = LGBMClassifier(
-    n_estimators=100, learning_rate=0.1, max_depth=10, random_state=42
+    n_estimators=100, 
+    learning_rate=0.11, 
+    max_depth=30, 
+    # min_data_in_leaf=1,
+    # min_gain_to_split=0.0,
+    verbose=1,
+    random_state=42
 )
 
 # 모델 학습
@@ -51,6 +60,7 @@ model.fit(
     y_train,
     eval_set=[(X_train, y_train), (X_valid, y_valid)],
     eval_metric="multi_logloss",
+    # early_stopping_rounds=10
 )
 
 # Validation Set에 대한 예측 및 성능 평가
