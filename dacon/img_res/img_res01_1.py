@@ -16,23 +16,20 @@ from skimage.metrics import structural_similarity as ssim
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-CFG = {
-    'EPOCHS':10,
-    'LEARNING_RATE':3e-4,
-    'BATCH_SIZE':16,
-    'SEED':42
-}
+CFG = {"EPOCHS": 10, "LEARNING_RATE": 3e-4, "BATCH_SIZE": 16, "SEED": 42}
+
 
 def seed_everything(seed):
     random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = True
 
-seed_everything(CFG['SEED']) # Seed 고정
+
+seed_everything(CFG["SEED"])  # Seed 고정
 
 
 class CustomDataset(Dataset):
@@ -60,23 +57,31 @@ class CustomDataset(Dataset):
             damage_img = self.transform(damage_img)
             origin_img = self.transform(origin_img)
 
-        return {'A': damage_img, 'B': origin_img}
+        return {"A": damage_img, "B": origin_img}
+
 
 # 경로 설정
-origin_dir = './train_gt'  # 원본 이미지 폴더 경로
-damage_dir = './train_input'  # 손상된 이미지 폴더 경로
-test_dir = './test_input'     # test 이미지 폴더 경로
+origin_dir = "./train_gt"  # 원본 이미지 폴더 경로
+damage_dir = "./train_input"  # 손상된 이미지 폴더 경로
+test_dir = "./test_input"  # test 이미지 폴더 경로
 
 # 데이터 전처리 설정
-transform = transforms.Compose([
-    transforms.Resize((256, 256)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.5], [0.5])
-])
+transform = transforms.Compose(
+    [
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.5], [0.5]),
+    ]
+)
 
 # 데이터셋 및 DataLoader 생성
-dataset = CustomDataset(damage_dir=damage_dir, origin_dir=origin_dir, transform=transform)
-dataloader = DataLoader(dataset, batch_size=CFG['BATCH_SIZE'], shuffle=True, num_workers=1)
+dataset = CustomDataset(
+    damage_dir=damage_dir, origin_dir=origin_dir, transform=transform
+)
+dataloader = DataLoader(
+    dataset, batch_size=CFG["BATCH_SIZE"], shuffle=True, num_workers=1
+)
+
 
 # U-Net 기반의 Generator
 class UNetGenerator(nn.Module):
@@ -91,9 +96,13 @@ class UNetGenerator(nn.Module):
             return nn.Sequential(*layers)
 
         def up_block(in_feat, out_feat, dropout=0.0):
-            layers = [nn.ConvTranspose2d(in_feat, out_feat, kernel_size=4, stride=2, padding=1),
-                      nn.BatchNorm2d(out_feat),
-                      nn.ReLU(inplace=True)] 
+            layers = [
+                nn.ConvTranspose2d(
+                    in_feat, out_feat, kernel_size=4, stride=2, padding=1
+                ),
+                nn.BatchNorm2d(out_feat),
+                nn.ReLU(inplace=True),
+            ]
             if dropout:
                 layers.append(nn.Dropout(dropout))
             return nn.Sequential(*layers)
@@ -116,7 +125,7 @@ class UNetGenerator(nn.Module):
         self.up7 = up_block(256, 64)
         self.up8 = nn.Sequential(
             nn.ConvTranspose2d(128, out_channels, kernel_size=4, stride=2, padding=1),
-            nn.Tanh()
+            nn.Tanh(),
         )
 
     def forward(self, x):
@@ -140,13 +149,16 @@ class UNetGenerator(nn.Module):
 
         return u8
 
+
 # PatchGAN 기반의 Discriminator
 class PatchGANDiscriminator(nn.Module):
     def __init__(self, in_channels=3):
         super(PatchGANDiscriminator, self).__init__()
 
         def discriminator_block(in_filters, out_filters, normalization=True):
-            layers = [nn.Conv2d(in_filters, out_filters, kernel_size=4, stride=2, padding=1)]
+            layers = [
+                nn.Conv2d(in_filters, out_filters, kernel_size=4, stride=2, padding=1)
+            ]
             if normalization:
                 layers.append(nn.BatchNorm2d(out_filters))
             layers.append(nn.LeakyReLU(0.2, inplace=True))
@@ -157,40 +169,44 @@ class PatchGANDiscriminator(nn.Module):
             discriminator_block(64, 128),
             discriminator_block(128, 256),
             discriminator_block(256, 512),
-            nn.Conv2d(512, 1, kernel_size=4, padding=1)
+            nn.Conv2d(512, 1, kernel_size=4, padding=1),
         )
 
     def forward(self, img_A, img_B):
         img_input = torch.cat((img_A, img_B), 1)
         return self.model(img_input)
 
+
 # 가중치 초기화 함수
 def weights_init_normal(m):
     classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
+    if classname.find("Conv") != -1:
         torch.nn.init.normal_(m.weight.data, 0.0, 0.02)
-    elif classname.find('BatchNorm2d') != -1:
+    elif classname.find("BatchNorm2d") != -1:
         torch.nn.init.normal_(m.weight.data, 1.0, 0.02)
         torch.nn.init.constant_(m.bias.data, 0.0)
+
 
 def ssim_score(true, pred):
     # 전체 RGB 이미지를 사용해 SSIM 계산 (channel_axis=-1)
     ssim_value = ssim(true, pred, channel_axis=-1, data_range=pred.max() - pred.min())
     return ssim_value
 
+
 def masked_ssim_score(true, pred, mask):
     # 손실 영역의 좌표에서만 RGB 채널별 픽셀 값 추출
     true_masked_pixels = true[mask > 0]
     pred_masked_pixels = pred[mask > 0]
-    
+
     # 손실 영역 픽셀만으로 SSIM 계산 (채널축 사용)
     ssim_value = ssim(
-        true_masked_pixels, 
-        pred_masked_pixels, 
-        channel_axis=-1, 
-        data_range=pred.max() - pred.min()
+        true_masked_pixels,
+        pred_masked_pixels,
+        channel_axis=-1,
+        data_range=pred.max() - pred.min(),
     )
     return ssim_value
+
 
 def histogram_similarity(true, pred):
     # BGR 이미지를 HSV로 변환
@@ -207,13 +223,14 @@ def histogram_similarity(true, pred):
     similarity = cv2.compareHist(hist_true, hist_pred, cv2.HISTCMP_CORREL)
     return similarity
 
+
 # 모델 저장을 위한 디렉토리 생성
 model_save_dir = "./saved_models"
 os.makedirs(model_save_dir, exist_ok=True)
 
 best_loss = float("inf")
 lambda_pixel = 100  # 픽셀 손실에 대한 가중치
-        
+
 # Generator와 Discriminator 초기화
 generator = UNetGenerator()
 generator = generator.to(device)
@@ -227,14 +244,14 @@ discriminator.apply(weights_init_normal).to(device)
 criterion_GAN = nn.MSELoss()
 criterion_pixelwise = nn.L1Loss()
 
-optimizer_G = optim.Adam(generator.parameters(), lr = CFG["LEARNING_RATE"])
-optimizer_D = optim.Adam(discriminator.parameters(), lr = CFG["LEARNING_RATE"]) 
+optimizer_G = optim.Adam(generator.parameters(), lr=CFG["LEARNING_RATE"])
+optimizer_D = optim.Adam(discriminator.parameters(), lr=CFG["LEARNING_RATE"])
 
 # 학습
-for epoch in range(1, CFG['EPOCHS'] + 1):
+for epoch in range(1, CFG["EPOCHS"] + 1):
     for i, batch in enumerate(dataloader):
-        real_A = batch['A'].to(device)
-        real_B = batch['B'].to(device)
+        real_A = batch["A"].to(device)
+        real_B = batch["B"].to(device)
 
         # Generator 훈련
         optimizer_G.zero_grad()
@@ -257,18 +274,29 @@ for epoch in range(1, CFG['EPOCHS'] + 1):
         optimizer_D.step()
 
         # 진행 상황 출력
-        print(f"[Epoch {epoch}/{CFG['EPOCHS']}] [Batch {i}/{len(dataloader)}] [D loss: {loss_D.item()}] [G loss: {loss_G.item()}]")
+        print(
+            f"[Epoch {epoch}/{CFG['EPOCHS']}] [Batch {i}/{len(dataloader)}] [D loss: {loss_D.item()}] [G loss: {loss_G.item()}]"
+        )
 
         # 현재 에포크에서의 손실이 best_loss보다 작으면 모델 저장
         if loss_G.item() < best_loss:
             best_loss = loss_G.item()
-            torch.save(generator.state_dict(), os.path.join(model_save_dir, "best_generator.pth"))
-            torch.save(discriminator.state_dict(), os.path.join(model_save_dir, "best_discriminator.pth"))
-            print(f"Best model saved at epoch {epoch}, batch {i} with G loss: {loss_G.item()} and D loss: {loss_D.item()}")
+            torch.save(
+                generator.state_dict(),
+                os.path.join(model_save_dir, "best_generator.pth"),
+            )
+            torch.save(
+                discriminator.state_dict(),
+                os.path.join(model_save_dir, "best_discriminator.pth"),
+            )
+            print(
+                f"Best model saved at epoch {epoch}, batch {i} with G loss: {loss_G.item()} and D loss: {loss_D.item()}"
+            )
 
 # 저장할 디렉토리 설정
 submission_dir = "./submission"
 os.makedirs(submission_dir, exist_ok=True)
+
 
 # 이미지 로드 및 전처리
 def load_image(image_path):
@@ -276,6 +304,7 @@ def load_image(image_path):
     image = transform(image)
     image = image.unsqueeze(0)  # 배치 차원을 추가합니다.
     return image
+
 
 # 모델 경로 설정
 generator_path = os.path.join(model_save_dir, "best_generator.pth")
@@ -301,20 +330,22 @@ for image_name in test_images:
         pred_image = pred_image.cpu().squeeze(0)  # 배치 차원 제거
         pred_image = pred_image * 0.5 + 0.5  # 역정규화
         pred_image = pred_image.numpy().transpose(1, 2, 0)  # HWC로 변경
-        pred_image = (pred_image * 255).astype('uint8')  # 0-255 범위로 변환
-        
+        pred_image = (pred_image * 255).astype("uint8")  # 0-255 범위로 변환
+
         # 예측된 이미지를 실제 이미지와 같은 512x512로 리사이즈
-        pred_image_resized = cv2.resize(pred_image, (512, 512), interpolation=cv2.INTER_LINEAR)
+        pred_image_resized = cv2.resize(
+            pred_image, (512, 512), interpolation=cv2.INTER_LINEAR
+        )
 
     # 결과 이미지 저장
     output_path = os.path.join(submission_dir, image_name)
-    cv2.imwrite(output_path, cv2.cvtColor(pred_image_resized, cv2.COLOR_RGB2BGR))    
-    
+    cv2.imwrite(output_path, cv2.cvtColor(pred_image_resized, cv2.COLOR_RGB2BGR))
+
 print(f"Saved all images")
 
 # 저장된 결과 이미지를 ZIP 파일로 압축
 zip_filename = "submission.zip"
-with zipfile.ZipFile(zip_filename, 'w') as submission_zip:
+with zipfile.ZipFile(zip_filename, "w") as submission_zip:
     for image_name in test_images:
         image_path = os.path.join(submission_dir, image_name)
         submission_zip.write(image_path, arcname=image_name)

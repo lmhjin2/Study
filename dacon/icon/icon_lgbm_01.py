@@ -27,10 +27,10 @@ plt.tight_layout()
 # plt.show()
 
 # Feature(X)와 Target(y) 분리
-X = train.iloc[:, 2:].values # 이미지 데이터 (32x32 = 1024 픽셀)
+X = train.iloc[:, 2:].values  # 이미지 데이터 (32x32 = 1024 픽셀)
 y = train["label"].values  # 분류할 대상 라벨
 
-X_test = test.iloc[:, 1:].values # 테스트 데이터
+X_test = test.iloc[:, 1:].values  # 테스트 데이터
 
 X = X / 255.0
 X_test = X_test / 255.0
@@ -45,13 +45,13 @@ X_train, X_valid, y_train, y_valid = train_test_split(
 )
 
 model = LGBMClassifier(
-    n_estimators=100, 
-    learning_rate=0.11, 
-    max_depth=30, 
+    n_estimators=100,
+    learning_rate=0.11,
+    max_depth=30,
     # min_data_in_leaf=1,
     # min_gain_to_split=0.0,
     verbose=1,
-    random_state=42
+    random_state=42,
 )
 
 # 모델 학습

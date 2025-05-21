@@ -42,13 +42,13 @@ X_train, X_valid, y_train, y_valid = train_test_split(
 )
 
 model = LGBMClassifier(
-    n_estimators=100, 
-    learning_rate=0.12, 
-    max_depth=30, 
+    n_estimators=100,
+    learning_rate=0.12,
+    max_depth=30,
     # min_data_in_leaf=1,
     # min_gain_to_split=0.0,
     verbose=1,
-    random_state=42
+    random_state=42,
 )
 
 # 모델 학습

@@ -9,8 +9,9 @@ import zipfile
 from skimage.metrics import structural_similarity as ssim
 from tqdm import tqdm
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class UNet(nn.Module):
     def __init__(self):
@@ -21,16 +22,16 @@ class UNet(nn.Module):
         self.enc4 = self.conv_block(256, 512)
         self.enc5 = self.conv_block(512, 1024)
 
-        self.up1 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.up1 = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         self.dec1 = self.conv_block(1024 + 512, 512)
 
-        self.up2 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.up2 = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         self.dec2 = self.conv_block(512 + 256, 256)
 
-        self.up3 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.up3 = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         self.dec3 = self.conv_block(256 + 128, 128)
 
-        self.up4 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.up4 = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         self.dec4 = self.conv_block(128 + 64, 64)
 
         self.final = nn.Conv2d(64, 3, kernel_size=1)
@@ -40,7 +41,7 @@ class UNet(nn.Module):
             nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
 
     def forward(self, x):
@@ -56,6 +57,7 @@ class UNet(nn.Module):
         d4 = self.dec4(torch.cat([self.up4(d3), e1], dim=1))
 
         return torch.sigmoid(self.final(d4))
+
 
 class PatchGANDiscriminator(nn.Module):
     def __init__(self, in_channels=3):
@@ -73,11 +75,12 @@ class PatchGANDiscriminator(nn.Module):
             nn.BatchNorm2d(512),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=1),
-            nn.Sigmoid()
+            nn.Sigmoid(),
         )
 
     def forward(self, x):
         return self.model(x)
+
 
 class ImageDataset(Dataset):
     def __init__(self, input_dir, gt_dir, transform=None):
@@ -100,8 +103,9 @@ class ImageDataset(Dataset):
             gt_image = self.transform(gt_image)
         return (
             torch.tensor(input_image).permute(2, 0, 1).float() / 255.0,
-            torch.tensor(gt_image).permute(2, 0, 1).float() / 255.0
+            torch.tensor(gt_image).permute(2, 0, 1).float() / 255.0,
         )
+
 
 generator = UNet().to(device)
 discriminator = PatchGANDiscriminator().to(device)
@@ -109,14 +113,16 @@ discriminator = PatchGANDiscriminator().to(device)
 generator = nn.DataParallel(generator, device_ids=[0, 1, 2, 3])
 discriminator = nn.DataParallel(discriminator, device_ids=[0, 1, 2, 3])
 
-adversarial_loss = nn.BCELoss()  
-pixel_loss = nn.MSELoss()  
+adversarial_loss = nn.BCELoss()
+pixel_loss = nn.MSELoss()
 
 optimizer_G = optim.Adam(generator.parameters(), lr=0.0001, betas=(0.5, 0.999))
 optimizer_D = optim.Adam(discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999))
 
 train_dataset = ImageDataset("train_input", "train_gt")
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=48, pin_memory=True)
+train_loader = DataLoader(
+    train_dataset, batch_size=64, shuffle=True, num_workers=48, pin_memory=True
+)
 
 epochs = 30
 result_dir = "result"
@@ -129,7 +135,9 @@ for epoch in range(epochs):
     running_loss_G = 0.0
     running_loss_D = 0.0
 
-    with tqdm(total=len(train_loader), desc=f"Epoch {epoch+1}/{epochs}", unit="batch") as pbar:
+    with tqdm(
+        total=len(train_loader), desc=f"Epoch {epoch+1}/{epochs}", unit="batch"
+    ) as pbar:
         for input_images, gt_images in train_loader:
             input_images, gt_images = input_images.to(device), gt_images.to(device)
 
@@ -160,10 +168,14 @@ for epoch in range(epochs):
             running_loss_G += g_loss.item()
             running_loss_D += d_loss.item()
 
-            pbar.set_postfix(generator_loss=g_loss.item(), discriminator_loss=d_loss.item())
+            pbar.set_postfix(
+                generator_loss=g_loss.item(), discriminator_loss=d_loss.item()
+            )
             pbar.update(1)
 
-    print(f"Epoch [{epoch+1}/{epochs}] - Generator Loss: {running_loss_G / len(train_loader):.4f}, Discriminator Loss: {running_loss_D / len(train_loader):.4f}")
+    print(
+        f"Epoch [{epoch+1}/{epochs}] - Generator Loss: {running_loss_G / len(train_loader):.4f}, Discriminator Loss: {running_loss_D / len(train_loader):.4f}"
+    )
 
     test_input_dir = "test_input"
     output_dir = f"output_images_epoch_{epoch+1}"
@@ -172,26 +184,34 @@ for epoch in range(epochs):
         for img_name in sorted(os.listdir(test_input_dir)):
             img_path = os.path.join(test_input_dir, img_name)
             img = cv2.imread(img_path)
-            input_tensor = torch.tensor(img).permute(2, 0, 1).unsqueeze(0).float().to(device) / 255.0
-            output = generator(input_tensor).squeeze().permute(1, 2, 0).cpu().numpy() * 255.0
+            input_tensor = (
+                torch.tensor(img).permute(2, 0, 1).unsqueeze(0).float().to(device)
+                / 255.0
+            )
+            output = (
+                generator(input_tensor).squeeze().permute(1, 2, 0).cpu().numpy() * 255.0
+            )
             output = output.astype(np.uint8)
             cv2.imwrite(os.path.join(output_dir, img_name), output)
 
     zip_filename = os.path.join(result_dir, f"epoch_{epoch+1}.zip")
-    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+    with zipfile.ZipFile(zip_filename, "w") as zipf:
         for img_name in os.listdir(output_dir):
             zipf.write(os.path.join(output_dir, img_name), arcname=img_name)
     print(f"Epoch {epoch+1} results saved to {zip_filename}")
 
-    torch.save({
-        'epoch': epoch,
-        'generator_state_dict': generator.state_dict(),
-        'discriminator_state_dict': discriminator.state_dict(),
-        'optimizer_G_state_dict': optimizer_G.state_dict(),
-        'optimizer_D_state_dict': optimizer_D.state_dict()
-    }, checkpoint_path)
+    torch.save(
+        {
+            "epoch": epoch,
+            "generator_state_dict": generator.state_dict(),
+            "discriminator_state_dict": discriminator.state_dict(),
+            "optimizer_G_state_dict": optimizer_G.state_dict(),
+            "optimizer_D_state_dict": optimizer_D.state_dict(),
+        },
+        checkpoint_path,
+    )
 
-generator.train()  
+generator.train()
 discriminator.train()
 
 # https://dacon.io/competitions/official/236420/mysubmission
