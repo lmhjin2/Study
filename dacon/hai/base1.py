@@ -257,4 +257,3 @@ output_filename = (
 
 submission.to_csv(output_filename, index=False, encoding="utf-8-sig")
 # https://dacon.io/competitions/official/236493/mysubmission
-
